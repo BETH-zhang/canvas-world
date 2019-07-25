@@ -155,7 +155,7 @@ storiesOf('Rough|Api', module)
       ['circle', { fill: 'rgb(0, 350, 50)', fillStyle: 'zigzag', hachureGap: 10, fillWeight: 3 }],
       ['circle', { fill: 'red', fillStyle: 'cross-hatch' }],
       ['circle', { fill: 'red', fillStyle: 'dots', hachureGap: 10, fillWeight: 2 }],
-      ['rectangle', { fill: 'red', fillStyle: 'sunburst', hachureGap: 10, fillWeight: 5, hachureAngle: 60 }],
+      ['rectangle', { fill: 'red', fillStyle: 'sunburst', hachureGap: 10, fillWeight: 5, hachureAngle: 60, stroke: 'blue' }],
       ['rectangle', { fill: 'red', fillStyle: 'hachure', hachureAngle: 30, hachureGap: 10, fillWeight: 5 }],
       ['rectangle', { fill: 'red', fillStyle: 'cross-hatch', hachureGap: 10, fillWeight: 3 }],
       ['rectangle', { fill: 'red', fillStyle: 'cross-hatch', hachureGap: 10, fillWeight: 1, hachureAngle: 0 }],
