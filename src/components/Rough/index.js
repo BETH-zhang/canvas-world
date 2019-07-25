@@ -48,6 +48,7 @@ class RoughComponent extends React.PureComponent {
           func(this.rc)
         } else if (isArray(item) && this.rc[item[0]]) {
           const options = this.formatPosition(index, item[0], item[1])
+          console.log(options, '--')
           this.rc[item[0]](...options)
         } else if (this.rc[item.type]) {
           const options = this.formatPosition(index, item.type, item.options)
@@ -65,9 +66,14 @@ class RoughComponent extends React.PureComponent {
   getDefaultOptions = (type, options) => {
     const defaultOptions = {
       circle: () => ([0, 0, 50, options]),
-      ellipse: () => ([0, 0, 150, 50, options]),
+      ellipse: () => ([75, 25, 150, 50, options]),
       linearPath: () => ([this.getRandomPointAry()]),
       polygon: () => ([this.getRandomPointAry()]),
+      arc: () => (
+        // x,  y,   w,   h,  start,stop,     closed
+        // [100, 100, 200, 200, -Math.PI * 2, -Math.PI / 2, true, options],
+        [random(50, 500), random(50, 500), random(100, 200), random(100, 200), -Math.PI * (Math.random() * 2), Math.PI / (Math.random() * 2), random(0, 2) ? true : false, options]
+      ),
     }
     if (defaultOptions[type]) {
       return defaultOptions[type]()
@@ -75,28 +81,39 @@ class RoughComponent extends React.PureComponent {
     return [0, 0, 50, 50, options]
   }
 
-  formatPosition = (index, type, options) => {
-    if (!this.props.autoSort) return isArray(options) ? options : this.getDefaultOptions(type, options)
-  
-    let newOptions = null
-    if (type === 'linearPath' || type === 'polygon') {
-      newOptions = options || [this.getRandomPointAry()]
-      console.log(type, newOptions)
-    } else if (type === 'circle') {
-      newOptions = isArray(options) ? options.slice(0) : [0, 0, 50, options]
-      newOptions[0] = newOptions[2] / 2 + this.state.lineHeight
-      newOptions[1] = (this.state.lineHeight + this.state.autoHeight) * index + this.state.lineHeight + newOptions[2] / 2
-    } else if (type === 'ellipse') {
-      newOptions = isArray(options) ? options.slice(0) : [0, 0, 150, 50, options]
-      newOptions[0] = newOptions[2] / 2 + this.state.lineHeight
-      newOptions[1] = (this.state.lineHeight + this.state.autoHeight) * index + this.state.lineHeight + newOptions[3] / 2 
-    } else {
-      newOptions = isArray(options) ? options.slice(0) : [0, 0, 50, 50, options]
-      newOptions[0] = this.state.lineHeight
-      newOptions[1] = (this.state.lineHeight + this.state.autoHeight) * index + this.state.lineHeight
+  getMainOptions = (index, type, options) => {
+    const mainOptions = {
+      circle: () => {
+        const newOptions = isArray(options) ? options.slice(0) : this.getDefaultOptions(type, options)
+        newOptions[0] = newOptions[2] / 2 + this.state.lineHeight
+        newOptions[1] = (this.state.lineHeight + this.state.autoHeight) * index + this.state.lineHeight + newOptions[2] / 2
+        return newOptions
+      },
+      ellipse: () => {
+        const newOptions = isArray(options) ? options.slice(0) : this.getDefaultOptions(type, options)
+        newOptions[0] = newOptions[2] / 2 + this.state.lineHeight
+        newOptions[1] = (this.state.lineHeight + this.state.autoHeight) * index + this.state.lineHeight + newOptions[3] / 2 
+        return newOptions
+      },
+      linearPath: () => options || this.getDefaultOptions(type, options),
+      polygon: () => options || this.getDefaultOptions(type, options),
+      arc: () => options || this.getDefaultOptions(type, options)
+    }
+    if (mainOptions[type]) {
+      console.log(mainOptions[type](), '2')
+      return mainOptions[type]()
     }
     
-    return newOptions
+    const newOptions = isArray(options) ? options.slice(0) : this.getDefaultOptions(type, options)
+    newOptions[0] = this.state.lineHeight
+    newOptions[1] = (this.state.lineHeight + this.state.autoHeight) * index + this.state.lineHeight
+    return newOptions 
+  }
+
+  formatPosition = (index, type, options) => {
+    if (!this.props.autoSort) return isArray(options) ? options : this.getDefaultOptions(type, options)
+    console.log(this.getMainOptions(index, type, options), '1')
+    return this.getMainOptions(index, type, options)
   }
 
   drawDemo = () => {
