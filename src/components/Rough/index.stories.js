@@ -24,8 +24,8 @@ storiesOf('Rough|Demo', module)
     ['ellipse', [300, 100, 150, 80]],
     ['line', [80, 120, 300, 100]]
   ]} />)
-  .add('Svg', () => <Component showDemo type="svg" />)
-  .add('Fill', () => <Component autoSort sortCount data={[
+  // .add('Svg', () => <Component showDemo type="svg" />)
+  .add('Fill', () => <Component autoSort sortCount={3} data={[
     ['circle', [50, 50, 50, { fill: 'red' }]],
     ['rectangle', [120, 15, 50, 50, { fill: 'red' }]],
     ['rectangle', [50, 150, 50, 50, {

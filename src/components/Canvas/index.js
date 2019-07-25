@@ -2,13 +2,11 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import isArray from 'lodash/isArray'
 import isFunction from 'lodash/isFunction'
-// import rough from '../../../node_modules/roughjs/dist/rough.umd'
-import rough from '../../../node_modules/roughjs/dist/rough-async.umd'
 import { random } from '../../utils/helper'
 
 import './index.less'
 
-class RoughComponent extends React.PureComponent {
+class CanvasComponent extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
@@ -22,36 +20,31 @@ class RoughComponent extends React.PureComponent {
   }
 
   initEle = (type) => {
-    if (type === 'canvas') {
-      const canvas = document.getElementById('canvas')
-      canvas.width = this.props.style.width || 800 || document.body.clientWidth
-      canvas.height = this.props.style.height || 800 || document.body.clientHeight
-      this.rc = rough.canvas(canvas, { async: this.props.async })
-      // console.log(this.rc, 'rc')
-      this.startDraw(this.props.data)
-    } else if (this.props.type === 'svg') {
-      // const rc = rough.svg(svg);
-      // let node = rc.rectangle(10, 10, 200, 200);
-      // svg.body.appendChild(node);
-    }
+    const canvas = document.getElementById('canvas')
+    canvas.width = this.props.style.width || 800 || document.body.clientWidth
+    canvas.height = this.props.style.height || 800 || document.body.clientHeight
+    this.ctx = canvas.getContext('2d')
+    this.startDraw(this.props.data)
   }
 
   startDraw = (data) => {
     if (this.props.showDemo) {
       this.drawDemo() 
+    } else if (this.props.render) {
+      this.props.render(this.ctx)
     }
-    if (!this.rc || !data) return null
+    if (!this.ctx || !data) return null
     data.forEach((item, index) => {
       if (item) {
         if (item.render) {
-          item.render(this.rc)
+          item.render(this.ctx)
         } else if (isArray(item) && (isFunction(item[0]) || isFunction(item[1]))) {
           const func = isFunction(item[0]) ? item[0] : item[1]
-          func(this.rc)
-        } else if (isArray(item) && this.rc[item[0]]) {
+          func(this.ctx)
+        } else if (isArray(item) && this.ctx[item[0]]) {
           const options = this.formatOptions(index, item[0], item[1])
           this.draw(item[0], options)
-        } else if (this.rc[item.type]) {
+        } else if (this.ctx[item.type]) {
           const options = this.formatOptions(index, item.type, item.options)
           this.draw(item.type, options)
         }
@@ -59,8 +52,8 @@ class RoughComponent extends React.PureComponent {
     }) 
   }
 
-  draw = async (type, options) => {
-    await this.rc[type](...options)
+  draw = (type, options) => {
+    // this.ctx[type](...options)
   }
 
   getRandomPointAry = () => {
@@ -126,42 +119,33 @@ class RoughComponent extends React.PureComponent {
   }
 
   drawDemo = () => {
-    this.rc.rectangle(10, 10, 200, 200)
+    this.ctx.fillStyle = 'red'
+    this.ctx.fillRect(10, 10, 50, 50)
 
-    this.rc.circle(50, 50, 80, { fill: 'red' })
-    this.rc.rectangle(120, 15, 80, 80, { fill: 'red' })
-    this.rc.circle(50, 150, 80, {
-      fill: 'rgb(10, 150, 80)',
-      fillWeight: 3,
-    })
-    this.rc.rectangle(220, 15, 80, 80, {
-      fill: 'red',
-      hachureAngle: 60,
-      hachureGap: 8,
-    })
-    this.rc.rectangle(120, 105, 80, 80, {
-      fill: 'rgba(255, 0, 200, 0.2)',
-      fillStyle: 'solid'
-    })
-    this.rc.linearPath([[690, 10], [790, 20], [750, 120], [690, 100]]);
+    this.ctx.strokeStyle = 'red'
+    this.ctx.strokeRect(10, 70, 50, 50)
+
+    this.ctx.fillStyle = 'red'
+    this.ctx.strokeStyle = 'blue'
+    this.ctx.rect(10, 130, 50, 50)
+    this.ctx.fill()
+    this.ctx.stroke()
+
+    this.ctx.clearRect(25, 25, 20, 130)
   }
 
   render() {
-    return (<div className="rough-container" style={this.props.style}>
-      {
-        this.props.type === 'canvas' ?
-          <canvas id="canvas" style={this.props.style} /> :
-          <svg style={this.props.style} id="svg" />
-      }
+    return (<div className="canvas-container" style={this.props.style}>
+      <canvas id="canvas" style={this.props.style} />
     </div>)
   }
 }
 
-RoughComponent.defaultProps = {
+CanvasComponent.defaultProps = {
   style: {},
-  type: 'canvas',
   data: [],
   showDemo: false,
+  render: null,
   autoSort: false,
   sortCount: 1,
   autoHeight: 0,
@@ -169,11 +153,11 @@ RoughComponent.defaultProps = {
   async: false,
 }
 
-RoughComponent.propTypes = {
+CanvasComponent.propTypes = {
   style: PropTypes.object,
-  type: PropTypes.string.isRequired,
   data: PropTypes.array,
   showDemo: PropTypes.bool,
+  render: PropTypes.func,
   autoSort: PropTypes.bool,
   sortCount: PropTypes.number,
   autoHeight: PropTypes.number,
@@ -181,4 +165,4 @@ RoughComponent.propTypes = {
   async: PropTypes.bool,
 }
 
-export default RoughComponent
+export default CanvasComponent
