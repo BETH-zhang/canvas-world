@@ -59,3 +59,13 @@ storiesOf('Rough|Api', module)
     ['ellipse', [300, 100, 150, 50, { fill: 'red' }]],
     ['ellipse', { fill: 'red' }]
   ]} />)
+  .add('circle', () => <Component autoSort data={[
+    ['circle'],
+  ]} />)
+  .add('linearPath-x', () => <Component autoSort data={[
+    ['linearPath', (rc) => { rc.linearPath([[110, 10], [190, 20], [150, 120], [190, 100]]) }],
+  ]} />)
+  .add('polygon', () => <Component autoSort data={[
+    ['polygon'],
+    ['polygon', (rc) => { rc.linearPath([[110, 130], [190, 140], [150, 240], [190, 220]]) }]
+  ]} />)

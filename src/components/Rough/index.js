@@ -1,7 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import isArray from 'lodash/isArray'
+import isFunction from 'lodash/isFunction'
 import rough from '../../../node_modules/roughjs/dist/rough.umd'
+import { random } from '../../utils/helper'
 
 import './index.less'
 
@@ -41,6 +43,9 @@ class RoughComponent extends React.PureComponent {
       if (item) {
         if (item.render) {
           item.render(this.rc)
+        } else if (isArray(item) && (isFunction(item[0]) || isFunction(item[1]))) {
+          const func = isFunction(item[0]) ? item[0] : item[1]
+          func(this.rc)
         } else if (isArray(item) && this.rc[item[0]]) {
           const options = this.formatPosition(index, item[0], item[1])
           this.rc[item[0]](...options)
@@ -52,11 +57,23 @@ class RoughComponent extends React.PureComponent {
     }) 
   }
 
+  getRandomPointAry = () => {
+    const count = random(2, 10)
+    return [Array(count).fill(0).map(() => [random(0, 500), random(0, 300)])]
+  }
+
   formatPosition = (index, type, options) => {
-    if (!this.props.autoSort) return isArray(options) ? options : (type === 'circle' ? [0, 0, 50, options] : type === 'ellipse' ? [0, 0, 150, 50, options] : [0, 0, 50, 50, options])
-   
+    if (!this.props.autoSort) return isArray(options) ? options :
+      (type === 'circle' ? [0, 0, 50, options] :
+      (type === 'ellipse' ? [0, 0, 150, 50, options] : 
+      (type === 'linearPath' || type === 'polygon' ? this.getRandomPointAry() :
+      [0, 0, 50, 50, options])))
+  
     let newOptions = null
-    if (type === 'circle') {
+    if (type === 'linearPath' || type === 'polygon') {
+      newOptions = options || this.getRandomPointAry()
+      console.log(type, newOptions)
+    } else if (type === 'circle') {
       newOptions = isArray(options) ? options.slice(0) : [0, 0, 50, options]
       newOptions[0] = newOptions[2] / 2 + this.state.lineHeight
       newOptions[1] = (this.state.lineHeight + this.state.autoHeight) * index + this.state.lineHeight + newOptions[2] / 2
@@ -91,6 +108,7 @@ class RoughComponent extends React.PureComponent {
       fill: 'rgba(255, 0, 200, 0.2)',
       fillStyle: 'solid'
     })
+    this.rc.linearPath([[690, 10], [790, 20], [750, 120], [690, 100]]);
   }
 
   render() {
