@@ -5,6 +5,7 @@ import Component from './index'
 
 storiesOf('Rough|Api', module)
   .add('测试', () => <Component data={[
+    ['rectangle'],
     ['rectangle', [10, 0, 50, 50]],
     {
       type: 'rectangle',
@@ -39,4 +40,9 @@ storiesOf('Rough|Api', module)
       fill: 'rgba(255,0,200,0.2)',
       fillStyle: 'solid' // solid fill
     }]],
+    ['rectangle', [0, 0, 50, 50]],
+    ['rectangle', [0, 0, 50, 50, { fill: '#f89587', fillStyle: 'solid' }]],
+    ['circle', { fill: '#8986ff', fillWeight: 3 }],
+    ['circle'],
+    ['rectangle'],
   ]} />)

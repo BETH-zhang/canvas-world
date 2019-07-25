@@ -53,13 +53,14 @@ class RoughComponent extends React.PureComponent {
   }
 
   formatPosition = (index, type, options) => {
-    if (!this.props.autoSort) return options
-    const newOptions = options.slice(0)
+    if (!this.props.autoSort) return isArray(options) ? options : (type === 'circle' ? [0, 0, 50, options] : [0, 0, 50, 50, options])
+    let newOptions = null
     if (type === 'circle') {
+      newOptions = isArray(options) ? options.slice(0) : [0, 0, 50, options]
       newOptions[0] = newOptions[2] / 2 + this.state.lineHeight
       newOptions[1] = (this.state.lineHeight + this.state.autoHeight) * index + this.state.lineHeight + newOptions[2] / 2
-      console.log(newOptions)
     } else {
+      newOptions = isArray(options) ? options.slice(0) : [0, 0, 50, 50, options]
       newOptions[0] = this.state.lineHeight
       newOptions[1] = (this.state.lineHeight + this.state.autoHeight) * index + this.state.lineHeight
     }
