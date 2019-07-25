@@ -149,15 +149,26 @@ storiesOf('Rough|Api', module)
       ['circle', { fill: '#cc00cc' }],
       ['circle', { fill: 'rgb(0, 350, 50)' }]
     ]} />)
-    .add('fillStyle', () => <Component autoSort data={[
+    .add('fillStyle', () => <Component autoSort sortCount={5} autoHeight={100} data={[
       ['circle'],
-      ['circle', { fill: 'rgb(0, 350, 50)', fillStyle: 'zigzag' }],
       ['circle', { fill: '#cc00cc', fillStyle: 'solid' }],
-      ['circle', { fill: 'red', fillStyle: 'dots' }],
-      ['circle', { fill: 'red', fillStyle: 'sunburst' }],
-      ['circle', { fill: 'red', fillStyle: 'dashed' }],
-      ['circle', { fill: 'red', fillStyle: 'zigzag-line' }],
+      ['circle', { fill: 'rgb(0, 350, 50)', fillStyle: 'zigzag', hachureGap: 10, fillWeight: 3 }],
       ['circle', { fill: 'red', fillStyle: 'cross-hatch' }],
+      ['circle', { fill: 'red', fillStyle: 'dots', hachureGap: 10, fillWeight: 2 }],
+      ['rectangle', { fill: 'red', fillStyle: 'sunburst', hachureGap: 10, fillWeight: 5, hachureAngle: 60 }],
+      ['rectangle', { fill: 'red', fillStyle: 'hachure', hachureAngle: 30, hachureGap: 10, fillWeight: 5 }],
+      ['rectangle', { fill: 'red', fillStyle: 'cross-hatch', hachureGap: 10, fillWeight: 3 }],
+      ['rectangle', { fill: 'red', fillStyle: 'cross-hatch', hachureGap: 10, fillWeight: 1, hachureAngle: 0 }],
+      ['rectangle', { fill: 'red', fillStyle: 'dots', hachureGap: 10, fillWeight: 2 }],
+      ['rectangle', { fill: 'red', fillStyle: 'hachure' }],
+      ['circle', { fill: 'red', fillStyle: 'hachure' }],
+      ['rectangle', { fill: 'red', fillStyle: 'dashed', hachureAngle: -30, dashOffset: 10, dashGap: 5 }],
+      ['rectangle', { fill: 'red', fillStyle: 'dashed', hachureAngle: -30, dashOffset: 10, dashGap: 5, hachureAngle: 90, hachureGap: 10 }],
+      ['circle', { fill: 'red', fillStyle: 'dashed', hachureAngle: -30, dashOffset: 5, dashGap: 3 }],
+      ['rectangle', { fill: 'red', fillStyle: 'zigzag-line', hachureAngle: 0, fillWeight: 3, hachureGap: 5 }],
+      ['rectangle', { fill: 'red', fillStyle: 'zigzag-line', hachureAngle: -45, fillWeight: 1, hachureGap: 8 }],
+      ['circle', { fill: 'red', fillStyle: 'zigzag-line', hachureAngle: -45, fillWeight: 1, hachureGap: 5 }],
+      ['rectangle', { fill: 'red', fillStyle: 'dots', hachureGap: 5, fillWeight: 1 }],
     ]} />)
     .add('fillWeight', () => <Component autoSort data={[
       ['circle'],
@@ -217,8 +228,9 @@ storiesOf('Rough|Api', module)
     ]} />)
     .add('zigzagOffset', () => <Component autoSort autoHeight={100} data={[
       ['ellipse', { fill: 'red', fillStyle: 'zigzag-line' }],
-      // ['ellipse', { fill: 'red', fillStyle: 'zigzag-line', zigzagOffset: 50 }]
-      // ['ellipse', { fill: 'red', fillStyle: 'zigzag-line', zigzagOffset: 10 }],
+      // zigzagOffset 这个属性，同时状态下只能使用一次 
+      ['ellipse', { fill: 'red', fillStyle: 'zigzag', zigzagOffset: 50 }]
+      // ['ellipse', { fill: 'red', fillStyle: 'zigzag', zigzagOffset: 10 }],
       // ['ellipse', { fill: 'red', fillStyle: 'zigzag-line', zigzagOffset: 25 }],
       // ['ellipse', { fill: 'red', fillStyle: 'zigzag-line', zigzagOffset: 50 }],
       // ['ellipse', { fill: 'red', fillStyle: 'zigzag-line' }],
