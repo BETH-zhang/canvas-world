@@ -37,7 +37,7 @@ addParameters({
      * display panel that shows addon configurations
      * @type {Boolean}
      */
-    showPanel: true,
+    showPanel: false,
     /**
      * where to show the addon panel
      * @type {('bottom'|'right')}
@@ -65,17 +65,17 @@ addParameters({
      * sidebar tree animations
      * @type {Boolean}
      */
-    sidebarAnimations: true,
+    sidebarAnimations: false,
     /**
      * enable/disable shortcuts
      * @type {Boolean}
      */
-    enableShortcuts: true,
+    enableShortcuts: false,
     /**
      * show/hide tool bar
      * @type {Boolean}
      */
-    isToolshown: true,
+    isToolshown: false,
     /**
      * theme storybook, see link below
      */

@@ -60,6 +60,7 @@
     "react": "^16.8.6",
     "react-cookie": "^1.0.5",
     "react-dom": "^16.8.6",
+    "roughjs": "^3.1.0",
     "sa-sdk-javascript": "^1.13.14",
     "us-common-utils": "^1.4.1"
   }
