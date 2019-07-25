@@ -59,19 +59,28 @@ class RoughComponent extends React.PureComponent {
 
   getRandomPointAry = () => {
     const count = random(2, 10)
-    return [Array(count).fill(0).map(() => [random(0, 500), random(0, 300)])]
+    return Array(count).fill(0).map(() => [random(0, 500), random(0, 300)])
+  }
+
+  getDefaultOptions = (type, options) => {
+    const defaultOptions = {
+      circle: () => ([0, 0, 50, options]),
+      ellipse: () => ([0, 0, 150, 50, options]),
+      linearPath: () => ([this.getRandomPointAry()]),
+      polygon: () => ([this.getRandomPointAry()]),
+    }
+    if (defaultOptions[type]) {
+      return defaultOptions[type]()
+    }
+    return [0, 0, 50, 50, options]
   }
 
   formatPosition = (index, type, options) => {
-    if (!this.props.autoSort) return isArray(options) ? options :
-      (type === 'circle' ? [0, 0, 50, options] :
-      (type === 'ellipse' ? [0, 0, 150, 50, options] : 
-      (type === 'linearPath' || type === 'polygon' ? this.getRandomPointAry() :
-      [0, 0, 50, 50, options])))
+    if (!this.props.autoSort) return isArray(options) ? options : this.getDefaultOptions(type, options)
   
     let newOptions = null
     if (type === 'linearPath' || type === 'polygon') {
-      newOptions = options || this.getRandomPointAry()
+      newOptions = options || [this.getRandomPointAry()]
       console.log(type, newOptions)
     } else if (type === 'circle') {
       newOptions = isArray(options) ? options.slice(0) : [0, 0, 50, options]

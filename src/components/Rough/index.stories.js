@@ -69,3 +69,6 @@ storiesOf('Rough|Api', module)
     ['polygon'],
     ['polygon', (rc) => { rc.linearPath([[110, 130], [190, 140], [150, 240], [190, 220]]) }]
   ]} />)
+  .add('arc', () => <Component autoSort data={[
+    [(rc) => { rc.arc(350, 300, 200, 180, Math.PI, Math.PI * 1.6, true) }]
+  ]} />)
