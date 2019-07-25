@@ -11,8 +11,8 @@ class RoughComponent extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
-      autoHeight: 50,
-      lineHeight: 10,
+      autoHeight: props.autoHeight || 50,
+      lineHeight: props.lineHeight || 10,
     }
   }
 
@@ -65,8 +65,8 @@ class RoughComponent extends React.PureComponent {
 
   getDefaultOptions = (type, options) => {
     const defaultOptions = {
-      circle: () => ([0, 0, 50, options]),
-      ellipse: () => ([75, 25, 150, 50, options]),
+      circle: () => ([this.state.autoHeight / 2 + this.state.lineHeight, this.state.autoHeight / 2 + this.state.lineHeight, this.state.autoHeight, options]),
+      ellipse: () => ([this.state.autoHeight * 1.5 / 2 + this.state.lineHeight, this.state.autoHeight / 2 + this.state.lineHeight, this.state.autoHeight * 1.5, this.state.autoHeight, options]),
       linearPath: () => ([this.getRandomPointAry()]),
       polygon: () => ([this.getRandomPointAry()]),
       curve: () => ([this.getRandomPointAry()]),
@@ -79,7 +79,7 @@ class RoughComponent extends React.PureComponent {
     if (defaultOptions[type]) {
       return defaultOptions[type]()
     }
-    return [0, 0, 50, 50, options]
+    return [this.state.lineHeight, this.state.lineHeight, this.state.autoHeight, this.state.autoHeight, options]
   }
 
   getMainOptions = (index, type, options) => {
@@ -157,6 +157,8 @@ RoughComponent.defaultProps = {
   showDemo: false,
   autoSort: false,
   sortCount: 1,
+  autoHeight: 0,
+  lineHeight: 0,
 }
 
 RoughComponent.propTypes = {
@@ -166,6 +168,8 @@ RoughComponent.propTypes = {
   showDemo: PropTypes.bool,
   autoSort: PropTypes.bool,
   sortCount: PropTypes.number,
+  autoHeight: PropTypes.number,
+  lineHeight: PropTypes.number
 }
 
 export default RoughComponent

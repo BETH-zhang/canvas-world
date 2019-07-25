@@ -1,9 +1,10 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react'
+import { random } from '../../utils/helper'
 
 import Component from './index'
 
-storiesOf('Rough|Api', module)
+storiesOf('Rough|Demo', module)
   .add('测试', () => <Component data={[
     ['rectangle'],
     ['rectangle', [10, 0, 50, 50]],
@@ -46,6 +47,8 @@ storiesOf('Rough|Api', module)
     ['circle'],
     ['rectangle'],
   ]} />)
+
+storiesOf('Rough|Api', module)
   .add('line', () => <Component autoSort sortCount data={[
     ['line'],
     ['line', { strokeWidth: 5 }],
@@ -98,3 +101,109 @@ storiesOf('Rough|Api', module)
       // https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths
     }]
   ]} />)
+  .add('draw', () => <Component data={[
+    [(rc) => {
+      const generator = rc.generator
+      const rect1 = generator.rectangle(10, 10, 100, 100)
+      const rect2 = generator.rectangle(10, 120, 100, 100)
+      // 定义 symbol 原子级别的图形
+      rc.draw(rect1)
+      rc.draw(rect2)
+      const paths = generator.toPaths(rect1)
+      console.log('paths', paths)
+    }]
+  ]} />)
+  
+  storiesOf('Rough|Options', module)
+    .add('roughness', () => <Component autoSort data={[
+      ['circle'],
+      ['circle', { roughness: 0 }],
+      ['circle', { roughness: 2.8 }],
+      ['circle', { roughness: 6 }],
+      ['circle', { roughness: 25 }]
+    ]} />)
+    .add('bowing', () => <Component autoSort data={[
+      ['rectangle'],
+      ['rectangle', { bowing: 1 }],
+      ['rectangle', { bowing: 2 }],
+      ['rectangle', { bowing: 6 }],
+      ['rectangle', { bowing: 25 }]
+    ]} />)
+    .add('stroke', () => <Component autoSort data={[
+      ['circle'],
+      ['circle', { stroke: 'red' }],
+      ['circle', { stroke: '#cc00cc' }],
+      ['circle', { stroke: 'rgb(0, 350, 50)' }]
+    ]} />)
+    .add('strokeWidth', () => <Component autoSort data={[
+      ['circle'],
+      ['circle', { strokeWidth: 1 }],
+      ['circle', { strokeWidth: 2 }],
+      ['circle', { strokeWidth: 3 }],
+      ['circle', { strokeWidth: 4 }],
+      ['circle', { strokeWidth: 5 }],
+    ]} />)
+    .add('fill', () => <Component autoSort data={[
+      ['circle'],
+      ['circle', { fill: 'red' }],
+      ['circle', { fill: '#cc00cc' }],
+      ['circle', { fill: 'rgb(0, 350, 50)' }]
+    ]} />)
+    .add('fillStyle', () => <Component autoSort data={[
+      ['circle'],
+      ['circle', { fill: 'rgb(0, 350, 50)', fillStyle: 'zigzag' }],
+      ['circle', { fill: '#cc00cc', fillStyle: 'solid' }],
+      ['circle', { fill: 'red', fillStyle: 'dots' }],
+      ['circle', { fill: 'red', fillStyle: 'sunburst' }],
+      ['circle', { fill: 'red', fillStyle: 'dashed' }],
+      ['circle', { fill: 'red', fillStyle: 'zigzag-line' }],
+      ['circle', { fill: 'red', fillStyle: 'cross-hatch' }],
+    ]} />)
+    .add('fillWeight', () => <Component autoSort data={[
+      ['circle'],
+      ['circle', { fill: 'red', fillStyle: 'zigzag-line', fillWeight: 1 }],
+      ['circle', { fill: 'red', fillStyle: 'zigzag-line', fillWeight: 2 }],
+      ['circle', { fill: 'red', fillStyle: 'zigzag-line', fillWeight: 3 }],
+      ['circle', { fill: 'red', fillStyle: 'zigzag-line', fillWeight: 4 }],
+      ['circle', { fill: 'red', fillStyle: 'zigzag-line', fillWeight: 5 }],
+    ]} />)
+    .add('hachureAngle', () => <Component autoSort data={[
+      ['circle', { fill: 'red' }],
+      ['circle', { fill: 'red', hachureAngle: -41 }],
+      ['circle', { fill: 'red', hachureAngle: random(0, 90) }],
+      ['circle', { fill: 'red', hachureAngle: random(90, 180) }],
+      ['circle', { fill: 'red', hachureAngle: random(180, 270) }],
+      ['circle', { fill: 'red', hachureAngle: random(270, 360) }],
+    ]} />)
+    .add('hachureGap', () => <Component autoSort data={[
+      ['circle', { fill: 'red', hachureAngle: 90 }],
+      ['circle', { fill: 'red', hachureAngle: 90, hachureGap: 4 }],
+      ['circle', { fill: 'red', hachureAngle: random(0, 90), hachureGap: random(0, 25) }],
+      ['circle', { fill: 'red', hachureAngle: random(90, 180), hachureGap: random(0, 25) }],
+      ['circle', { fill: 'red', hachureAngle: random(180, 270), hachureGap: random(0, 25) }],
+      ['circle', { fill: 'red', hachureAngle: random(270, 360), hachureGap: random(0, 25) }],
+    ]} />)
+    .add('curveStepCount', () => <Component autoSort data={[
+      ['circle', { fill: 'red', hachureAngle: 90 }],
+      ['circle', { fill: 'red', hachureAngle: 90, curveStepCount: 9 }],
+      ['circle', { fill: 'red', hachureAngle: 90, curveStepCount: 1 }],
+      ['circle', { fill: 'red', hachureAngle: 90, curveStepCount: 4 }],
+      ['circle', { fill: 'red', hachureAngle: 90, curveStepCount: 20 }],
+      ['circle', { fill: 'red', hachureAngle: 90, curveStepCount: 50 }],
+    ]} />)
+    .add('simplification-?', () => <Component autoSort data={[
+      ['circle', [0, 0, 100, 100]],
+      ['circle', [0, 0, 100, 100, { simplification: 0 }]],
+      ['circle', [0, 0, 100, 100, { simplification: 0.5 }]],
+      ['circle', [0, 0, 100, 100, { simplification: 1 }]],
+      ['circle', [0, 0, 100, 100, { simplification: 5 }]],
+      ['circle', [0, 0, 100, 100, { simplification: 20 }]],
+      ['circle', [0, 0, 100, 100, { simplification: 0.1 }]],
+    ]} />)
+    .add('dashOffset', () => <Component autoSort autoHeight={100} data={[
+      ['circle', { fill: 'red', fillStyle: 'dashed' }],
+      ['circle', { fill: 'red', fillStyle: 'dashed', dashOffset: 4 }],
+      ['circle', { fill: 'red', fillStyle: 'dashed', dashOffset: 10 }],
+      ['circle', { fill: 'red', fillStyle: 'dashed', dashOffset: 25 }],
+      ['circle', { fill: 'red', fillStyle: 'dashed', dashOffset: 50 }],
+    ]} />)
