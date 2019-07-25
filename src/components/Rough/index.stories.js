@@ -207,3 +207,22 @@ storiesOf('Rough|Api', module)
       ['circle', { fill: 'red', fillStyle: 'dashed', dashOffset: 25 }],
       ['circle', { fill: 'red', fillStyle: 'dashed', dashOffset: 50 }],
     ]} />)
+    .add('dashGap', () => <Component autoSort autoHeight={100} data={[
+      ['rectangle', { fill: 'red', fillStyle: 'dashed' }],
+      ['rectangle', { fill: 'red', fillStyle: 'dashed', dashGap: 0 }],
+      ['rectangle', { fill: 'red', fillStyle: 'dashed', dashGap: 5 }],
+      ['rectangle', { fill: 'red', fillStyle: 'dashed', dashGap: 10 }],
+      ['rectangle', { fill: 'red', fillStyle: 'dashed', dashGap: 25 }],
+      ['rectangle', { fill: 'red', fillStyle: 'dashed', dashGap: 50 }],
+    ]} />)
+    .add('zigzagOffset', () => <Component autoSort autoHeight={100} data={[
+      ['ellipse', { fill: 'red', fillStyle: 'zigzag-line' }],
+      // ['ellipse', { fill: 'red', fillStyle: 'zigzag-line', zigzagOffset: 50 }]
+      // ['ellipse', { fill: 'red', fillStyle: 'zigzag-line', zigzagOffset: 10 }],
+      // ['ellipse', { fill: 'red', fillStyle: 'zigzag-line', zigzagOffset: 25 }],
+      // ['ellipse', { fill: 'red', fillStyle: 'zigzag-line', zigzagOffset: 50 }],
+      // ['ellipse', { fill: 'red', fillStyle: 'zigzag-line' }],
+    ]} />)
+
+  storiesOf('Rough|async', module)
+    .add('async', () => <Component async sortCount={10} autoSort data={Array(100).fill(0).map(() => (['rectangle', { fill: 'red', fillStyle: 'dashed', dashGap: 10 }]))} />)
