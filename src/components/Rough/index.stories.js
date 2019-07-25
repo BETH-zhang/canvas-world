@@ -46,3 +46,16 @@ storiesOf('Rough|Api', module)
     ['circle'],
     ['rectangle'],
   ]} />)
+  .add('line', () => <Component autoSort sortCount data={[
+    ['line'],
+    ['line', { strokeWidth: 5 }],
+  ]} />)
+  .add('rectangle', () => <Component autoSort data={[
+    ['rectangle'],
+    ['rectangle', { fill: 'red' }],
+  ]} />)
+  .add('ellipse', () => <Component autoSort data={[
+    ['ellipse'],
+    ['ellipse', [300, 100, 150, 50, { fill: 'red' }]],
+    ['ellipse', { fill: 'red' }]
+  ]} />)
