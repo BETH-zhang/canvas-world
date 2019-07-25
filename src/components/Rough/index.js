@@ -69,6 +69,7 @@ class RoughComponent extends React.PureComponent {
       ellipse: () => ([75, 25, 150, 50, options]),
       linearPath: () => ([this.getRandomPointAry()]),
       polygon: () => ([this.getRandomPointAry()]),
+      curve: () => ([this.getRandomPointAry()]),
       arc: () => (
         // x,  y,   w,   h,  start,stop,     closed
         // [100, 100, 200, 200, -Math.PI * 2, -Math.PI / 2, true, options],
@@ -97,6 +98,7 @@ class RoughComponent extends React.PureComponent {
       },
       linearPath: () => options || this.getDefaultOptions(type, options),
       polygon: () => options || this.getDefaultOptions(type, options),
+      curve: () => options || this.getDefaultOptions(type, options),
       arc: () => options || this.getDefaultOptions(type, options)
     }
     if (mainOptions[type]) {

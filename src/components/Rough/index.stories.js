@@ -75,3 +75,26 @@ storiesOf('Rough|Api', module)
     ['arc', { stroke: 'blue', strokeWidth: 2, fill: 'rgba(255,0,255,0.4)' }],
     ['arc', { stroke: 'red', strokeWidth: 4, fill: 'rgba(255,255,0,0.4)', fillStyle: 'solid' }],
   ]} />)
+  .add('curve', () => <Component data={[
+    [(rc) => {
+      let points = [];
+      for (let i = 0; i < 20; i++) {
+        let x = (400 / 20) * i + 10;
+        let xdeg = (Math.PI / 100) * x;
+        let y = Math.round(Math.sin(xdeg) * 90) + 500;
+        points.push([x, y]);
+      }
+      console.log(points)
+      rc.curve(points, {
+        stroke: 'red', strokeWidth: 3
+      })
+    }],
+    ['curve']
+  ]} />)
+  .add('path', () => <Component data={[
+    [(rc) => {
+      rc.path('M37,17v15H14V17z M50,0H0v50h50z')
+      rc.path('M80 80 A 45 45, 0, 0, 0, 125 125 L 125 80 Z', { fill: 'green' })
+      // https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths
+    }]
+  ]} />)
