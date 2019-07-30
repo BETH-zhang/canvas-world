@@ -2,7 +2,12 @@ import React from 'react';
 import { storiesOf } from '@storybook/react'
 
 import Component from './index'
+import doc from './doc.md'
+import transformationsDoc from './transformationsDoc.md'
 // https://developer.mozilla.org/zh-CN/docs/Web/API/Canvas_API/Tutorial/Using_images
+import defaultImg from '../../assets/mr.jpg'
+const imgUrl = 'https://static.uskid.com/web/garden/jxx21vkk_6CBhSeTswDSeW3YVNHQ5BLhU.png'
+const videoUrl = 'https://uskid.oss-cn-beijing.aliyuncs.com/video/%E5%8C%A0%E5%BF%83%E6%AF%94%E5%BF%83-%E7%BF%9F%E5%B0%91%E6%88%90%E8%80%81%E5%B8%88(5min).mp4'
 
 storiesOf('Canvas|Basic', module)
   .add('默认状态', () => <Component showDemo />)
@@ -236,17 +241,189 @@ storiesOf('Canvas|Basic', module)
     text.width // 51.909881591796875;
     ctx.strokeText("Hello world", 0, 100);
   }} />)
-  .add('', () => <Component render={(ctx) => {
+  .add('绘制图片-drawImage', () => (<div>
+    <Component render={(ctx) => {
+      var img = new Image()
+      img.onload = function() {
+        ctx.drawImage(img, 0, 0)
+        // ctx.beginPath()
+        // ctx.moveTo(30,96);
+        // ctx.lineTo(70,66);
+        // ctx.lineTo(103,76);
+        // ctx.lineTo(170,15);
+        // ctx.stroke();
+      }
+      img.src = imgUrl
+    }} />
+  </div>), {
+    notes: doc
+  })
+  .add('绘制图片-Scaling', () => <Component render={(ctx) => {
+    var img = new Image()
+    img.onload = function() {
+      ctx.drawImage(img, 0, 0, 200, 200)
+    }
+    img.src = imgUrl 
   }} />)
-  .add('', () => <Component render={(ctx) => {
+  .add('绘制图片-平铺', () => <Component render={(ctx) => {
+    var img = new Image()
+    img.onload = function() {
+      for (var i=0;i<4;i++){
+        for (var j=0;j<3;j++){
+          ctx.drawImage(img,j*100,i*80,100,80);
+        }
+      }
+    }
+    img.src = imgUrl 
   }} />)
-  .add('', () => <Component render={(ctx) => {
+  .add('绘制图片-切片', () => <Component render={(ctx) => {
+    var img = new Image()
+    img.onload = function() {
+      ctx.drawImage(img, 0, 0, 400, 400)
+      ctx.drawImage(img,
+                28,20,200,200,400,0,300,300);
+    }
+    img.src = 'https://mdn.mozillademos.org/files/226/Canvas_drawimage2.jpg'  
   }} />)
-  .add('', () => <Component render={(ctx) => {
+  .add('状态的保存和恢复 Saving and restoring state', () => <Component render={(ctx) => {
+    ctx.fillRect(0,0,150,150);   // 使用默认设置绘制一个矩形
+    ctx.save();                  // 保存默认状态
+
+    ctx.fillStyle = '#09F'       // 在原有配置基础上对颜色做改变
+    ctx.fillRect(15,15,120,120); // 使用新的设置绘制一个矩形
+
+    ctx.save();                  // 保存当前状态
+    ctx.fillStyle = '#FFF'       // 再次改变颜色配置
+    ctx.globalAlpha = 0.5;    
+    ctx.fillRect(30,30,90,90);   // 使用新的配置绘制一个矩形
+
+    ctx.restore();               // 重新加载之前的颜色状态
+    ctx.fillRect(45,45,60,60);   // 使用上一次的配置绘制一个矩形
+
+    ctx.restore();               // 加载默认颜色配置
+    ctx.fillRect(60,60,30,30);   // 使用加载的配置绘制一个矩形
+  }} />, {
+    notes: transformationsDoc
+  })
+  .add('移动 Translating', () => <Component render={(ctx) => {
+    for (var i = 0; i < 3; i++) {
+      for (var j = 0; j < 3; j++) {
+        ctx.save();
+        ctx.fillStyle = 'rgb(' + (51 * i) + ', ' + (255 - 51 * i) + ', 255)';
+        ctx.translate(10 + j * 50, 10 + i * 50);
+        ctx.fillRect(0, 0, 25, 25);
+        ctx.restore();
+      }
+    }
   }} />)
-  .add('', () => <Component render={(ctx) => {
+  .add('旋转 Rotating', () => <Component render={(ctx) => {
+    ctx.translate(75,75);
+
+    for (var i=1;i<6;i++){ // Loop through rings (from inside to out)
+      ctx.save();
+      ctx.fillStyle = 'rgb('+(51*i)+','+(255-51*i)+',255)';
+
+      for (var j=0;j<i*6;j++){ // draw individual dots
+        ctx.rotate(Math.PI*2/(i*6));
+        ctx.beginPath();
+        ctx.arc(0,i*12.5,5,0,Math.PI*2,true);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
   }} />)
-  .add('', () => <Component render={(ctx) => {
+  .add('缩放 Scaling', () => <Component render={(ctx) => {
+    // draw a simple rectangle, but scale it.
+    ctx.save();
+    ctx.scale(10, 3);
+    ctx.fillRect(1, 10, 10, 10);
+    ctx.restore();
+
+    // mirror horizontally
+    ctx.scale(-1, 1);
+    ctx.font = '48px serif';
+    ctx.fillText('MDN', -135, 120);
   }} />)
-  .add('', () => <Component render={(ctx) => {
+  .add('变形 Transforms', () => <Component render={(ctx) => {
+    var sin = Math.sin(Math.PI/6);
+    var cos = Math.cos(Math.PI/6);
+    ctx.translate(100, 100);
+    var c = 0;
+    for (var i=0; i <= 12; i++) {
+      c = Math.floor(255 / 12 * i);
+      ctx.fillStyle = "rgb(" + c + "," + c + "," + c + ")";
+      ctx.fillRect(0, 0, 100, 10);
+      ctx.transform(cos, sin, -sin, cos, 0, 0);
+    }
+    
+    ctx.setTransform(-1, 0, 0, 1, 100, 100);
+    ctx.fillStyle = "rgba(255, 128, 255, 0.5)";
+    ctx.fillRect(0, 50, 100, 100);
   }} />)
+
+storiesOf('Canvas|Compositing', module) 
+  .add('globalCompositeOperation', () => (<div>
+    <iframe src="./demo.html" />
+  </div>))
+  .add('clip', () => <Component render={(ctx) => {
+    function drawStar(ctx,r){
+      ctx.save();
+      ctx.beginPath()
+      ctx.moveTo(r,0);
+      for (var i=0;i<9;i++){
+        ctx.rotate(Math.PI/5);
+        if(i%2 == 0) {
+          ctx.lineTo((r/0.525731)*0.200811,0);
+        } else {
+          ctx.lineTo(r,0);
+        }
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.fillRect(0,0,150,150);
+    ctx.translate(75,75);
+
+    // Create a circular clipping path
+    ctx.beginPath();
+    ctx.arc(0,0,60,0,Math.PI*2,true);
+    ctx.clip();
+
+    // draw background
+    var lingrad = ctx.createLinearGradient(0,-75,0,75);
+    lingrad.addColorStop(0, '#232256');
+    lingrad.addColorStop(1, '#143778');
+    
+    ctx.fillStyle = lingrad;
+    ctx.fillRect(-75,-75,150,150);
+
+    // draw stars
+    for (var j=1;j<50;j++){
+      ctx.save();
+      ctx.fillStyle = '#fff';
+      ctx.translate(75-Math.floor(Math.random()*150),
+                    75-Math.floor(Math.random()*150));
+      drawStar(ctx,Math.floor(Math.random()*4)+2);
+      ctx.restore();
+    }
+  }} />)
+  // .add('', () => <Component render={(ctx) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx) => {
+  // }} />)

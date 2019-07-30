@@ -3,6 +3,7 @@ import { configure, addDecorator, addParameters } from '@storybook/react';
 import { withInfo } from '@storybook/addon-info';
 import theme from './theme'
 import './index.less'
+// import './markdown6.less'
 
 function loadStories() {
   require('../stories/index.js');
@@ -37,7 +38,7 @@ addParameters({
      * display panel that shows addon configurations
      * @type {Boolean}
      */
-    showPanel: false,
+    showPanel: true,
     /**
      * where to show the addon panel
      * @type {('bottom'|'right')}
@@ -70,12 +71,12 @@ addParameters({
      * enable/disable shortcuts
      * @type {Boolean}
      */
-    enableShortcuts: false,
+    enableShortcuts: true,
     /**
      * show/hide tool bar
      * @type {Boolean}
      */
-    isToolshown: false,
+    isToolshown: true,
     /**
      * theme storybook, see link below
      */

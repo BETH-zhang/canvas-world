@@ -31,7 +31,7 @@ export default create({
   // inputTextColor: 'black',
   // inputBorderRadius: 4,
 
-  brandTitle: 'Canvas 实战',
+  brandTitle: 'Canvas World',
   brandUrl: 'https://qiugesoft.cn/',
   brandImage: '',
 });
