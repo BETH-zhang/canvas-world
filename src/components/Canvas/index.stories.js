@@ -1,6 +1,18 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react'
-
+import { timer } from 'us-common-utils'
+/**
+ *
+Timer.add({
+   name: 'value',
+   fn: () => {},
+   time: 1000,
+   num: 1,
+   callback: () => {}
+   _this: this,
+})
+Timer.clear(name)
+ *  */
 import Component from './index'
 import doc from './doc.md'
 import transformationsDoc from './transformationsDoc.md'
@@ -409,10 +421,39 @@ storiesOf('Canvas|Compositing', module)
       ctx.restore();
     }
   }} />)
-  // .add('', () => <Component render={(ctx) => {
-  // }} />)
-  // .add('', () => <Component render={(ctx) => {
-  // }} />)
+
+storiesOf('Canvas|基本动画', module) 
+  .add('基本步骤', () => <Component render={(ctx) => {
+  }} />, {
+    notes: `
+    1.清空 canvas
+    除非接下来画的内容会完全充满 canvas（如背景图），否则你需要清空所有，最简单的做法是用 clearRect 方法
+
+    2.保存 canvas 状态
+    如果你要改变一些会改变 canvas 状态的设置 （样式，变形之类的），又要在每画一帧之时都是原始状态的话，你需要先保存一下
+
+    3.绘制动画图形（animated shapes）
+    这一步才是重绘动画帧
+
+    4.恢复 canvas 状态
+    如果已经保存了 canvas 的状态，可以先恢复它，然后重绘下一帧
+    `
+  })
+  .add('操控动画 Controlling an animation', () => <Component render={(ctx) => {
+    timer.add({
+      name: '1',
+      fn: (i) => {
+        // ctx.clearRect(0, 0, 500, 500)
+        ctx.save();
+        ctx.fillStyle = 'rgb(' + (51 * i) + ', ' + (255 - 51 * i) + ', 255)';
+        ctx.translate(10 + i * 20, 10 + i * 20);
+        ctx.fillRect(0, 0, 25, 25);
+        ctx.restore(); 
+      },
+      // time: 1000,
+      num: 20,
+    })
+  }} />)
   // .add('', () => <Component render={(ctx) => {
   // }} />)
   // .add('', () => <Component render={(ctx) => {
