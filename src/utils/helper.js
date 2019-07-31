@@ -33,18 +33,26 @@ export const getMainOptions = (index, type, options, { autoHeight, sortCount, li
   const mainOptions = {
     circle: () => {
       const newOptions = isArray(options) ? options.slice(0) : getDefaultOptions(type, options, { autoHeight, lineHeight })
-      newOptions[0] = (autoWidth + lineHeight) * col + newOptions[2] / 2 + lineHeight
-      newOptions[1] = (autoHeight + lineHeight) * row + newOptions[2] / 2 + lineHeight
+      newOptions[0] = (autoWidth + lineHeight) * col + lineHeight
+      newOptions[1] = (autoHeight + lineHeight) * row + lineHeight
       return newOptions
     },
     ellipse: () => {
       const newOptions = isArray(options) ? options.slice(0) : getDefaultOptions(type, options, { autoHeight, lineHeight })
-      newOptions[0] = (autoWidth + lineHeight) * col + newOptions[2] / 2 + lineHeight
-      newOptions[1] = (autoHeight + lineHeight) * row + newOptions[3] / 2 + lineHeight
+      newOptions[0] = (autoWidth + lineHeight) * col + lineHeight
+      newOptions[1] = (autoHeight + lineHeight) * row + lineHeight
       return newOptions
     },
-    linearPath: () => options || getDefaultOptions(type, options, { autoHeight, lineHeight }),
-    polygon: () => options || getDefaultOptions(type, options, { autoHeight, lineHeight }),
+    linearPath: () => {
+      const newOptions = isArray(options) ? options.slice(0) : getDefaultOptions(type, options, { autoHeight, lineHeight })
+      newOptions[0][0] = [(autoWidth + lineHeight) * col + lineHeight, (autoHeight + lineHeight) * row + lineHeight]
+      return newOptions
+    },
+    polygon: () => {
+      const newOptions = isArray(options) ? options.slice(0) : getDefaultOptions(type, options, { autoHeight, lineHeight })
+      newOptions[0][0] = [(autoWidth + lineHeight) * col + lineHeight, (autoHeight + lineHeight) * row + lineHeight]
+      return newOptions
+    },
     curve: () => options || getDefaultOptions(type, options, { autoHeight, lineHeight }),
     arc: () => options || getDefaultOptions(type, options, { autoHeight, lineHeight })
   }

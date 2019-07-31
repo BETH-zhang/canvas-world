@@ -1,8 +1,7 @@
-import React, { createElement } from 'react';
+import React from 'react';
 import { storiesOf } from '@storybook/react'
 import Component from './index'
 import WbUtils from '../../utils/whiteboard'
-import Draw from '../../utils/draw';
 
 storiesOf('Draw|Picture', module)
   .add('画板1', () => <Component render={(ctx) => {
@@ -46,13 +45,12 @@ storiesOf('Draw|Picture', module)
       postUpload: () => ({}),
     })
   }} />)
-  .add('各种图形绘制', () => <Component data={[
-    // ['rectangle', [10, 100, 50, 50, { fill: 'red' }]],
-    // ['rectangle', [10, 0, 50, 50, { stroke: 'red', strokeWidth: 5 }]],
-    // ['line', [80, 120, 300, 100, { strokeWidth: 10 }]],
-    // ['linearPath', [[[110, 10], [190, 20], [150, 120], [190, 100]], { strokeWidth: 1 }]],
-    // ['polygon', [[[110, 130], [190, 140], [150, 240], [190, 220]]]],
-    // ['arc', [100, 100, 200, 200, { stroke: 'blue', strokeWidth: 2, fill: 'red' }]],
-    ['ellipse', [300, 100, 150, 50, { fill: 'red' }]],
-    // ['curve', (uc) => { uc.curve([[110, 130], [190, 140], [150, 240], [190, 220]], { stroke: 'red', strokeWidth: 3 }) }]
+  .add('各种图形绘制', () => <Component autoSort data={[
+    ['rectangle', [10, 100, 100, 40, { fill: 'red' }]],
+    ['rectangle', [10, 0, 100, 40, { stroke: 'red', strokeWidth: 5 }]],
+    ['line', [80, 120, 300, 100, { strokeWidth: 10 }]],
+    ['linearPath', [[[110, 10], [190, 20], [150, 120], [190, 100]], { strokeWidth: 1 }]],
+    ['polygon', [[[110, 130], [190, 140], [150, 240], [190, 220]]]],
+    ['circle', [100, 100, 50, { stroke: 'blue', strokeWidth: 2, fill: 'red' }]],
+    ['ellipse', [300, 100, 150, 50, { stroke: '#000' }]],
   ]} />)

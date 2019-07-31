@@ -13,7 +13,7 @@ class Draw extends React.PureComponent {
     this.state = {
       autoHeight: props.autoHeight || 60,
       lineHeight: props.lineHeight || 20,
-      sortCount: props.sortCount,
+      sortCount: props.sortCount || 1,
       autoSort: props.autoSort,
     }
   }
@@ -55,7 +55,7 @@ class Draw extends React.PureComponent {
   }
 
   draw = (type, options) => {
-    // console.log(type, options)
+    console.log(type, options)
     this.uc[type](...options) 
   }
 

@@ -46,11 +46,11 @@ class Draw {
   }
 
   // rect -> rectangle
-  rectangle = (x, y, x1, y1, options) => {
+  rectangle = (x, y, w, h, options) => {
     this.setStyle(options)
 
     this.ctx.beginPath()
-    this.ctx.rect(x, y, x1 - x, y1 - y)
+    this.ctx.rect(x, y, w, h)
 
     this.endToDraw()
   }
@@ -65,20 +65,23 @@ class Draw {
     this.endToDraw()
   }
 
-  // circle -> arc
-  arc = (x, y, x1, y1, options) => {
-    console.log(x, y, x1, y1, options)
-    this.ctx.beginPath()
-    if (isObject(y1)) {
-      this.setStyle(y1)
-      this.ctx.arc(x, y, x1, 0, 2 * Math.PI)
-    } else {
-      this.setStyle(options)
+  circle = (x, y, r, options) => {
+    this.setStyle(options)
 
-      this.ctx.translate(x, y);
-      const r = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2))
-      this.ctx.arc(x + (x1 - x) / 2, y + (y1 - y) / 2, r, 0, 2 * Math.PI)
-    }
+    this.ctx.beginPath()
+    this.ctx.arc(x + r, y + r, r, 0, 2 * Math.PI)
+
+    this.endToDraw()
+  }
+
+  // new add api
+  arc = (x, y, x1, y1, options) => {
+    this.setStyle(options)
+
+    this.ctx.beginPath()
+    this.ctx.translate(x, y);
+    const r = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2))
+    this.ctx.arc(x + (x1 - x) / 2, y + (y1 - y) / 2, r, 0, 2 * Math.PI)
 
     this.endToDraw()
   }
@@ -96,7 +99,7 @@ class Draw {
     const oy = 0.6 * h;
     
     this.ctx.save();
-    this.ctx.translate(x, y);
+    this.ctx.translate(x + w, y + h);
     this.ctx.beginPath();
     // 从椭圆纵轴下端开始逆时针方向绘制
     this.ctx.moveTo(0, h); 
