@@ -42,7 +42,7 @@ storiesOf('Draw|Demo', module)
   }} />)
   .add('圈记4', () => <Component render={(ctx, canvas, uc) => {
     addTestImage(ctx).then(({ x, y, w, h, textA, textWhen, line, p }) => {
-      uc.polygon(p, { fill: 'rgba(255, 0, 0, 0.3)' })
+      uc.polygon(p, { fill: 'rgba(255, 0, 0, 0.3)', stroke: 'rgba(255, 0, 0, 1)' })
     })
   }} />)
 
