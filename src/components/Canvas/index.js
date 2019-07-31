@@ -20,9 +20,9 @@ class CanvasComponent extends React.PureComponent {
   }
 
   initEle = (type) => {
-    const canvas = document.getElementById('canvas')
-    canvas.width = this.props.style.width || 800 || document.body.clientWidth
-    canvas.height = this.props.style.height || 800 || document.body.clientHeight
+    this.canvas = document.getElementById('canvas')
+    this.canvas.width = this.props.style.width || 800 || document.body.clientWidth
+    this.canvas.height = this.props.style.height || 800 || document.body.clientHeight
     this.ctx = canvas.getContext('2d')
     this.startDraw(this.props.data)
   }
@@ -31,7 +31,7 @@ class CanvasComponent extends React.PureComponent {
     if (this.props.showDemo) {
       this.drawDemo() 
     } else if (this.props.render) {
-      this.props.render(this.ctx)
+      this.props.render(this.ctx, this.canvas)
     }
     if (!this.ctx || !data) return null
     data.forEach((item, index) => {

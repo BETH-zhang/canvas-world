@@ -70,7 +70,7 @@ storiesOf('Rough|Api', module)
   ]} />)
   .add('polygon', () => <Component autoSort data={[
     ['polygon'],
-    ['polygon', (rc) => { rc.linearPath([[110, 130], [190, 140], [150, 240], [190, 220]]) }]
+    ['polygon', (rc) => { rc.polygon([[110, 130], [190, 140], [150, 240], [190, 220]]) }]
   ]} />)
   .add('arc', () => <Component data={[
     [(rc) => { rc.arc(350, 300, 200, 180, Math.PI, Math.PI * 1.6, true) }],
@@ -89,19 +89,20 @@ storiesOf('Rough|Api', module)
       }
       console.log(points)
       rc.curve(points, {
-        stroke: 'red', strokeWidth: 3
+        stroke: 'red',
+        strokeWidth: 3,
       })
     }],
     ['curve']
   ]} />)
-  .add('path', () => <Component data={[
+  .add('path -_-', () => <Component data={[
     [(rc) => {
       rc.path('M37,17v15H14V17z M50,0H0v50h50z')
       rc.path('M80 80 A 45 45, 0, 0, 0, 125 125 L 125 80 Z', { fill: 'green' })
       // https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths
     }]
   ]} />)
-  .add('draw', () => <Component data={[
+  .add('draw -_-', () => <Component data={[
     [(rc) => {
       const generator = rc.generator
       const rect1 = generator.rectangle(10, 10, 100, 100)
