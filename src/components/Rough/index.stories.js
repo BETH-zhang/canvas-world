@@ -22,7 +22,7 @@ storiesOf('Rough|Demo', module)
     ['arc', [350, 400, 100, 80, -Math.PI * 2, -Math.PI / 2, true, { stroke: 'red', strokeWidth: 4, fill: 'rgba(255,255,0,0.4)', fillStyle: 'solid' }]],
   ]} />)
   .add('圈记1', () => <Component render={(ctx, rc) => {
-    addTestImage(ctx).then(({ x, y, w, h }) => {
+    addTestImage(ctx).then(({ x, y, w, h, textA, textWhen, line }) => {
       rc.ellipse(x, y, w, h, {
         stroke: 'red',
         roughness: 1,
@@ -41,6 +41,13 @@ storiesOf('Rough|Demo', module)
         hachureAngle: 90,
         hachureGap: h / 2,
       })
+    })
+  }} />)
+  .add('圈记3', () => <Component render={(ctx, rc) => {
+    addTestImage(ctx).then(({ x, y, w, h, textA, textWhen, line }) => {
+      rc.polygon(textA, { roughness: 2 })
+      rc.polygon(textWhen, { roughness: 2 })
+      rc.line(...line, { roughness: 3 })
     })
   }} />)
 

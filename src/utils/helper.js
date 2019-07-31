@@ -110,7 +110,10 @@ export const addTestImage = (ctx) => new Promise((resolve) => {
       x,
       y,
       w,
-      h
+      h,
+      textA: [[71, 105], [160, 105], [163, 201], [71, 203]],
+      textWhen: [[83, 261], [264, 259], [265, 346], [80, 355]],
+      line: [408, 346, 708, 338],
     })
   }
 })

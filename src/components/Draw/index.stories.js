@@ -33,6 +33,13 @@ storiesOf('Draw|Demo', module)
       uc.line(x - w / 2 - 10, y, x + w / 2 + 10, y, { stroke: 'red', strokeWidth: 1 })
     })
   }} />)
+  .add('圈记3', () => <Component render={(ctx, canvas, uc) => {
+    addTestImage(ctx).then(({ x, y, w, h, textA, textWhen, line }) => {
+      uc.polygon(textA, { roughness: 2 })
+      uc.polygon(textWhen, { roughness: 2 })
+      uc.line(...line, { roughness: 3 })
+    })
+  }} />)
 
 storiesOf('Draw|Picture', module)
   .add('画板1', () => <Component render={(ctx) => {
