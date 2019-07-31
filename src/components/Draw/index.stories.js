@@ -22,6 +22,17 @@ storiesOf('Draw|Demo', module)
     ['arc', [350, 300, 100, 80, -Math.PI * 2, -Math.PI / 2, true, { stroke: 'blue', strokeWidth: 2, fill: 'rgba(255,0,255,0.4)' }]],
     ['arc', [350, 400, 100, 80, -Math.PI * 2, -Math.PI / 2, true, { stroke: 'red', strokeWidth: 4, fill: 'rgba(255,255,0,0.4)', fillStyle: 'solid' }]],
   ]} />)
+  .add('圈记1', () => <Component render={(ctx, canvas, uc) => {
+    addTestImage(ctx).then(({x, y, w, h}) => {
+      uc.ellipse(x, y, w, h, { stroke: 'red', strokeWidth: 1 })
+    })
+  }} />)
+  .add('圈记2', () => <Component render={(ctx, canvas, uc) => {
+    addTestImage(ctx).then(({ x, y, w, h }) => {
+      uc.ellipse(x, y, w, h, { stroke: 'red', strokeWidth: 1 })
+      uc.line(x - w / 2 - 10, y, x + w / 2 + 10, y, { stroke: 'red', strokeWidth: 1 })
+    })
+  }} />)
 
 storiesOf('Draw|Picture', module)
   .add('画板1', () => <Component render={(ctx) => {
@@ -74,16 +85,3 @@ storiesOf('Draw|Picture', module)
       postUpload: () => ({}),
     })
   }} />)
-
-storiesOf('Draw|图片标记', module) 
-.add('圈记', () => <Component render={(ctx, canvas, uc) => {
-  addTestImage(ctx).then(({x, y, w, h}) => {
-    uc.ellipse(x, y, w / 2, h / 2, { stroke: 'red' })
-  })
-  
-}} />)
-.add('圈记', () => <Component render={(ctx, canvas, uc) => {
-  addTestImage(ctx).then(({ x, y, w, h }) => {
-    uc.ellipse(x, y, w / 2, h / 2, { stroke: 'red' })
-  })
-}} />)

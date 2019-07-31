@@ -4,6 +4,47 @@ import { random, addTestImage } from '../../utils/helper'
 import Component from './index'
 
 storiesOf('Rough|Demo', module)
+  .add('默认状态', () => <Component render={(ctx, rc) => {
+    rc.ellipse(392.25, 159, 764.5, 164)
+  }} />)
+  .add('各种图形绘制', () => <Component autoSort data={[
+    ['rectangle', [10, 10, 100, 40, { fill: 'red' }]],
+    ['rectangle', [10, 0, 100, 40, { stroke: 'red', strokeWidth: 5 }]],
+    ['line', [80, 120, 300, 100, { strokeWidth: 10 }]],
+    ['linearPath', [[[110, 10], [190, 20], [150, 120], [190, 100]], { strokeWidth: 1 }]],
+    ['polygon', [[[110, 130], [190, 140], [150, 240], [190, 220]]]],
+    ['circle', [10, 10, 50, { stroke: 'blue', strokeWidth: 2, fill: 'red' }]],
+    ['ellipse', [10, 10, 150, 50, { stroke: '#000' }]],
+    [(rc) => { rc.arc(350, 100, 100, 80, Math.PI, Math.PI * 1.6, false); }],
+    [(rc) => { rc.arc(450, 100, 100, 80, Math.PI, Math.PI * 1.6, true); }],
+    [(rc) => { rc.arc(350, 200, 100, 80, -Math.PI * 2, -Math.PI / 2, true) }],
+    ['arc', [350, 300, 100, 80, -Math.PI * 2, -Math.PI / 2, true, { stroke: 'blue', strokeWidth: 2, fill: 'rgba(255,0,255,0.4)' }]],
+    ['arc', [350, 400, 100, 80, -Math.PI * 2, -Math.PI / 2, true, { stroke: 'red', strokeWidth: 4, fill: 'rgba(255,255,0,0.4)', fillStyle: 'solid' }]],
+  ]} />)
+  .add('圈记1', () => <Component render={(ctx, rc) => {
+    addTestImage(ctx).then(({ x, y, w, h }) => {
+      rc.ellipse(x, y, w, h, {
+        stroke: 'red',
+        roughness: 1,
+        // fill: 'red',
+        // hachureAngle: 90,
+        // hachureGap: h / 2,
+      })
+    })
+  }} />)
+  .add('圈记2', () => <Component render={(ctx, rc) => {
+    addTestImage(ctx).then(({ x, y, w, h }) => {
+      rc.ellipse(x, y, w, h, {
+        stroke: 'red',
+        roughness: 1,
+        fill: 'red',
+        hachureAngle: 90,
+        hachureGap: h / 2,
+      })
+    })
+  }} />)
+
+storiesOf('Rough|Test', module)
   .add('测试', () => <Component data={[
     ['rectangle'],
     ['rectangle', [10, 0, 50, 50]],
@@ -17,7 +58,7 @@ storiesOf('Rough|Demo', module)
       },
     },
   ]} />)
-  .add('默认状态', () => <Component data={[
+  .add('test', () => <Component data={[
     ['rectangle', [10, 10, 200, 200]],
     ['circle', [80, 120, 50]],
     ['ellipse', [300, 100, 150, 80]],
@@ -45,23 +86,6 @@ storiesOf('Rough|Demo', module)
     ['circle', { fill: '#8986ff', fillWeight: 3 }],
     ['circle'],
     ['rectangle'],
-  ]} />)
-  .add('test', () => <Component render={(ctx, rc) => {
-    rc.ellipse(392.25, 159, 764.5, 164)
-  }} />)
-  .add('各种图形绘制', () => <Component autoSort data={[
-    ['rectangle', [10, 10, 100, 40, { fill: 'red' }]],
-    ['rectangle', [10, 0, 100, 40, { stroke: 'red', strokeWidth: 5 }]],
-    ['line', [80, 120, 300, 100, { strokeWidth: 10 }]],
-    ['linearPath', [[[110, 10], [190, 20], [150, 120], [190, 100]], { strokeWidth: 1 }]],
-    ['polygon', [[[110, 130], [190, 140], [150, 240], [190, 220]]]],
-    ['circle', [10, 10, 50, { stroke: 'blue', strokeWidth: 2, fill: 'red' }]],
-    ['ellipse', [10, 10, 150, 50, { stroke: '#000' }]],
-    [(rc) => { rc.arc(350, 100, 100, 80, Math.PI, Math.PI * 1.6, false); }],
-    [(rc) => { rc.arc(450, 100, 100, 80, Math.PI, Math.PI * 1.6, true); }],
-    [(rc) => { rc.arc(350, 200, 100, 80, -Math.PI * 2, -Math.PI / 2, true) }],
-    ['arc', [350, 300, 100, 80, -Math.PI * 2, -Math.PI / 2, true, { stroke: 'blue', strokeWidth: 2, fill: 'rgba(255,0,255,0.4)' }]],
-    ['arc', [350, 400, 100, 80, -Math.PI * 2, -Math.PI / 2, true, { stroke: 'red', strokeWidth: 4, fill: 'rgba(255,255,0,0.4)', fillStyle: 'solid' }]],
   ]} />)
 
 storiesOf('Rough|Api', module)
@@ -255,17 +279,4 @@ storiesOf('Rough|Api', module)
 
   storiesOf('Rough|async', module)
     .add('async', () => <Component async sortCount={10} autoSort data={Array(100).fill(0).map(() => (['rectangle', { fill: 'red', fillStyle: 'dashed', dashGap: 10 }]))} />)
-
-  storiesOf('Rough|图片标记', module) 
-    .add('圈记', () => <Component render={(ctx, rc) => {
-      addTestImage(ctx).then(({ x, y, w, h }) => {
-        rc.ellipse(x, y, w, h, {
-          stroke: 'red',
-          roughness: 1,
-          fill: 'red',
-          hachureAngle: 90,
-          hachureGap: h / 2,
-        })
-      })
-    }} />)
 
