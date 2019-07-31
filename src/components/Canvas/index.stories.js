@@ -14,6 +14,11 @@ Timer.add({
 Timer.clear(name)
  *  */
 import Component from './index'
+import {
+  lightMix,
+  colorSphere,
+  runComposite,
+} from './utils.js'
 import doc from './doc.md'
 import transformationsDoc from './transformationsDoc.md'
 // https://developer.mozilla.org/zh-CN/docs/Web/API/Canvas_API/Tutorial/Using_images
@@ -375,9 +380,11 @@ storiesOf('Canvas|Basic', module)
   }} />)
 
 storiesOf('Canvas|Compositing', module) 
-  .add('globalCompositeOperation', () => (<div>
-    <iframe src="./demo.html" />
-  </div>))
+  .add('globalCompositeOperation', () => (<Component render={(ctx) => {
+    // lightMix(ctx)
+    // colorSphere(ctx)
+    // runComposite(ctx)
+  }} />))
   .add('clip', () => <Component render={(ctx) => {
     function drawStar(ctx,r){
       ctx.save();
@@ -500,8 +507,6 @@ storiesOf('Canvas|基本动画', module)
 
     init()
   }} />)
-  // .add('', () => <Component render={(ctx) => {
-  // }} />)
   // .add('', () => <Component render={(ctx) => {
   // }} />)
   // .add('', () => <Component render={(ctx) => {

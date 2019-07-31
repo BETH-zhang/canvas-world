@@ -1,7 +1,6 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react'
-import { random } from '../../utils/helper'
-
+import { random, addTestImage } from '../../utils/helper'
 import Component from './index'
 
 storiesOf('Rough|Demo', module)
@@ -239,3 +238,17 @@ storiesOf('Rough|Api', module)
 
   storiesOf('Rough|async', module)
     .add('async', () => <Component async sortCount={10} autoSort data={Array(100).fill(0).map(() => (['rectangle', { fill: 'red', fillStyle: 'dashed', dashGap: 10 }]))} />)
+
+  storiesOf('Rough|图片标记', module) 
+    .add('圈记', () => <Component render={(ctx, rc) => {
+      addTestImage(ctx).then(({ x, y, w, h }) => {
+        rc.ellipse(x, y, w, h, {
+          stroke: 'red',
+          roughness: 1,
+          fill: 'red',
+          hachureAngle: 90,
+          hachureGap: h / 2,
+        })
+      })
+    }} />)
+

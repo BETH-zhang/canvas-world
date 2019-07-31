@@ -33,7 +33,7 @@ class Draw extends React.PureComponent {
 
   startDraw = (data) => {
     if (this.props.render) {
-      this.props.render(this.ctx, this.canvas)
+      this.props.render(this.ctx, this.canvas, this.uc)
     }
     if (!this.uc || !data) return null
     data.forEach((item, index) => {

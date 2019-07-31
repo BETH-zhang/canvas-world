@@ -46,6 +46,7 @@
       '保留了底层的亮度（luma），同时采用了顶层的色调(hue)和色度(chroma)。',
       '保持底层的色调（hue）和色度（chroma），同时采用顶层的亮度（luma）。'
     ].reverse();
+    
     var width = 320;
     var height = 340;
     window.onload = function () {
@@ -157,6 +158,7 @@
       ctx.fillRect(0, 0, 30, 30)
       ctx.fill();
     };
+    
     var colorSphere = function (element) {
       var ctx = canvas1.getContext("2d");
       var width = 360;
@@ -165,6 +167,7 @@
       var offset = 0; // scrollbar offset
       var oleft = -20;
       var otop = -20;
+      
       for (var n = 0; n <= 359; n++) {
         var gradient = ctx.createLinearGradient(oleft + halfWidth, otop, oleft + halfWidth, otop + halfWidth);
         var color = Color.HSV_RGB({ H: (n + 300) % 360, S: 100, V: 100 });

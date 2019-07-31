@@ -70,3 +70,40 @@ export const formatOptions = (index, type, options, params) => {
   if (!params.autoSort) return isArray(options) ? options : getDefaultOptions(type, options, params)
   return getMainOptions(index, type, options, params)
 }
+
+export const addTestImage = (ctx) => new Promise((resolve) => {
+  var img = new Image();
+  img.src = 'http://localhost:8080/test1.jpeg';
+  img.onload = function() {
+    const width = img.width
+    const height = img.height
+    ctx.drawImage(img, 0, 0, 800, 800 * height / width)
+       
+    var point1 = [68, 106]
+    var point2 = [80, 222]
+    var point3 = [757, 140]
+    var point4 = [756, 188]
+   
+    // const r1 = (point2[1] - point1[1]) / 2
+    // const r2 = (point4[1] - point3[1]) / 2
+    // const x = point1[0] - r1
+    // const y = point1[1] - r1 / 2
+    // const w = ((point3[0] - point1[0]) + (point4[0] - point2[0])) / 2 + r1 + r2
+    // const h = ((point3[1] - point1[1]) + (point4[1] - point2[1])) / 2 + (r1 + r2) * 2
+
+    const r1 = (point2[1] - point1[1]) / 2
+    const r2 = (point4[1] - point3[1]) / 2
+    const w = ((point3[0] - point1[0]) + (point4[0] - point2[0])) / 2 + r1 + r2
+    const h = ((point3[1] - point1[1]) + (point4[1] - point2[1])) / 2 + (r1 + r2) * 2
+    const x = point1[0] - r1 + w / 2
+    const y = point1[1] - r1 / 2 + h / 2
+
+    resolve({
+      img,
+      x,
+      y,
+      w,
+      h
+    })
+  }
+})

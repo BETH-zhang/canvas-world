@@ -2,6 +2,7 @@ import React from 'react';
 import { storiesOf } from '@storybook/react'
 import Component from './index'
 import WbUtils from '../../utils/whiteboard'
+import { addTestImage } from '../../utils/helper'
 
 storiesOf('Draw|Picture', module)
   .add('画板1', () => <Component render={(ctx) => {
@@ -20,6 +21,15 @@ storiesOf('Draw|Picture', module)
       onDrawUp: () => {},
       postUpload: () => ({}),
     })
+    // 创建新 image 对象，用作图案
+    var img = new Image();
+    img.src = 'http://localhost:8080/test1.jpeg';
+    img.onload = function() {
+      const width = img.width
+      const height = img.height
+      console.log(width, height)
+      ctx.drawImage(img, 0, 0, 800, 800 * height / width)
+    }
   }} />)
   .add('画板2', () => <Component render={(ctx) => {
     if (!document.getElementById('canvasFollow')) {
@@ -46,11 +56,24 @@ storiesOf('Draw|Picture', module)
     })
   }} />)
   .add('各种图形绘制', () => <Component autoSort data={[
-    ['rectangle', [10, 100, 100, 40, { fill: 'red' }]],
+    ['rectangle', [10, 10, 100, 40, { fill: 'red' }]],
     ['rectangle', [10, 0, 100, 40, { stroke: 'red', strokeWidth: 5 }]],
     ['line', [80, 120, 300, 100, { strokeWidth: 10 }]],
     ['linearPath', [[[110, 10], [190, 20], [150, 120], [190, 100]], { strokeWidth: 1 }]],
     ['polygon', [[[110, 130], [190, 140], [150, 240], [190, 220]]]],
-    ['circle', [100, 100, 50, { stroke: 'blue', strokeWidth: 2, fill: 'red' }]],
-    ['ellipse', [300, 100, 150, 50, { stroke: '#000' }]],
+    ['circle', [10, 10, 50, { stroke: 'blue', strokeWidth: 2, fill: 'red' }]],
+    ['ellipse', [10, 10, 150, 50, { stroke: '#000' }]],
   ]} />)
+
+storiesOf('Draw|图片标记', module) 
+.add('圈记', () => <Component render={(ctx, canvas, uc) => {
+  addTestImage(ctx).then(({x, y, w, h}) => {
+    uc.ellipse(x, y, w / 2, h / 2, { stroke: 'red' })
+  })
+  
+}} />)
+.add('圈记', () => <Component render={(ctx, canvas, uc) => {
+  addTestImage(ctx).then(({ x, y, w, h }) => {
+    uc.ellipse(x, y, w / 2, h / 2, { stroke: 'red' })
+  })
+}} />)

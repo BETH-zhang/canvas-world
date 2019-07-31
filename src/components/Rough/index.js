@@ -26,6 +26,7 @@ class RoughComponent extends React.PureComponent {
       const canvas = document.getElementById('canvas')
       canvas.width = this.props.style.width || 800 || document.body.clientWidth
       canvas.height = this.props.style.height || 800 || document.body.clientHeight
+      this.ctx = canvas.getContext('2d')
       this.rc = rough.canvas(canvas, { async: this.props.async })
       // console.log(this.rc, 'rc')
       this.startDraw(this.props.data)
@@ -39,6 +40,9 @@ class RoughComponent extends React.PureComponent {
   startDraw = (data) => {
     if (this.props.showDemo) {
       this.drawDemo() 
+    }
+    if (this.props.render) {
+      this.props.render(this.ctx, this.rc)
     }
     if (!this.rc || !data) return null
     data.forEach((item, index) => {
