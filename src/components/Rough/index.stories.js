@@ -50,6 +50,11 @@ storiesOf('Rough|Demo', module)
       rc.line(...line, { roughness: 3 })
     })
   }} />)
+  .add('圈记4', () => <Component render={(ctx, rc) => {
+    addTestImage(ctx).then(({ x, y, w, h, textA, textWhen, line, p }) => {
+      rc.polygon(p, { fill: 'rgba(255, 0, 0, 1)', hachureGap: 5 })
+    })
+  }} />)
 
 storiesOf('Rough|Test', module)
   .add('测试', () => <Component data={[

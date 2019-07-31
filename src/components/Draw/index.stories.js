@@ -35,9 +35,14 @@ storiesOf('Draw|Demo', module)
   }} />)
   .add('圈记3', () => <Component render={(ctx, canvas, uc) => {
     addTestImage(ctx).then(({ x, y, w, h, textA, textWhen, line }) => {
-      uc.polygon(textA, { roughness: 2 })
-      uc.polygon(textWhen, { roughness: 2 })
-      uc.line(...line, { roughness: 3 })
+      uc.polygon(textA)
+      uc.polygon(textWhen)
+      uc.line(...line)
+    })
+  }} />)
+  .add('圈记4', () => <Component render={(ctx, canvas, uc) => {
+    addTestImage(ctx).then(({ x, y, w, h, textA, textWhen, line, p }) => {
+      uc.polygon(p, { fill: 'rgba(255, 0, 0, 0.3)' })
     })
   }} />)
 
