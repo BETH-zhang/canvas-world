@@ -215,7 +215,7 @@ class Whiteboard {
 
   drawUp = () => {
     this.isDraw = false
-    this.arr.push(this.context.getImageData(0, 0, this.whiteboard.width, this.whiteboard.height))
+    // this.arr.push(this.context.getImageData(0, 0, this.whiteboard.width, this.whiteboard.height))
   }
 
   canvasMouseMove = (e) => {
@@ -257,7 +257,7 @@ class Whiteboard {
 
       this.drawLine(this.quadraticCurveBeginPoint, controlPoint, endPoint);
       this.quadraticCurveBeginPoint = endPoint;
-      console.log(this.quadraticCurveBeginPoint, '??')
+      // console.log(this.quadraticCurveBeginPoint, '??')
     }
   }
 

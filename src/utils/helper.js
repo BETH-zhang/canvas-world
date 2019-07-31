@@ -118,3 +118,53 @@ export const addTestImage = (ctx) => new Promise((resolve) => {
     })
   }
 })
+
+export const findFourPoint = (arr, type) => {
+  var rightPointer = arr.length - 1
+  if (rightPointer < 1) {
+    return 0
+  }
+  var leftPointer = 0
+  var left = arr[0][0]
+  var right = 0
+  var top = arr[0][1]
+  var bottom = 0
+  
+  while (leftPointer < rightPointer) {
+    console.log(leftPointer)
+    const pointL = arr[leftPointer]
+
+    console.log(1, pointL, left, right, bottom, top)
+    // const pointR = arr[rightPointer]
+    if (pointL[0] < left) left = pointL[0]
+    if (pointL[0] > right) right = pointL[0]
+    if (pointL[1] > bottom) bottom = pointL[1]
+    if (pointL[1] < top) top = pointL[1]
+
+    console.log(2, pointL, left, right, bottom, top)
+    leftPointer++
+  }
+  console.log(left, right, top, bottom)
+  // 'ellipse', 'rectangle', 'circle'
+  if (type === 'rectangle') {
+    return [
+      left,
+      top,
+      right - left,
+      bottom - top
+    ]
+  } else if (type === 'circle') {
+    return [
+      (right - left) / 2 + left,
+      (bottom - top) / 2 + top,
+      Math.max(right - left, bottom - top)
+    ]
+  }
+
+  return [
+    (right - left) / 2 + left,
+    (bottom - top) / 2 + top,
+    right - left,
+    bottom - top
+  ]
+}

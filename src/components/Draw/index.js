@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import isArray from 'lodash/isArray'
 import isFunction from 'lodash/isFunction'
 import usDraw from '../../utils/draw'
+import rough from '../../../node_modules/roughjs/dist/rough-async.umd'
 import { formatOptions } from '../../utils/helper'
 
 import './index.less'
@@ -28,12 +29,13 @@ class Draw extends React.PureComponent {
     this.canvas.height = this.props.style.height || 800 || document.body.clientHeight
     this.ctx = canvas.getContext('2d')
     this.uc = new usDraw(this.ctx)
+    this.rc = rough.canvas(this.canvas, { async: this.props.async })
     this.startDraw(this.props.data)
   }
 
   startDraw = (data) => {
     if (this.props.render) {
-      this.props.render(this.ctx, this.canvas, this.uc)
+      this.props.render(this.ctx, this.uc, this.canvas, this.rc)
     }
     if (!this.uc || !data) return null
     data.forEach((item, index) => {
