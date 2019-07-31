@@ -33,14 +33,14 @@ export const getMainOptions = (index, type, options, { autoHeight, sortCount, li
   const mainOptions = {
     circle: () => {
       const newOptions = isArray(options) ? options.slice(0) : getDefaultOptions(type, options, { autoHeight, lineHeight })
-      newOptions[0] = (autoWidth + lineHeight) * col + lineHeight
-      newOptions[1] = (autoHeight + lineHeight) * row + lineHeight
+      newOptions[0] = (autoWidth + lineHeight) * col + newOptions[2] / 2 + lineHeight
+      newOptions[1] = (autoHeight + lineHeight) * row + newOptions[2] / 2 + lineHeight
       return newOptions
     },
     ellipse: () => {
       const newOptions = isArray(options) ? options.slice(0) : getDefaultOptions(type, options, { autoHeight, lineHeight })
-      newOptions[0] = (autoWidth + lineHeight) * col + lineHeight
-      newOptions[1] = (autoHeight + lineHeight) * row + lineHeight
+      newOptions[0] = (autoWidth + lineHeight) * col + newOptions[2] / 2 + lineHeight
+      newOptions[1] = (autoHeight + lineHeight) * row + newOptions[3] / 2 + lineHeight
       return newOptions
     },
     linearPath: () => {
@@ -98,6 +98,13 @@ export const addTestImage = (ctx) => new Promise((resolve) => {
     const x = point1[0] - r1 + w / 2
     const y = point1[1] - r1 / 2 + h / 2
 
+    // console.log({
+    //   img,
+    //   x,
+    //   y,
+    //   w,
+    //   h
+    // })
     resolve({
       img,
       x,

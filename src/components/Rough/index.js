@@ -4,8 +4,7 @@ import isArray from 'lodash/isArray'
 import isFunction from 'lodash/isFunction'
 // import rough from '../../../node_modules/roughjs/dist/rough.umd'
 import rough from '../../../node_modules/roughjs/dist/rough-async.umd'
-import { random } from '../../utils/helper'
-
+import { formatOptions } from '../../utils/helper'
 import './index.less'
 
 class RoughComponent extends React.PureComponent {
@@ -14,6 +13,8 @@ class RoughComponent extends React.PureComponent {
     this.state = {
       autoHeight: props.autoHeight || 60,
       lineHeight: props.lineHeight || 20,
+      sortCount: props.sortCount || 1,
+      autoSort: props.autoSort,
     }
   }
 
@@ -47,16 +48,17 @@ class RoughComponent extends React.PureComponent {
     if (!this.rc || !data) return null
     data.forEach((item, index) => {
       if (item) {
+        console.log(item, index)
         if (item.render) {
           item.render(this.rc)
         } else if (isArray(item) && (isFunction(item[0]) || isFunction(item[1]))) {
           const func = isFunction(item[0]) ? item[0] : item[1]
           func(this.rc)
         } else if (isArray(item) && this.rc[item[0]]) {
-          const options = this.formatOptions(index, item[0], item[1])
+          const options = formatOptions(index, item[0], item[1], this.state)
           this.draw(item[0], options)
         } else if (this.rc[item.type]) {
-          const options = this.formatOptions(index, item.type, item.options)
+          const options = formatOptions(index, item.type, item.options, this.state)
           this.draw(item.type, options)
         }
       }
@@ -65,68 +67,6 @@ class RoughComponent extends React.PureComponent {
 
   draw = async (type, options) => {
     await this.rc[type](...options)
-  }
-
-  getRandomPointAry = () => {
-    const count = random(2, 10)
-    return Array(count).fill(0).map(() => [random(0, 500), random(0, 300)])
-  }
-
-  getDefaultOptions = (type, options) => {
-    const defaultOptions = {
-      circle: () => ([this.state.autoHeight / 2 + this.state.lineHeight, this.state.autoHeight / 2 + this.state.lineHeight, this.state.autoHeight, options]),
-      ellipse: () => ([this.state.autoHeight * 1.5 / 2 + this.state.lineHeight, this.state.autoHeight / 2 + this.state.lineHeight, this.state.autoHeight * 1.5, this.state.autoHeight, options]),
-      linearPath: () => ([this.getRandomPointAry()]),
-      polygon: () => ([this.getRandomPointAry()]),
-      curve: () => ([this.getRandomPointAry()]),
-      arc: () => (
-        // x,  y,   w,   h,  start,stop,     closed
-        // [100, 100, 200, 200, -Math.PI * 2, -Math.PI / 2, true, options],
-        [random(50, 500), random(50, 500), random(100, 200), random(100, 200), -Math.PI * (Math.random() * 2), Math.PI / (Math.random() * 2), random(0, 2) ? true : false, options]
-      ),
-    }
-    if (defaultOptions[type]) {
-      return defaultOptions[type]()
-    }
-    return [this.state.lineHeight, this.state.lineHeight, this.state.autoHeight, this.state.autoHeight, options]
-  }
-
-  getMainOptions = (index, type, options) => {
-    const autoWidth = this.state.autoHeight
-    const autoHeight = this.state.autoHeight
-    const col = Math.floor(index % this.props.sortCount)
-    const row = Math.floor(index / this.props.sortCount)
-    const mainOptions = {
-      circle: () => {
-        const newOptions = isArray(options) ? options.slice(0) : this.getDefaultOptions(type, options)
-        newOptions[0] = (autoWidth + this.state.lineHeight) * col + newOptions[2] / 2 + this.state.lineHeight
-        newOptions[1] = (autoHeight + this.state.lineHeight) * row + newOptions[2] / 2 + this.state.lineHeight
-        return newOptions
-      },
-      ellipse: () => {
-        const newOptions = isArray(options) ? options.slice(0) : this.getDefaultOptions(type, options)
-        newOptions[0] = (autoWidth + this.state.lineHeight) * col + newOptions[2] / 2 + this.state.lineHeight
-        newOptions[1] = (autoHeight + this.state.lineHeight) * row + newOptions[3] / 2 + this.state.lineHeight
-        return newOptions
-      },
-      linearPath: () => options || this.getDefaultOptions(type, options),
-      polygon: () => options || this.getDefaultOptions(type, options),
-      curve: () => options || this.getDefaultOptions(type, options),
-      arc: () => options || this.getDefaultOptions(type, options)
-    }
-    if (mainOptions[type]) {
-      return mainOptions[type]()
-    }
-    
-    const newOptions = isArray(options) ? options.slice(0) : this.getDefaultOptions(type, options)
-    newOptions[0] = (autoWidth + this.state.lineHeight) * col + this.state.lineHeight
-    newOptions[1] = (autoHeight + this.state.lineHeight) * row + this.state.lineHeight
-    return newOptions 
-  }
-
-  formatOptions = (index, type, options) => {
-    if (!this.props.autoSort) return isArray(options) ? options : this.getDefaultOptions(type, options)
-    return this.getMainOptions(index, type, options)
   }
 
   drawDemo = () => {

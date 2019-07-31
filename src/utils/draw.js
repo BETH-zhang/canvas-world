@@ -67,9 +67,10 @@ class Draw {
 
   circle = (x, y, r, options) => {
     this.setStyle(options)
+    console.log(x, y, r)
 
     this.ctx.beginPath()
-    this.ctx.arc(x + r, y + r, r, 0, 2 * Math.PI)
+    this.ctx.arc(x, y, r / 2, 0, 2 * Math.PI)
 
     this.endToDraw()
   }
@@ -99,16 +100,38 @@ class Draw {
     const oy = 0.6 * h;
     
     this.ctx.save();
-    this.ctx.translate(x + w, y + h);
+    this.ctx.translate(x, y);
     this.ctx.beginPath();
     // 从椭圆纵轴下端开始逆时针方向绘制
-    this.ctx.moveTo(0, h); 
-    this.ctx.bezierCurveTo(ox, h, w, oy, w, 0);
-    this.ctx.bezierCurveTo(w, -oy, ox, -h, 0, -h);
-    this.ctx.bezierCurveTo(-ox, -h, -w, -oy, -w, 0);
-    this.ctx.bezierCurveTo(-w, oy, -ox, h, 0, h);
+    this.ctx.moveTo(0, h / 2); 
+    this.ctx.bezierCurveTo(ox / 3, h / 2, w / 2, oy / 3 * 2, w / 2, 0)
+    this.ctx.bezierCurveTo(w / 2, -oy / 3 * 2, ox / 3, -h / 2, 0, -h / 2);
+    this.ctx.bezierCurveTo(-ox / 3, -h / 2, -w / 2, -oy / 3 * 2, -w / 2, 0);
+    this.ctx.bezierCurveTo(-w / 2, oy / 3, -ox / 3 * 2, h / 2, 0, h / 2);
     this.ctx.closePath();
-    
+
+    // 右下
+    // this.ctx.moveTo(0, h / 2);
+    // this.ctx.lineTo(ox / 3, h / 2);
+    // this.ctx.lineTo(w / 2, oy / 3 * 2)
+    // this.ctx.lineTo(w / 2, 0)
+    // 右上
+    // this.ctx.moveTo(w / 2, 0)
+    // this.ctx.lineTo(w / 2, -oy / 3)
+    // this.ctx.lineTo(ox / 3 * 2, -h / 2)
+    // this.ctx.lineTo(0, -h / 2)
+    // 左上
+    // this.ctx.moveTo(0, -h / 2)
+    // this.ctx.lineTo(-ox / 3, -h / 2)
+    // this.ctx.lineTo(-w / 2, -oy / 3 * 2)
+    // this.ctx.lineTo(-w / 2, 0)
+    // 左下
+    // this.ctx.moveTo(-w / 2, 0)
+    // this.ctx.lineTo(-w / 2, oy / 3)
+    // this.ctx.lineTo(-ox / 3 * 2, h / 2)
+    // this.ctx.lineTo(0, h / 2)
+    // this.ctx.closePath();
+
     this.endToDraw()
     this.ctx.restore();
   }
@@ -120,7 +143,7 @@ class Draw {
     if (isArray(params[0])) {
       this.ctx.beginPath()
       this.ctx.moveTo(...params[0])
-      for (let i = 1; i < params.length - 1; i++) {
+      for (let i = 1; i < params.length; i++) {
         this.ctx.lineTo(...params[i]) 
       }
     } else {
@@ -144,6 +167,7 @@ class Draw {
         this.ctx.lineTo(nx, -ny)
       }
     }
+    this.ctx.closePath()
 
     this.endToDraw()
     this.ctx.restore()
@@ -166,7 +190,7 @@ class Draw {
     
     this.ctx.beginPath()
     this.ctx.moveTo(...params[0])
-    for (let i = 1; i < params.length - 1; i++) {
+    for (let i = 1; i < params.length; i++) {
       this.ctx.lineTo(...params[i]) 
     }
 
