@@ -79,24 +79,17 @@ export const addTestImage = (ctx) => new Promise((resolve) => {
     const height = img.height
     ctx.drawImage(img, 0, 0, 800, 800 * height / width)
        
-    var point1 = [68, 106]
-    var point2 = [80, 222]
-    var point3 = [757, 140]
-    var point4 = [756, 188]
-   
-    // const r1 = (point2[1] - point1[1]) / 2
-    // const r2 = (point4[1] - point3[1]) / 2
-    // const x = point1[0] - r1
-    // const y = point1[1] - r1 / 2
-    // const w = ((point3[0] - point1[0]) + (point4[0] - point2[0])) / 2 + r1 + r2
-    // const h = ((point3[1] - point1[1]) + (point4[1] - point2[1])) / 2 + (r1 + r2) * 2
+    var p1 = {x: 68, y: 106}
+    var p2 = {x: 80, y: 222}
+    var p3 = {x: 757, y: 140}
+    var p4 = {x: 756, y: 188}
 
-    const r1 = (point2[1] - point1[1]) / 2
-    const r2 = (point4[1] - point3[1]) / 2
-    const w = ((point3[0] - point1[0]) + (point4[0] - point2[0])) / 2 + r1 + r2
-    const h = ((point3[1] - point1[1]) + (point4[1] - point2[1])) / 2 + (r1 + r2) * 2
-    const x = point1[0] - r1 + w / 2
-    const y = point1[1] - r1 / 2 + h / 2
+    const hr1 = (p2.y - p1.y) / 2
+    const hr2 = (p4.y - p3.y) / 2
+    const w = ((p3.x - p1.x) + (p4.x - p2.x)) / 2 + hr1 + hr2
+    const h = ((p3.y - p3.y) + (p4.y - p2.y)) / 2 + (hr1 + hr2) * 2
+    const x = p1.x - hr1 + w / 2
+    const y = p1.y - hr1 / 2 + h / 2
 
     // console.log({
     //   img,

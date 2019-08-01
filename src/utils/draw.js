@@ -65,11 +65,11 @@ class Draw {
     this.endToDraw()
   }
 
-  circle = (x, y, diameter, options) => {
+  circle = (cx, cy, diameter, options) => {
     this.setStyle(options)
 
     this.ctx.beginPath()
-    this.ctx.arc(x, y, diameter / 2, 0, 2 * Math.PI)
+    this.ctx.arc(cx, cy, diameter / 2, 0, 360 * Math.PI / 180)
 
     this.endToDraw()
   }
@@ -95,45 +95,48 @@ class Draw {
     // 使用三次贝塞尔曲线
     // 关键是bezierCurveTo中两个控制点的设置
     // 0.5 和 0.6 是两个关键系数（在本函数中为试验而得）
-    const ox = 0.5 * w;
-    const oy = 0.6 * h;
+    const wr = 0.5 * w;
+    const hr = 0.6 * h;
     
     this.ctx.save();
     this.ctx.translate(x, y);
     this.ctx.beginPath();
     // 从椭圆纵轴下端开始逆时针方向绘制
-    this.ctx.moveTo(0, h / 2); 
-    this.ctx.bezierCurveTo(ox / 3, h / 2, w / 2, oy / 3 * 2, w / 2, 0)
-    this.ctx.bezierCurveTo(w / 2, -oy / 3 * 2, ox / 3, -h / 2, 0, -h / 2);
-    this.ctx.bezierCurveTo(-ox / 3, -h / 2, -w / 2, -oy / 3 * 2, -w / 2, 0);
-    this.ctx.bezierCurveTo(-w / 2, oy / 3, -ox / 3 * 2, h / 2, 0, h / 2);
+    this.ctx.moveTo(0, hr); 
+    this.ctx.bezierCurveTo(wr / 3, hr, wr, hr / 3 * 2, wr, 0)
+    this.ctx.bezierCurveTo(wr, -hr / 3 * 2, wr / 3, -hr, 0, -hr);
+    this.ctx.bezierCurveTo(-wr / 3, -hr, -wr, -hr / 3 * 2, -wr, 0);
+    this.ctx.bezierCurveTo(-wr, hr / 3, -wr / 3 * 2, hr, 0, hr);
     this.ctx.closePath();
 
     this.endToDraw()
     this.ctx.restore();
 
-    // 右下
-    // this.ctx.moveTo(0, h / 2);
-    // this.ctx.lineTo(ox / 3, h / 2);
-    // this.ctx.lineTo(w / 2, oy / 3 * 2)
-    // this.ctx.lineTo(w / 2, 0)
-    // 右上
-    // this.ctx.moveTo(w / 2, 0)
-    // this.ctx.lineTo(w / 2, -oy / 3)
-    // this.ctx.lineTo(ox / 3 * 2, -h / 2)
-    // this.ctx.lineTo(0, -h / 2)
-    // 左上
-    // this.ctx.moveTo(0, -h / 2)
-    // this.ctx.lineTo(-ox / 3, -h / 2)
-    // this.ctx.lineTo(-w / 2, -oy / 3 * 2)
-    // this.ctx.lineTo(-w / 2, 0)
-    // 左下
-    // this.ctx.moveTo(-w / 2, 0)
-    // this.ctx.lineTo(-w / 2, oy / 3)
-    // this.ctx.lineTo(-ox / 3 * 2, h / 2)
-    // this.ctx.lineTo(0, h / 2)
+    // this.ctx.translate(x, y);
+    // this.ctx.beginPath();
+    // this.ctx.strokeStyle = 'red'
+    // // 右下
+    // this.ctx.moveTo(0, hr);
+    // this.ctx.lineTo(wr / 3, hr);
+    // this.ctx.lineTo(wr, hr / 3 * 2)
+    // this.ctx.lineTo(wr, 0)
+    // // 右上
+    // // this.ctx.moveTo(wr, 0)
+    // this.ctx.lineTo(wr, -hr / 3)
+    // this.ctx.lineTo(wr / 3 * 2, -hr)
+    // this.ctx.lineTo(0, -hr)
+    // // 左上
+    // // this.ctx.moveTo(0, -hr)
+    // this.ctx.lineTo(-wr / 3, -hr)
+    // this.ctx.lineTo(-wr, -hr / 3 * 2)
+    // this.ctx.lineTo(-wr, 0)
+    // // 左下
+    // // this.ctx.moveTo(-wr, 0)
+    // this.ctx.lineTo(-wr, hr / 3)
+    // this.ctx.lineTo(-wr / 3 * 2, hr)
+    // this.ctx.lineTo(0, hr)
     // this.ctx.closePath();
-
+    // this.endToDraw()
   }
 
   // poly -> polygon
