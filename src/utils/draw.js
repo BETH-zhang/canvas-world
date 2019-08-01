@@ -65,12 +65,11 @@ class Draw {
     this.endToDraw()
   }
 
-  circle = (x, y, r, options) => {
+  circle = (x, y, diameter, options) => {
     this.setStyle(options)
-    console.log(x, y, r)
 
     this.ctx.beginPath()
-    this.ctx.arc(x, y, r / 2, 0, 2 * Math.PI)
+    this.ctx.arc(x, y, diameter / 2, 0, 2 * Math.PI)
 
     this.endToDraw()
   }
@@ -110,6 +109,9 @@ class Draw {
     this.ctx.bezierCurveTo(-w / 2, oy / 3, -ox / 3 * 2, h / 2, 0, h / 2);
     this.ctx.closePath();
 
+    this.endToDraw()
+    this.ctx.restore();
+
     // 右下
     // this.ctx.moveTo(0, h / 2);
     // this.ctx.lineTo(ox / 3, h / 2);
@@ -132,8 +134,6 @@ class Draw {
     // this.ctx.lineTo(0, h / 2)
     // this.ctx.closePath();
 
-    this.endToDraw()
-    this.ctx.restore();
   }
 
   // poly -> polygon
@@ -173,6 +173,20 @@ class Draw {
     this.ctx.restore()
   }
 
+  curveTag = (x, y, x1, y1, options) => {
+    let points = [];
+    const interval = 100
+
+    for (let i = 0; i < (x1 - x) / 7; i++) {
+      let pointX = x + (x1 / interval) * i + 10;
+      let xdeg = (30 * Math.PI / 180) * i * 20;
+      let pointY = y + Math.round(Math.sin(xdeg) * 5);
+
+      points.push([pointX, pointY]);
+    }
+    this.curve(points, options)
+  }
+
   linearGradient = () => {
     this.canvasGradient = this.ctx.createLinearGradient(0, 0, this.screenWidth, this.screenHeight)
     colors.forEach((item, index) => {
@@ -198,7 +212,22 @@ class Draw {
     this.ctx.restore()
   }
 
-  curve = () => {}
+  curve = (params, options) => {
+    this.setStyle(options)
+    
+    this.ctx.beginPath()
+    this.ctx.moveTo(...params[0])
+    console.log(params)
+    for (let i = 1; i < params.length; i = i+1) {
+      this.ctx.lineTo(...params[i])
+      // this.ctx.bezierCurveTo(params[i][0], params[i][1], params[i + 1][0], params[i + 1][1])
+    }
+    // this.ctx.bezierCurveTo(425.08, 342, 432.16, 350, 439.24, 346)
+    // this.ctx.bezierCurveTo(439.24, 346, 446.32, 342, 453.4, 350)
+
+    this.endToDraw()
+    this.ctx.restore()
+  }
 
   pen = (x, y, x1, y1) => {
     if (this.rainbow) {

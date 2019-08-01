@@ -29,6 +29,7 @@ class RoughComponent extends React.PureComponent {
       canvas.height = this.props.style.height || 800 || document.body.clientHeight
       this.ctx = canvas.getContext('2d')
       this.rc = rough.canvas(canvas, { async: this.props.async })
+      this.rc.curveTag = this.curveTag
       // console.log(this.rc, 'rc')
       this.startDraw(this.props.data)
     } else if (this.props.type === 'svg') {
@@ -88,6 +89,19 @@ class RoughComponent extends React.PureComponent {
       fillStyle: 'solid'
     })
     this.rc.linearPath([[690, 10], [790, 20], [750, 120], [690, 100]]);
+  }
+
+  curveTag = (x, y, x1, y1, options) => {
+    let points = [];
+    const interval = 100
+
+    for (let i = 0; i < (x1 - x) / 7; i++) {
+      let pointX = x + (x1 / interval) * i + 10;
+      let xdeg = (30 * Math.PI / 180) * i * 20;
+      let pointY = y + Math.round(Math.sin(xdeg) * 5);
+      points.push([pointX, pointY]);
+    }
+    this.rc.curve(points, options)
   }
 
   render() {

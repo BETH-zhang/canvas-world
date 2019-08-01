@@ -55,6 +55,12 @@ storiesOf('Rough|Demo', module)
       rc.polygon(p, { fill: 'rgba(255, 0, 0, 1)', hachureGap: 5, stroke: 'rgba(255, 0, 0, 1)' })
     })
   }} />)
+  .add('圈记5', () => <Component render={(ctx, rc) => {
+    addTestImage(ctx).then(({ x, y, w, h, textA, textWhen, line, p }) => {
+      // rc.polygon(p, { fill: 'rgba(255, 0, 0, 1)', hachureGap: 5, stroke: 'rgba(255, 0, 0, 1)' })
+      rc.curveTag(...line, { stroke: 'red', strokeWidth: 1 })
+    })
+  }} />)
 
 storiesOf('Rough|Test', module)
   .add('测试', () => <Component data={[

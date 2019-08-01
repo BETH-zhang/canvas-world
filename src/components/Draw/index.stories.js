@@ -45,6 +45,11 @@ storiesOf('Draw|Demo', module)
       uc.polygon(p, { fill: 'rgba(255, 0, 0, 0.3)', stroke: 'rgba(255, 0, 0, 1)' })
     })
   }} />)
+  .add('圈记5', () => <Component render={(ctx, uc, canvas) => {
+    addTestImage(ctx).then(({ x, y, w, h, textA, textWhen, line, p }) => {
+      uc.curveTag(...line, { stroke: 'red', strokeWidth: 1 })
+    })
+  }} />)
 
 storiesOf('Draw|Picture', module)
   .add('画板1', () => <Component render={(ctx, uc, canvas, rc) => {
