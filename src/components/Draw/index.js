@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import isArray from 'lodash/isArray'
 import isFunction from 'lodash/isFunction'
-import usDraw from '../../utils/draw'
+import Elves from '../../utils/elves'
 import rough from '../../../node_modules/roughjs/dist/rough-async.umd'
 import { formatOptions } from '../../utils/helper'
 
@@ -24,11 +24,11 @@ class Draw extends React.PureComponent {
   }
 
   initEle = () => {
-    this.canvas = document.getElementById('canvas')
+    this.canvas = document.getElementById(this.props.id || 'canvas')
     this.canvas.width = this.props.style.width || 800 || document.body.clientWidth
     this.canvas.height = this.props.style.height || 800 || document.body.clientHeight
-    this.ctx = canvas.getContext('2d')
-    this.uc = new usDraw(this.ctx)
+    this.ctx = this.canvas.getContext('2d', this.props.canvasOptions)
+    this.uc = new Elves(this.canvas)
     this.rc = rough.canvas(this.canvas, { async: this.props.async })
     this.startDraw(this.props.data)
   }
@@ -63,21 +63,25 @@ class Draw extends React.PureComponent {
 
   render() {
     return (<div className="draw-container" style={this.props.style}>
-      <canvas id="canvas" style={this.props.style} />
+      <canvas id={this.props.id || 'canvas'} style={this.props.style}>{this.props.children}</canvas>
     </div>)
   }
 }
 
 Draw.defaultProps = {
   style: {},
+  canvasOptions: {},
   data: [],
   render: () => {},
+  children: null,
 }
 
 Draw.propTypes = {
   style: PropTypes.object,
+  canvasOptions: PropTypes.object,
   data: PropTypes.array,
   render: PropTypes.func,
+  children: PropTypes.element,
 }
 
 export default Draw

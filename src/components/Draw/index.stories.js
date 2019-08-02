@@ -4,6 +4,8 @@ import Component from './index'
 import WbUtils from '../../utils/whiteboard'
 import { addTestImage, findFourPoint } from '../../utils/helper'
 
+import defaultImg from '../../assets/mr.jpg'
+
 storiesOf('Draw|Demo', module)
   .add('默认状态', () => <Component render={(ctx, uc, canvas) => {
     uc.ellipse(392.25, 159, 764.5, 164)
@@ -159,3 +161,260 @@ storiesOf('Draw|Picture', module)
       ctx.drawImage(img, 0, 0, 800, 800 * height / width)
     }
   }} />)
+
+storiesOf('Draw|高级动画', module) 
+  .add('绘制小球', () => <Component render={(ctx, uc, canvas) => {
+    var ball = uc.atomic.ball(100, 100, 50, { fill: 'blue' }, { vx: 5, vy: 2 });
+    var raf = null
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ball.draw();
+      // 修改小球
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+      raf = window.requestAnimationFrame(draw);
+    }
+
+    draw()
+
+    // canvas.addEventListener('mouseover', function(e) {
+    //   raf = window.requestAnimationFrame(draw)
+    // })
+
+    // canvas.addEventListener('mouseout', function(e) {
+    //   window.cancelAnimationFrame(raf)
+    // })
+  }} />)
+  .add('边界检测', () => <Component render={(ctx, uc, canvas) => {
+    var ball = uc.atomic.ball(100, 100, 50, { fill: 'blue' }, { vx: 5, vy: 2 });
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ball.draw();
+
+      // 修改小球
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+
+      // 碰撞检测，修改速度方向
+      if (ball.y + ball.vy > canvas.height || ball.y + ball.vy < 0) {
+        ball.vy = -ball.vy;
+      }
+      if (ball.x + ball.vx > canvas.width || ball.x + ball.vx < 0) {
+        ball.vx = -ball.vx;
+      }
+      window.requestAnimationFrame(draw);
+    }
+    draw()
+  }} />)
+  .add('加速度', () => <Component render={(ctx, uc, canvas) => {
+    canvas.width = 300
+    canvas.height = 300
+    var ball = uc.atomic.ball(10, 10, 50, { fill: 'blue' }, { vx: 5, vy: 2 });
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ball.draw();
+      // 添加加速度，使运动轨迹更加真实
+      ball.vx *= .99
+      ball.vy += .25
+
+      // 修改小球
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+
+      // 碰撞检测，修改速度方向
+      if (ball.y + ball.vy > canvas.height || ball.y + ball.vy < 0) {
+        ball.vy = -ball.vy;
+      }
+      if (ball.x + ball.vx > canvas.width || ball.x + ball.vx < 0) {
+        ball.vx = -ball.vx;
+      }
+      window.requestAnimationFrame(draw);
+    }
+    draw()
+  }} />)
+  .add('长尾效果', () => <Component render={(ctx, uc, canvas) => {
+    var ball = uc.atomic.ball(10, 10, 50, { fill: 'blue' }, { vx: 5, vy: 2 });
+    function draw() {
+      // 长尾效果
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ball.draw();
+      // 添加加速度，使运动轨迹更加真实
+      ball.vx *= .99
+      ball.vy += .25
+
+      // 修改小球
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+
+      // 碰撞检测，修改速度方向
+      if (ball.y + ball.vy > canvas.height || ball.y + ball.vy < 0) {
+        ball.vy = -ball.vy;
+      }
+      if (ball.x + ball.vx > canvas.width || ball.x + ball.vx < 0) {
+        ball.vx = -ball.vx;
+      }
+      window.requestAnimationFrame(draw);
+    }
+    draw()
+  }} />)
+  .add('鼠标控制', () => <Component render={(ctx, uc, canvas) => {
+    var ball = uc.atomic.ball(10, 10, 50, { fill: 'blue' }, { vx: 5, vy: 2 });
+    uc.tools.draw(ball)
+    uc.tools.longTailEffect(ball) 
+    // https://developer.mozilla.org/en-US/docs/Games
+    // 有时间研究
+  }} />)
+
+
+storiesOf('Draw|图像处理', module) 
+  .add('像素操作', () => <Component render={(ctx, uc, canvas) => {
+    var img = new Image();
+    img.src = defaultImg;
+    img.onload = function() {
+      // 画图片
+      ctx.drawImage(img, 0, 0, 300, 300);
+      // 获取图片数据
+      var myImageData = ctx.getImageData(0, 0, 100, 100);
+      // 绘制图片数据
+      ctx.putImageData(myImageData, 0, 200);
+    };
+    canvas.addEventListener('mousemove', uc.tools.drawPixelColor);
+  }} />)
+  .add('图片的灰度', () => <Component render={(ctx, uc, canvas) => {
+    uc.image(0, 0, 300, 300, defaultImg)
+    canvas.addEventListener('click', uc.filter.grayscale); 
+  }} />)
+  .add('反向颜色', () => <Component render={(ctx, uc, canvas) => {
+    uc.image(0, 0, 300, 300, defaultImg)
+    canvas.addEventListener('click', uc.filter.invert); 
+  }} />)
+  .add('缩放反锯齿', () => (<div>
+    <Component render={(ctx, uc, canvas) => {
+      uc.image(0, 0, 300, 300, defaultImg)
+      var zoomctx = document.getElementById('zoom').getContext('2d');
+ 
+      var smoothbtn = document.getElementById('smoothbtn');
+      // 反锯齿，看不出来区别
+      var toggleSmoothing = function(event) {
+        zoomctx.imageSmoothingEnabled = this.checked;
+        zoomctx.mozImageSmoothingEnabled = this.checked;
+        zoomctx.webkitImageSmoothingEnabled = this.checked;
+        zoomctx.msImageSmoothingEnabled = this.checked;
+      };
+      smoothbtn.addEventListener('change', toggleSmoothing);
+
+      var zoom = function(event) {
+        var x = event.layerX;
+        var y = event.layerY;
+        zoomctx.drawImage(canvas, Math.abs(x - 5), Math.abs(y - 5), 10, 10, 0, 0, 200, 200);
+      };
+
+      canvas.addEventListener('mousemove', zoom);
+    }} />
+    <canvas id="zoom" style={{ position: 'absolute', top: 300, left: 0 }} />
+    <button id="smoothbtn" style={{ position: 'absolute', top: 300, left: 300 }}>smoothbtn</button>
+  </div>))
+  .add('保存图片', () => <Component render={(ctx, uc, canvas) => {
+    uc.image(0, 0, 300, 300, defaultImg)
+    // console.log(canvas.toDataURL('image/png'))
+    // console.log(canvas.toDataURL('image/jpeg', 0.5))
+    // console.log(canvas.toBlob())
+  }} />)
+
+storiesOf('Draw|其他操作', module) 
+  .add('内容兼容', () => <Component render={(ctx, uc, canvas) => {
+  }}>
+    <h2>Shapes</h2> 
+    <p>A rectangle with a black border. 
+    In the background is a pink circle. 
+    Partially overlaying the <a href="http://en.wikipedia.org/wiki/Circle">circle</a>. 
+    Partially overlaying the circle is a green 
+    <a href="http://en.wikipedia.org/wiki/Square">square</a> 
+    and a purple <a href="http://en.wikipedia.org/wiki/Triangle">triangle</a>,
+    both of which are semi-opaque, so the full circle can be seen underneath.</p> 
+  </Component>)
+  .add('点击区域', () => <Component render={(ctx, uc, canvas) => {
+    var ball = uc.atomic.ball(50, 50, 50, { fill: 'red' })
+    ball.draw()
+    canvas.addEventListener('click', function(event) {
+      if (event.region) {
+        console.log(event.region)
+      }
+    })
+  }} />)
+  .add('smile', () => <Component render={(ctx, uc, canvas) => {
+    var smile = uc.atomic.smile(100, 100, 75, { stroke: 'blue', strokeWidth: 1 })
+    var smile1 = uc.atomic.smile(100, 200, 75, { fill: 'blue', strokeWidth: 3 })
+    smile.draw()
+    smile1.draw()
+  }} />)
+  .add('优化', () => <Component render={(ctx, uc, canvas) => {
+    uc.tools.offcreenRender(canvas)
+  }} />)
+  .add('多层画布', () => (<div>
+    <Component id="ui-layer" style={{ position: 'absolute', top: 0, zIndex: 3 }} render={(ctx, uc, canvas) => {
+      var smile = uc.atomic.smile(100, 100, 75, { fill: 'red', strokeWidth: 1 }) 
+      smile.draw()
+    }} />
+    <Component id="game-layer" style={{ position: 'absolute', top: 0, zIndex: 2 }} render={(ctx, uc, canvas) => {
+      var smile = uc.atomic.smile(100, 150, 75, { fill: 'green', strokeWidth: 1 })
+      smile.draw()
+    }} />
+    <Component id="background-layer" style={{ position: 'absolute', top: 0, zIndex: 1 }} render={(ctx, uc, canvas) => {
+      var smile = uc.atomic.smile(100, 200, 75, { fill: 'blue', strokeWidth: 1 })
+      smile.draw()
+    }} />
+  </div>))
+  .add('用CSS设置大的背景图', () => <Component style={{ backgroundImage: `url(${defaultImg})` }} render={(ctx, uc, canvas) => {
+  }} />)
+  .add('用CSS transforms特性缩放画布', () => <Component render={(ctx, uc, canvas) => {
+    var scaleX = canvas.width / window.innerWidth;
+    var scaleY = canvas.height / window.innerHeight;
+
+    var scaleToFit = Math.min(scaleX, scaleY);
+    var scaleToCover = Math.max(scaleX, scaleY);
+
+    // stage.style.transformOrigin = '0 0'; //scale from top left
+    // stage.style.transform = 'scale(' + scaleToFit + ')';
+  }} />)
+  .add('关闭透明度', () => (<div>
+    <Component id="ui-layer" style={{ position: 'absolute', top: 0, zIndex: 3 }} render={(ctx, uc, canvas) => {
+      var smile = uc.atomic.smile(100, 100, 75, { fill: 'red', strokeWidth: 1 }) 
+      smile.draw()
+    }} />
+    <Component id="game-layer" canvasOptions={{ alpha: false }} style={{ position: 'absolute', top: 0, zIndex: 2 }} render={(ctx, uc, canvas) => {
+      var smile = uc.atomic.smile(100, 150, 75, { fill: 'green', strokeWidth: 1 })
+      smile.draw()
+    }} />
+    <Component id="background-layer" style={{ position: 'absolute', top: 0, zIndex: 1 }} render={(ctx, uc, canvas) => {
+      var smile = uc.atomic.smile(100, 200, 75, { fill: 'blue', strokeWidth: 1 })
+      smile.draw()
+    }} />
+  </div>), {
+    notes: `
+1.将画布的函数调用集合到一起（例如，画一条折线，而不要画多条分开的直线）
+
+2.避免不必要的画布状态改变
+
+3.渲染画布中的不同点，而非整个新状态
+
+4.尽可能避免 shadowBlur特性
+
+5.尽可能避免text rendering
+
+6.使用不同的办法去清除画布(clearRect() vs. fillRect() vs. 调整canvas大小)
+
+7.有动画，请使用window.requestAnimationFrame() 而非window.setInterval()
+
+8.请谨慎使用大型物理库
+    `
+  })
+  // .add('', () => <Component render={(ctx, uc, canvas) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx, uc, canvas) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx, uc, canvas) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx, uc, canvas) => {
+  // }} />)

@@ -254,10 +254,11 @@ storiesOf('Rough|Api', module)
       ['circle', { fill: 'red', hachureAngle: random(270, 360), hachureGap: random(0, 25) }],
     ]} />)
     .add('curveStepCount', () => <Component autoSort data={[
-      ['circle', { fill: 'red', hachureAngle: 90 }],
-      ['circle', { fill: 'red', hachureAngle: 90, curveStepCount: 9 }],
       ['circle', { fill: 'red', hachureAngle: 90, curveStepCount: 1 }],
+      ['circle', { fill: 'red', hachureAngle: 90, curveStepCount: 2 }],
+      ['circle', { fill: 'red', hachureAngle: 90, curveStepCount: 3 }],
       ['circle', { fill: 'red', hachureAngle: 90, curveStepCount: 4 }],
+      ['circle', { fill: 'red', hachureAngle: 90, curveStepCount: 9 }],
       ['circle', { fill: 'red', hachureAngle: 90, curveStepCount: 20 }],
       ['circle', { fill: 'red', hachureAngle: 90, curveStepCount: 50 }],
     ]} />)

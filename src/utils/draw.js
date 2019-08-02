@@ -4,13 +4,15 @@ import isArray from 'lodash/isArray'
 const colors = ['', '#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3', '#FB001F', '#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3']
 
 class Draw {
-  constructor(obj, setting) {
-    this.ctx = obj
+  constructor(context, setting) {
+    this.ctx = context
 
     this.initStyle(setting || {})
   }
 
   initStyle = (setting) => {
+    if (!setting || !this.ctx) return null
+    
     this.rainbow = setting.rainbow
     this.screenWidth = setting.screenWidth || 800 
     this.screenHeight = setting.screenHeight || 800
@@ -24,7 +26,7 @@ class Draw {
   }
 
   setStyle = (setting) => {
-    if (!setting) return null
+    if (!setting || !this.ctx) return null
 
     this.styleType = []
     if (setting.fill) this.styleType.push('fill')
@@ -231,6 +233,17 @@ class Draw {
     this.endToDraw()
     this.ctx.restore()
   }
+
+  image = (x, y, w, h, src) => new Promise((resolve) => {
+    var img = new Image();
+    img.src = src;
+    img.crossOrigin = "Anonymous";
+    img.onload = () => {
+      // 画图片
+      this.ctx.drawImage(img, x, y, w, h);
+      resolve()
+    };
+  })
 
   pen = (x, y, x1, y1) => {
     if (this.rainbow) {
