@@ -79,6 +79,18 @@ class Tools {
 
     // entity.render(entity.offscreenContext);
   }
+
+  addMouseEvent = (mousedown, mousemove, mouseup) => {
+    this.canvas.addEventListener('mousedown', (evt) => {
+      mousedown(evt)
+    });
+    document.addEventListener('mousemove', (evt) => {
+      mousemove(evt)
+    });
+    document.addEventListener('mouseup', () => {
+      mouseup()
+    });
+  }
 }
 
 export default Tools

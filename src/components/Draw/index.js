@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import isArray from 'lodash/isArray'
 import isFunction from 'lodash/isFunction'
-import Elves from '../../utils/elves'
+import Elves from '../../utils/elves/index'
 import rough from '../../../node_modules/roughjs/dist/rough-async.umd'
 import { formatOptions } from '../../utils/helper'
 

@@ -321,6 +321,22 @@ storiesOf('Draw|图像处理', module)
     // console.log(canvas.toDataURL('image/jpeg', 0.5))
     // console.log(canvas.toBlob())
   }} />)
+  .add('图片翻转', () => <Component render={(ctx, uc, canvas) => {
+    uc.image(0, 0, 300, 300, defaultImg)
+
+    setTimeout(() => {
+      const x1 = 0 + 300 / 2
+  
+      ctx.save();
+      // ctx.translate(x1, 0)
+      ctx.translate(2 * x1, 0)
+      ctx.scale(-1, 1) // 沿y轴水平翻转对象  1，-1 沿x轴垂直翻转对象
+      // ctx.translate(-x1, 0)
+      uc.image(0, 0, 300, 300, defaultImg)
+      // 恢复之前的状态，是后渲染的内容消失吗？
+      // ctx.restore()
+    }, 3000)
+  }} />)
 
 storiesOf('Draw|其他操作', module) 
   .add('内容兼容', () => <Component render={(ctx, uc, canvas) => {

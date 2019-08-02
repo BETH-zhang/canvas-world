@@ -1,5 +1,5 @@
 import { addEvent, getOffSet, timer } from 'us-common-utils'
-import Draw from './draw'
+import Draw from './elves/draw'
 import Mousefollow from './mousefollow'
 import Screenshots from './screenshots'
 

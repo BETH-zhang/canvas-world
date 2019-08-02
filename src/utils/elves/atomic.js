@@ -1,3 +1,5 @@
+import Cube from './cube'
+
 class Atomic {
   constructor(canvas, draw) {
     this.canvas = canvas
@@ -13,12 +15,12 @@ class Atomic {
       vx: speedOptions.vx || 0,
       vy: speedOptions.vy || 0,
       radius: diameter / 2,
-      update: function(params) {
+      update: function (params) {
         Object.keys(params).forEach((key) => {
           this[key] = params[key]
         })
       },
-      draw: function() {
+      draw: function () {
         self.draw.circle(this.x, this.y, diameter, options)
         // chrome://flags/ Set the flag ExperimentalCanvasFeatures to true to enable it.
         // self.ctx.addHitRegion({ id: speedOptions.id || 'ball' })
@@ -39,13 +41,30 @@ class Atomic {
     return {
       x,
       y,
-      draw: function() {
+      draw: function () {
         self.draw.circle(this.x, this.y, diameter, options)
         const innerOptions = options.fill ? Object.assign({}, options, { fill: '', stroke: '#fff' }) : options
         self.draw.circle(leftEyeX, leftEyeY, diameter / 7.5, innerOptions)
         self.draw.circle(rightEyeX, rightEyeY, diameter / 7.5, innerOptions)
         self.draw.line(leftMouthX, leftMouthY, rightMouthX, rightMouthY, innerOptions)
       }
+    }
+  }
+
+  cube = (x, y) => {
+    const self = this
+    return {
+      x: x || this.canvas.width,
+      y: y || this.canvas.height,
+      center: null,
+      instance: null,
+      mousedown: false,
+      draw: function () {
+        var instance = new Cube(0, 100, 0, 50);
+        this.instance = instance
+        this.center = instance.center
+        instance.render(self.ctx, 200, 200);
+      },
     }
   }
 }
