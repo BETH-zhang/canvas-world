@@ -12,7 +12,7 @@ storiesOf('Atomic|Demo', module)
     smile.draw()
   }} />)
   .add('cube', () => <Component render={(ctx, uc, canvas) => {
-    var cube = uc.atomic.cube()
+    var cube = uc.atomic.cube(50, 50)
     cube.draw()
     uc.tools.addMouseEvent((evt) => {
       cube.mousedown = true
@@ -20,13 +20,12 @@ storiesOf('Atomic|Demo', module)
       cube.my = evt.clientY
     }, (evt) => {
       if (cube.mousedown) {
-          var theta = (evt.clientX - cube.mx) * Math.PI / 360;
-          var phi = (evt.clientY - cube.my) * Math.PI / 180;
-          cube.instance.rotate2(theta, phi);
-          cube.mx = evt.clientX;
-          cube.my = evt.clientY;
-          cube.draw()
-          // cube.render(this.ctx, this.dx, this.dy);
+        var theta = (evt.clientX - cube.mx) * Math.PI / 360;
+        var phi = (evt.clientY - cube.my) * Math.PI / 180;
+        cube.instance.rotate2(theta, phi);
+        cube.mx = evt.clientX;
+        cube.my = evt.clientY;
+        cube.instance.render(ctx, cube.x, cube.y);
       }
     }, () => {
       cube.mousedown = false

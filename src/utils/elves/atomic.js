@@ -56,14 +56,14 @@ class Atomic {
     return {
       x: x || this.canvas.width,
       y: y || this.canvas.height,
-      center: null,
+      // center: null,
       instance: null,
       mousedown: false,
       draw: function () {
         var instance = new Cube(0, 100, 0, 50);
         this.instance = instance
-        this.center = instance.center
-        instance.render(self.ctx, 200, 200);
+        // this.center = instance.center
+        instance.render(self.ctx, this.x, this.y);
       },
     }
   }

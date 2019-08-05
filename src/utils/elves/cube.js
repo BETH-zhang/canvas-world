@@ -36,6 +36,8 @@ class Cube {
       [this.vertices[7], this.vertices[0], this.vertices[3], this.vertices[4]],
       [this.vertices[1], this.vertices[6], this.vertices[5], this.vertices[2]]
     ];
+
+    console.log(this.faces)
   }
 
   /**
@@ -46,7 +48,8 @@ class Cube {
    */
   render = (ctx, dx, dy) => {
     ctx.clearRect(0, 0, 2 * dx, 2 * dy);
-    var faces = this.faces, len = this.faces.length;
+    var faces = this.faces
+    var len = this.faces.length;
     faces.sort(function (a, b) {
       let aIndex = a[0].y + a[1].y + a[2].y + a[3].y;
       let bIndex = b[0].y + b[1].y + b[2].y + b[3].y;
@@ -55,8 +58,8 @@ class Cube {
     //遍历6个面
     for (var j = 0; j < len; ++j) {
       var face = faces[j];
-      //ctx.fillStyle = this.facecolor[1];
       ctx.beginPath();
+      ctx.fillStyle = this.facecolor[j];
 
       //连接4个点
       for (var k = 0, n_vertices = face.length; k < n_vertices; ++k) {
