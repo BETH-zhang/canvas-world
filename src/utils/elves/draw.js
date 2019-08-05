@@ -220,16 +220,23 @@ class Draw {
   curve = (params, options) => {
     this.setStyle(options)
     
-    this.ctx.beginPath()
-    this.ctx.moveTo(...params[0])
-    console.log(params)
-    for (let i = 1; i < params.length; i = i+1) {
-      this.ctx.lineTo(...params[i])
-      // this.ctx.bezierCurveTo(params[i][0], params[i][1], params[i + 1][0], params[i + 1][1])
+    for (let i = 0; i < params.length - 1; i = i + 3) {
+      this.ctx.beginPath()
+      this.ctx.moveTo(params[i][0], params[i][1]);
+      this.pen(params[i + 1][0], params[i + 1][1], params[i + 2][0], params[i + 2][1], options)
     }
-    // this.ctx.bezierCurveTo(425.08, 342, 432.16, 350, 439.24, 346)
-    // this.ctx.bezierCurveTo(439.24, 346, 446.32, 342, 453.4, 350)
+    this.endToDraw()
+    this.ctx.restore()
+  }
 
+  pen = (x, y, x1, y1, options) => {
+    this.setStyle(options)
+
+    if (this.rainbow) {
+      this.linearGradient()
+    }
+    this.ctx.save()
+    this.ctx.quadraticCurveTo(x, y, x1, y1);
     this.endToDraw()
     this.ctx.restore()
   }
@@ -244,16 +251,6 @@ class Draw {
       resolve()
     };
   })
-
-  pen = (x, y, x1, y1) => {
-    if (this.rainbow) {
-      this.linearGradient()
-    }
-    this.ctx.save()
-    this.ctx.quadraticCurveTo(x, y, x1, y1);
-    this.ctx.stroke()
-    this.ctx.closePath()
-  }
 
   eraser = (x, y, x1, y1) => {
     this.ctx.clearRect(x1 - 5, y1 - 5, 10, 10)

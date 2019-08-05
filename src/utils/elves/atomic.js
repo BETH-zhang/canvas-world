@@ -7,6 +7,48 @@ class Atomic {
     this.draw = draw
   }
 
+  anchor = (x, y, options = { stroke: '#ee6621' }, otherOptions = { scale: 1, borderRadius: 3 }) => {
+    const self = this
+    return {
+      x,
+      y,
+      scale: otherOptions.scale || 1,
+      borderRadius: otherOptions.borderRadius || 3,
+      draw: function () {
+        const point1 = [x, y]
+        const point2 = [x - 10 * this.scale, y + 10 * this.scale]
+        const point3 = [x + 10 * this.scale, y + 10 * this.scale]
+        const params = [
+          [point1[0] - this.borderRadius, point1[1]],
+          [point1[0], point1[1] - this.borderRadius],
+          [point1[0] + this.borderRadius, point1[1]],
+          [point3[0] - this.borderRadius, point3[1] - this.borderRadius],
+         
+          [point3[0] - this.borderRadius, point3[1] - this.borderRadius],
+          [point3[0], point3[1] + this.borderRadius],
+          [point3[0] - 2 * this.borderRadius, point3[1] + this.borderRadius],
+          [point2[0] + 2 * this.borderRadius, point2[1] + this.borderRadius],
+
+          [point2[0] + 2 * this.borderRadius, point2[1] + this.borderRadius],
+          [point2[0], point2[1] + this.borderRadius],
+          [point2[0] + this.borderRadius, point2[1] - this.borderRadius],
+          [point1[0] - this.borderRadius, point1[1]],
+        ]
+        self.draw.setStyle(options)
+        self.ctx.beginPath()
+        self.ctx.moveTo(params[0][0], params[0][1]);
+        for (let i = 0; i < params.length - 1; i = i + 4) {
+          self.ctx.quadraticCurveTo(params[i + 1][0], params[i + 1][1], params[i + 2][0], params[i + 2][1]);
+          self.ctx.lineTo(params[i + 3][0], params[i + 3][1])
+        }
+
+        self.ctx.closePath()
+        self.draw.endToDraw()
+        self.ctx.restore()
+      },
+    }
+  }
+
   ball = (x, y, diameter, options, speedOptions = {}) => {
     const self = this
     return {

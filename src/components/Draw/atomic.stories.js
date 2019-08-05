@@ -1,6 +1,7 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react'
 import Component from './index'
+import Cube from '../../utils/elves/cube';
 
 storiesOf('Atomic|Demo', module)
   .add('ball', () => <Component render={(ctx, uc, canvas) => {
@@ -30,7 +31,31 @@ storiesOf('Atomic|Demo', module)
     }, () => {
       cube.mousedown = false
     })
+  }} />, {
+    notes: '这里涉及到旋转矩阵的知识<br /> http://www.mamicode.com/info-detail-2278290.html'
+  })
+  .add('anchor', () => <Component render={(ctx, uc, canvas) => {
+    var anchor = uc.atomic.anchor(100, 100, { fill: 'red' }, { scale: 5 } )
+    anchor.draw()
+    var anchor = uc.atomic.anchor(100, 50, { stroke: 'red' }, { scale: 2 } )
+    anchor.draw()
   }} />)
+  // .add('', () => <Component render={(ctx, uc, canvas) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx, uc, canvas) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx, uc, canvas) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx, uc, canvas) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx, uc, canvas) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx, uc, canvas) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx, uc, canvas) => {
+  // }} />)
+  // .add('', () => <Component render={(ctx, uc, canvas) => {
+  // }} />)
   // .add('', () => <Component render={(ctx, uc, canvas) => {
   // }} />)
 
