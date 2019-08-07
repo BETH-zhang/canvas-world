@@ -2,9 +2,11 @@ import React from 'react';
 import { storiesOf } from '@storybook/react'
 import Component from './index'
 import WbUtils from '../../utils/whiteboard'
-import { addTestImage, findFourPoint } from '../../utils/helper'
+import { addImageData, addTestImage, findFourPoint } from '../../utils/helper'
 
 import defaultImg from '../../assets/mr.jpg'
+import imageTestData from './data'
+import imageTestData1 from './data1'
 
 storiesOf('Draw|Demo', module)
   .add('默认状态', () => <Component render={(ctx, uc, canvas) => {
@@ -50,6 +52,14 @@ storiesOf('Draw|Demo', module)
   .add('圈记5', () => <Component render={(ctx, uc, canvas) => {
     addTestImage(ctx).then(({ x, y, w, h, textA, textWhen, line, p }) => {
       uc.curveTag(...line, { stroke: 'red', strokeWidth: 1 })
+    })
+  }} />)
+  .add('标记', () => <Component style={{ width: 400 }} render={(ctx, uc, canvas) => {
+    addImageData(ctx, 400, imageTestData1.img, imageTestData1.data).then((params) => {
+      console.log(params, '???params')
+      console.log(params.point)
+      uc.polygon(params.point, { fill: 'rgba(255, 0, 0, 0.3)', stroke: 'rgba(255, 0, 0, 1)' })
+      // uc.ellipse(params.x, params.y, params.w, params.h, { stroke: 'red', strokeWidth: 1 })
     })
   }} />)
 

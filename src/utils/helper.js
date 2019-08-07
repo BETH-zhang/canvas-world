@@ -112,6 +112,77 @@ export const addTestImage = (ctx) => new Promise((resolve) => {
   }
 })
 
+export const addImageData = (ctx, zoom, imageUrl, data) => new Promise((resolve) => {
+  var img = new Image();
+  img.src = imageUrl;
+  img.onload = function() {
+    const width = img.width
+    const height = img.height
+    ctx.drawImage(img, 0, 0, zoom, zoom * height / width)
+
+    const notations = []
+    if (data && data.length) {
+      data.forEach((item, index) => {
+        if (index) return
+        console.log(item, '---')
+
+        console.log(item.vertices, '///')
+        
+        // var p1 = {
+        //   x: Math.round(item.vertices[0][0].x * (800 / width)),
+        //   y: Math.round(item.vertices[0][0].y * (800 / width)),
+        // }
+        // var p2 = {
+        //   x: Math.round(item.vertices[0][1].x * (800 / width)),
+        //   y: Math.round(item.vertices[0][1].y * (800 / width)),
+        // }
+        // var p3 = {
+        //   x: Math.round(item.vertices[0][2].x * (800 / width)),
+        //   y: Math.round(item.vertices[0][2].y * (800 / width)),
+        // }
+        // var p4 = {
+        //   x: Math.round(item.vertices[0][3].x * (800 / width)),
+        //   y: Math.round(item.vertices[0][3].y * (800 / width)),
+        // }
+
+        var p1 = {
+          x: item.vertices[0][0].x * (zoom / width),
+          y: item.vertices[0][0].y * (zoom / width),
+        }
+        var p2 = {
+          x: item.vertices[0][1].x * (zoom / width),
+          y: item.vertices[0][1].y * (zoom / width),
+        }
+        var p3 = {
+          x: item.vertices[0][2].x * (zoom / width),
+          y: item.vertices[0][2].y * (zoom / width),
+        }
+        var p4 = {
+          x: item.vertices[0][3].x * (zoom / width),
+          y: item.vertices[0][3].y * (zoom / width),
+        }
+
+        const hr1 = (p2.y - p1.y) / 2
+        const hr2 = (p4.y - p3.y) / 2
+        const w = ((p3.x - p1.x) + (p4.x - p2.x)) / 2 + hr1 + hr2
+        const h = ((p3.y - p3.y) + (p4.y - p2.y)) / 2 + (hr1 + hr2) * 2
+        const x = p1.x - hr1 + w / 2
+        const y = p1.y - hr1 / 2 + h / 2
+        
+        notations.push({
+          x: Math.round(x),
+          y: Math.round(y),
+          w: Math.round(w),
+          h: Math.round(h),
+          point: [[p1.x, p1.y], [p2.x, p2.y], [p3.x, p3.y], [p4.x, p4.y]],
+        })
+      })
+    }
+       
+    resolve(notations[0])
+  } 
+})
+
 export const findFourPoint = (arr, type) => {
   var rightPointer = arr.length - 1
   if (rightPointer < 1) {
