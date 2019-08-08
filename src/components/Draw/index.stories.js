@@ -416,6 +416,39 @@ storiesOf('Draw|其他操作', module)
       }
     })
   }} />)
+  .add('点击方块', () => <Component render={(ctx, uc, canvas) => {
+    // 碰撞检测
+    const checkBoundary = (x, y, self) => {
+      return x > self.x && x < (self.x + self.w) && y > self.y && y < (self.y + self.h)
+    }
+    const blockList = [
+      {x: 100, y: 100, w: 100, h: 100, fill: 'red', onClick: () => {console.log('red')}},
+      {x: 150, y: 100, w: 100, h: 100, fill: 'blue', onClick: () => {console.log('blue')}}
+    ]
+    blockList.forEach((item) => {
+      uc.rectangle(item.x, item.y, item.w, item.y, { fill: item.fill })
+    })
+    const mousedownEvent = (e) => {
+      const x = e.clientX
+      const y = e.clientY
+      let hierarchy = -1
+      for (let i = blockList.length - 1; i >= 0; i--) {
+        console.log(hierarchy, i)
+        if (checkBoundary(x, y, blockList[i]) && hierarchy === -1) {
+          blockList[i].onClick()
+          hierarchy = i
+          uc.clear()
+          const topLevelBlock = blockList[hierarchy]
+          blockList.splice(hierarchy, 1)
+          blockList.push(topLevelBlock)
+          blockList.forEach((item) => {
+            uc.rectangle(item.x, item.y, item.w, item.y, { fill: item.fill })
+          })
+        }
+      }
+    }
+    canvas.addEventListener('click', mousedownEvent)
+  }} />)
   .add('smile', () => <Component render={(ctx, uc, canvas) => {
     var smile = uc.atomic.smile(100, 100, 75, { stroke: 'blue', strokeWidth: 1 })
     var smile1 = uc.atomic.smile(100, 200, 75, { fill: 'blue', strokeWidth: 3 })
