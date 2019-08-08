@@ -1,5 +1,5 @@
 {
-  "name": "Elves",
+  "name": "elves",
   "version": "1.0.0",
   "description": "",
   "main": "./dist/index.js",
@@ -7,7 +7,9 @@
     "start": "npm run storybook",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --progress",
+    "build-react": "webpack --config ./webpack.config.react.js --progress",
     "prepublish": "npm run build",
+    "prepublish-react": "npm run build-react",
     "storybook": "start-storybook -s ./dist -p 6005 -c .storybook",
     "storybook-for-app": "start-storybook -p 8001 -c .storybook-app",
     "build-storybook": "build-storybook -c .storybook -o .site",

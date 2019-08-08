@@ -14,7 +14,7 @@ module.exports = {
     filename: 'index.js',
     publicPath: '/dist/',
     path: path.resolve(__dirname, 'dist'),
-    library: package.name,
+    library: 'canvas-world',
     libraryTarget: 'umd'
   },
   module: {

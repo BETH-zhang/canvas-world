@@ -1,6 +1,8 @@
 // import * as ant from 'antd'
-import ButtonC from './components/Button'
+import DrawC from './components/Draw'
+import RoughC from './components/Rough'
 
 import './style/index.less'
 
-export const Button = ButtonC
+export const Draw = DrawC
+export const Rough = RoughC
