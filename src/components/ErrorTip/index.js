@@ -4,7 +4,7 @@ import { Card } from 'antd'
 import './index.less'
 
 export default class ErrorTip extends React.Component {
-  state = { count: 0, style: { top: 0, left: 0, display: 'none' }, notation: {} }
+  state = { key: 'tab1', count: 0, style: { top: 0, left: 0, display: 'none' }, notation: {} }
 
   update = () => {
     this.setState({ count: this.state.count + 1 })
@@ -12,15 +12,14 @@ export default class ErrorTip extends React.Component {
   
   render() {
     console.log(this.state)
-    return (<div className="error-tip" style={this.state.style}>
-      <Card title={(<div dangerouslySetInnerHTML={{ __html: this.state.notation.title}} />)}>
+    const contentList = {
+      tab1: (<div>
         {
           Object.keys(this.state.notation).map((key) => {
-            if (['category', 'categoryHuman', 'categoryHumanText', 'impact', 'point', 'todo', 'explanation'].includes(key)) {
-              if (this.state.notation[key].indexOf('<') > -1) {
-                return (<div dangerouslySetInnerHTML={{ __html: this.state.notation[key]}} />)
-              }
+            if (['category', 'categoryHuman', 'categoryHumanText', 'impact', 'point', 'todo'].includes(key)) {
               return (<div><b>{key}</b>&nbsp;&nbsp;{this.state.notation[key]}</div>)
+            } else if (['explanation', 'details'].includes(key)) {
+              return (<div dangerouslySetInnerHTML={{ __html: this.state.notation[key]}} />)
             } else if (key === 'replacements') {
               return (<div>
                 <b>{key}</b>&nbsp;&nbsp;{this.state.notation[key].map((item) => (<i>【{item}】</i>))}
@@ -29,6 +28,24 @@ export default class ErrorTip extends React.Component {
             return null
           })
         }
+      </div>),
+      tab2: (<div>
+        {
+          this.state.notation.cardLayout &&
+          Object.keys(this.state.notation.cardLayout).map((key) => {
+            return (<div><b>{key}</b>&nbsp;&nbsp;{this.state.notation.cardLayout[key]}</div>) 
+          }) 
+        }
+      </div>)
+    }
+    return (<div className="error-tip" style={this.state.style}>
+      <Card
+        title={(<div dangerouslySetInnerHTML={{ __html: this.state.notation.title}} />)}
+        tabList={[{ key: 'tab1', tab: 'category' }, { key: 'tab2', tab: 'cardLayout' }]}
+        activeTabKey={this.state.key}
+        onTabChange={key => this.setState({ key })}
+      >
+        {contentList[this.state.key]}
       </Card>
     </div>)
   }
