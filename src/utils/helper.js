@@ -106,21 +106,28 @@ export const coordinateToEllipseParameter = (data, scale) => {
   let right = { x: null }
   let bottom = { y: null }
 
-  data.forEach((item) => {
+  left = data[data.length - 1]
+  top = data[0]
+
+  data.forEach((item, index) => {
     const point = {
       x: item.x * scale,
       y: item.y * scale
     }
-    if (!left.x || point.x < left.x) {
+    // if (!left.x || point.x < left.x) {
+    if (index === data.length - 1) {
       left = point
     }
-    if (!right.x || point.x > right.x) {
-      right = point
-    }
-    if (!top.y || point.y < top.y) {
+    // if (!top.y || point.y < top.y) {
+    if (index === 0) {
       top = point
     }
-    if (!bottom.y || point.y > bottom.y) {
+    // if (!right.x || point.x > right.x) {
+    if (index === data.length / 2 -1) {
+      right = point
+    }
+    // if (!bottom.y || point.y > bottom.y) {
+    if (index === data.length / 2) {
       bottom = point
     }
   })
@@ -199,42 +206,20 @@ export const addImageData = (ctx, zoom, imageUrl, data) => new Promise((resolve)
     const notations = []
     if (data && data.length) {
       data.forEach((item, index) => {
-        if (index) return
-        var p1 = { // 上
-          x: item.vertices[0][0].x * (zoom / width),
-          y: item.vertices[0][0].y * (zoom / width),
-        }
-        var p2 = { // 右
-          x: item.vertices[0][1].x * (zoom / width),
-          y: item.vertices[0][1].y * (zoom / width),
-        }
-        var p3 = { // 下
-          x: item.vertices[0][2].x * (zoom / width),
-          y: item.vertices[0][2].y * (zoom / width),
-        }
-        var p4 = { // 左
-          x: item.vertices[0][3].x * (zoom / width),
-          y: item.vertices[0][3].y * (zoom / width),
-        }
+        const vertices = item.vertices.map((item) => {
+          return item.map((subItem) => ([subItem.x * (zoom / width), subItem.y * (zoom / width)]))
+        })
 
         const params = coordinateToEllipseParameter(item.vertices[0], zoom / width)
-
-        const x = params.x
-        const y = params.y
-        const w = params.w
-        const h = params.h
-        const angle = params.angle
-        
         notations.push({
           ...params,
-          point: [[p1.x, p1.y], [p2.x, p2.y], [p3.x, p3.y], [p4.x, p4.y]],
+          point: [],
+          vertices,
         })
       })
     }
 
-    console.log(notations)
-       
-    resolve(notations[0])
+    resolve({ params: notations[0], notations })
   } 
 })
 

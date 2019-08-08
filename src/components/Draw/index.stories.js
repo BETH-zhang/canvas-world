@@ -56,33 +56,57 @@ storiesOf('Draw|Demo', module)
     })
   }} />)
   .add('标记1', () => <Component style={{ width: 800 }} render={(ctx, uc, canvas) => {
-    addImageData(ctx, 800, imageTestData.img, imageTestData.data).then((params) => {
-      uc.polygon(params.point, { fill: 'rgba(255, 0, 0, 0.3)', stroke: 'red' })
-      uc.ellipse(params.x, params.y, params.w, params.h, { rotate: params.angle, stroke: 'yellow' })
-      uc.line(params.point[3][0], params.point[3][1], params.point[2][0], params.point[2][1], { stroke: 'blue' })
-      uc.circle(params.center.x, params.center.y, 5, { stroke: 'green', fill: 'green' })
-      console.log(params)
-      uc.circle(params.center.x - params.w / 2, params.center.y, 5)
+    addImageData(ctx, 800, imageTestData.img, imageTestData.data).then(({ params, notations }) => {
+      const colors = ['#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3', '#FB001F', '#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3']
+      notations.forEach((notation, index) => {
+        const vertices = notation.vertices
+        vertices.forEach((vertice) => {
+          if (vertice && vertice.length) {
+            uc.polygon(vertice, { fill: 'rgba(255, 0, 0, 0.3)' })
+            uc.ellipse(notation.x, notation.y, notation.w, notation.h, { rotate: notation.angle, stroke: 'yellow' })
+            uc.line(vertice[vertice.length - 1][0], vertice[vertice.length - 1][1] + 3, vertice[vertice.length / 2][0], vertice[vertice.length / 2][1] + 3, { stroke: colors[index] })
+            vertice.forEach((point) => {
+              uc.circle(...point, 5, { stroke: colors[index], fill: colors[index] }) 
+            })
+          }
+        })
+      })
     })
   }} />)
   .add('标记2', () => <Component style={{ width: 400 }} render={(ctx, uc, canvas) => {
-    addImageData(ctx, 400, imageTestData1.img, imageTestData1.data).then((params) => {
-      uc.polygon(params.point, { fill: 'rgba(255, 0, 0, 0.3)', stroke: 'red' })
-      uc.ellipse(params.x, params.y, params.w, params.h, {rotate: params.angle,  stroke: 'yellow' })
-      uc.line(params.point[3][0], params.point[3][1], params.point[2][0], params.point[2][1], { stroke: 'blue' })
-      uc.circle(params.center.x, params.center.y, 5, { stroke: 'green', fill: 'green' })
-      console.log(params)
-      uc.circle(params.center.x - params.w / 2, params.center.y, 5)
+    addImageData(ctx, 400, imageTestData1.img, imageTestData1.data).then(({ params, notations }) => {
+      const colors = ['#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3', '#FB001F', '#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3']
+      notations.forEach((notation, index) => {
+        const vertices = notation.vertices
+        vertices.forEach((vertice) => {
+          if (vertice && vertice.length) {
+            uc.polygon(vertice, { fill: 'rgba(255, 0, 0, 0.3)' })
+            uc.ellipse(notation.x, notation.y, notation.w, notation.h, { rotate: notation.angle, stroke: 'yellow' })
+            uc.line(vertice[vertice.length - 1][0], vertice[vertice.length - 1][1] + 3, vertice[vertice.length / 2][0], vertice[vertice.length / 2][1] + 3, { stroke: colors[index] })
+            vertice.forEach((point) => {
+              uc.circle(...point, 5, { stroke: colors[index], fill: colors[index] }) 
+            })
+          }
+        })
+      })
     })
   }} />)
   .add('标记3', () => <Component style={{ width: 800 }} render={(ctx, uc, canvas) => {
-    addImageData(ctx, 800, imageTestData2.img, imageTestData2.data).then((params) => {
-      uc.polygon(params.point, { fill: 'rgba(255, 0, 0, 0.3)', stroke: 'red' })
-      uc.ellipse(params.x, params.y, params.w, params.h, { rotate: params.angle, stroke: 'yellow' })
-      uc.line(params.point[3][0], params.point[3][1], params.point[2][0], params.point[2][1], { stroke: 'blue' })
-      uc.circle(params.center.x, params.center.y, 5, { stroke: 'green', fill: 'green' })
-      console.log(params)
-      uc.circle(params.center.x - params.w / 2, params.center.y, 5)
+    addImageData(ctx, 800, imageTestData2.img, imageTestData2.data).then(({ params, notations }) => {
+      const colors = ['#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3', '#FB001F', '#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3']
+      notations.forEach((notation, index) => {
+        const vertices = notation.vertices
+        vertices.forEach((vertice) => {
+          if (vertice && vertice.length) {
+            uc.polygon(vertice, { fill: 'rgba(255, 0, 0, 0.3)' })
+            uc.ellipse(notation.x, notation.y, notation.w, notation.h, { rotate: notation.angle, stroke: 'yellow' })
+            uc.line(vertice[vertice.length - 1][0], vertice[vertice.length - 1][1] + 3, vertice[vertice.length / 2][0], vertice[vertice.length / 2][1] + 3, { stroke: colors[index] })
+            vertice.forEach((point) => {
+              uc.circle(...point, 5, { stroke: colors[index], fill: colors[index] }) 
+            })
+          }
+        })
+      })
     })
   }} />)
 

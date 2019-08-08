@@ -1,7 +1,11 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react'
-import { random, addTestImage } from '../../utils/helper'
+import { random, addImageData, addTestImage } from '../../utils/helper'
 import Component from './index'
+
+import imageTestData from '../../assets/data'
+import imageTestData1 from '../../assets/data1'
+import imageTestData2 from '../../assets/data2'
 
 storiesOf('Rough|Demo', module)
   .add('默认状态', () => <Component render={(ctx, rc) => {
@@ -59,6 +63,60 @@ storiesOf('Rough|Demo', module)
     addTestImage(ctx).then(({ x, y, w, h, textA, textWhen, line, p }) => {
       // rc.polygon(p, { fill: 'rgba(255, 0, 0, 1)', hachureGap: 5, stroke: 'rgba(255, 0, 0, 1)' })
       rc.curveTag(...line, { stroke: 'red', strokeWidth: 1 })
+    })
+  }} />)
+  .add('标记1', () => <Component style={{ width: 800 }} render={(ctx, rc) => {
+    addImageData(ctx, 800, imageTestData.img, imageTestData.data).then(({ params, notations }) => {
+      const colors = ['#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3', '#FB001F', '#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3']
+      notations.forEach((notation, index) => {
+        const vertices = notation.vertices
+        vertices.forEach((vertice) => {
+          if (vertice && vertice.length) {
+            rc.polygon(vertice, { fill: 'rgba(255, 0, 0, 0.3)' })
+            rc.ellipse(notation.x, notation.y, notation.w, notation.h, { rotate: notation.angle, stroke: 'yellow' })
+            rc.line(vertice[vertice.length - 1][0], vertice[vertice.length - 1][1] + 3, vertice[vertice.length / 2][0], vertice[vertice.length / 2][1] + 3, { stroke: colors[index] })
+            vertice.forEach((point) => {
+              rc.circle(...point, 5, { stroke: colors[index], fill: colors[index] }) 
+            })
+          }
+        })
+      })
+    })
+  }} />)
+  .add('标记2', () => <Component style={{ width: 400 }} render={(ctx, rc) => {
+    addImageData(ctx, 400, imageTestData1.img, imageTestData1.data).then(({ params, notations }) => {
+      const colors = ['#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3', '#FB001F', '#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3']
+      notations.forEach((notation, index) => {
+        const vertices = notation.vertices
+        vertices.forEach((vertice) => {
+          if (vertice && vertice.length) {
+            rc.polygon(vertice, { fill: 'rgba(255, 0, 0, 0.3)' })
+            rc.ellipse(notation.x, notation.y, notation.w, notation.h, { rotate: notation.angle, stroke: 'yellow' })
+            rc.line(vertice[vertice.length - 1][0], vertice[vertice.length - 1][1] + 3, vertice[vertice.length / 2][0], vertice[vertice.length / 2][1] + 3, { stroke: colors[index] })
+            vertice.forEach((point) => {
+              rc.circle(...point, 5, { stroke: colors[index], fill: colors[index] }) 
+            })
+          }
+        })
+      })
+    })
+  }} />)
+  .add('标记3', () => <Component style={{ width: 800 }} render={(ctx, rc) => {
+    addImageData(ctx, 800, imageTestData2.img, imageTestData2.data).then(({ params, notations }) => {
+      const colors = ['#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3', '#FB001F', '#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3']
+      notations.forEach((notation, index) => {
+        const vertices = notation.vertices
+        vertices.forEach((vertice) => {
+          if (vertice && vertice.length) {
+            rc.polygon(vertice, { fill: 'rgba(255, 0, 0, 0.3)' })
+            rc.ellipse(notation.x, notation.y, notation.w, notation.h, { rotate: notation.angle, stroke: 'yellow' })
+            rc.line(vertice[vertice.length - 1][0], vertice[vertice.length - 1][1] + 3, vertice[vertice.length / 2][0], vertice[vertice.length / 2][1] + 3, { stroke: colors[index] })
+            vertice.forEach((point) => {
+              rc.circle(...point, 5, { stroke: colors[index], fill: colors[index] }) 
+            })
+          }
+        })
+      })
     })
   }} />)
 
