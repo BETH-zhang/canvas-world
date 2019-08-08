@@ -1,0 +1,25 @@
+.draw-container {
+  width: 100%;
+  height: 100vh;
+}
+.draw-container canvas {
+  width: 800px;
+  height: 800px;
+  border: 1px solid;
+}
+#tools {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.rough-container {
+  width: 100%;
+  height: 100vh;
+}
+.rough-container canvas,
+.rough-container svg {
+  width: 800px;
+  height: 800px;
+}
+
+/*# sourceMappingURL=index.css.map*/
