@@ -1,6 +1,6 @@
 {
-  "name": "canvas-world",
-  "version": "1.0.13",
+  "name": "Elves",
+  "version": "1.0.0",
   "description": "",
   "main": "./dist/index.js",
   "scripts": {
