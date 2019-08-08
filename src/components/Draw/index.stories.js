@@ -5,8 +5,9 @@ import WbUtils from '../../utils/whiteboard'
 import { addImageData, addTestImage, findFourPoint } from '../../utils/helper'
 
 import defaultImg from '../../assets/mr.jpg'
-import imageTestData from './data'
-import imageTestData1 from './data1'
+import imageTestData from '../../assets/data'
+import imageTestData1 from '../../assets/data1'
+import imageTestData2 from '../../assets/data2'
 
 storiesOf('Draw|Demo', module)
   .add('默认状态', () => <Component render={(ctx, uc, canvas) => {
@@ -54,12 +55,34 @@ storiesOf('Draw|Demo', module)
       uc.curveTag(...line, { stroke: 'red', strokeWidth: 1 })
     })
   }} />)
-  .add('标记', () => <Component style={{ width: 400 }} render={(ctx, uc, canvas) => {
+  .add('标记1', () => <Component style={{ width: 800 }} render={(ctx, uc, canvas) => {
+    addImageData(ctx, 800, imageTestData.img, imageTestData.data).then((params) => {
+      uc.polygon(params.point, { fill: 'rgba(255, 0, 0, 0.3)', stroke: 'red' })
+      uc.ellipse(params.x, params.y, params.w, params.h, { rotate: params.angle, stroke: 'yellow' })
+      uc.line(params.point[3][0], params.point[3][1], params.point[2][0], params.point[2][1], { stroke: 'blue' })
+      uc.circle(params.center.x, params.center.y, 5, { stroke: 'green', fill: 'green' })
+      console.log(params)
+      uc.circle(params.center.x - params.w / 2, params.center.y, 5)
+    })
+  }} />)
+  .add('标记2', () => <Component style={{ width: 400 }} render={(ctx, uc, canvas) => {
     addImageData(ctx, 400, imageTestData1.img, imageTestData1.data).then((params) => {
-      console.log(params, '???params')
-      console.log(params.point)
-      uc.polygon(params.point, { fill: 'rgba(255, 0, 0, 0.3)', stroke: 'rgba(255, 0, 0, 1)' })
-      // uc.ellipse(params.x, params.y, params.w, params.h, { stroke: 'red', strokeWidth: 1 })
+      uc.polygon(params.point, { fill: 'rgba(255, 0, 0, 0.3)', stroke: 'red' })
+      uc.ellipse(params.x, params.y, params.w, params.h, {rotate: params.angle,  stroke: 'yellow' })
+      uc.line(params.point[3][0], params.point[3][1], params.point[2][0], params.point[2][1], { stroke: 'blue' })
+      uc.circle(params.center.x, params.center.y, 5, { stroke: 'green', fill: 'green' })
+      console.log(params)
+      uc.circle(params.center.x - params.w / 2, params.center.y, 5)
+    })
+  }} />)
+  .add('标记3', () => <Component style={{ width: 800 }} render={(ctx, uc, canvas) => {
+    addImageData(ctx, 800, imageTestData2.img, imageTestData2.data).then((params) => {
+      uc.polygon(params.point, { fill: 'rgba(255, 0, 0, 0.3)', stroke: 'red' })
+      uc.ellipse(params.x, params.y, params.w, params.h, { rotate: params.angle, stroke: 'yellow' })
+      uc.line(params.point[3][0], params.point[3][1], params.point[2][0], params.point[2][1], { stroke: 'blue' })
+      uc.circle(params.center.x, params.center.y, 5, { stroke: 'green', fill: 'green' })
+      console.log(params)
+      uc.circle(params.center.x - params.w / 2, params.center.y, 5)
     })
   }} />)
 

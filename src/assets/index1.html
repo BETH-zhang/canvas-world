@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>锤子3d</title>
+  <style>
+    * {
+      margin: 0px;
+      padding: 0px;
+    }
+
+    ul {
+      list-style: none;
+      position: fixed;
+      bottom: -20px;
+      width: 100%;
+    }
+
+    li {
+      float: left;
+    }
+
+    img {
+      width: 100%;
+    }
+
+    #ul1 li img {
+      transition: transform 1s cubic-bezier(.445, .05, .55, .95);
+      /*设置动画时间*/
+    }
+
+
+    #ul1 li:nth-of-type(1) img {
+      transform: translateY(67%);
+    }
+
+    #ul1 li:nth-of-type(2) img {
+      transform: translateY(47%);
+    }
+
+    #ul1 li:nth-of-type(3) img {
+      transform: translateY(67%);
+    }
+
+    #ul1 li:nth-of-type(4) img {
+      transform: translateY(47%);
+    }
+
+    #ul1 li:nth-of-type(5) img {
+      transform: translateY(27%);
+    }
+
+    #ul1 li:nth-of-type(6) img {
+      transform: translateY(47%);
+    }
+
+    #ul1 li:nth-of-type(7) img {
+      transform: translateY(61%);
+    }
+  </style>
+</head>
+
+<body>
+
+  <ul id="ul1">
+    <li><img src="img/1.png" alt=""></li>
+    <li><img src="img/2.png" alt=""></li>
+    <li><img src="img/3.png" alt=""></li>
+    <li><img src="img/4.png" alt=""></li>
+    <li><img src="img/5.png" alt=""></li>
+    <li><img src="img/6.png" alt=""></li>
+    <li><img src="img/7.png" alt=""></li>
+  </ul>
+
+  <script>
+    window.onload = function () {
+      var getUl = document.getElementById('ul1');
+      var getImg = getUl.getElementsByTagName('img');
+      var getLi = getUl.getElementsByTagName('li');
+
+      for (var i = 0; i < getImg.length; i++) {        //为每一个Li设置宽度
+        // 浏览器宽度/7 = 单个的宽度值.单个宽度值/总宽度 = 比例值
+        getLi[i].style.width = getViewWindowMessage().w / 7 / getViewWindowMessage().w * 100 + '%';
+      }
+
+
+      function getViewWindowMessage() {//获得浏览器视口信息
+        return {
+          w: document.documentElement.clientWidth,
+          h: document.documentElement.clientHeight
+        };
+      }
+
+      function getOffsetLeft(obj) {
+        var left = 0;
+        while (obj) {
+          left += obj.offsetLeft;
+          obj = obj.offsetParent;
+        };
+        return left;
+      }
+
+      //----------------------------------------------------------
+
+      var AImgWidth = getUl.offsetWidth / 7 * 5;//5张图片宽度.[受影响的最大范围值]
+
+      getUl.onmousemove = function (ev) {
+
+        for (var j = 0; j < getImg.length; j++) {
+
+          var ev = ev || event;
+          //中心点x轴到left的距离
+          var middle = getOffsetLeft(getImg[j]) + getImg[j].offsetWidth / 2;
+
+          //鼠标到每张图片中心点x轴的差值
+          var distance = Math.abs(ev.clientX - middle);
+
+          if (distance > AImgWidth) {//如果差值大于AImgWidth.差值就会等于五张图片距离.[到下面就是转换成60%]
+            distance = AImgWidth;
+          }
+
+          var scale = Math.abs(distance / AImgWidth) * 60;//上下比例
+
+          //      console.log(scale);
+          getImg[j].style.transform = 'translateY' + '(' + scale + '%)';
+
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>

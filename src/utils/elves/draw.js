@@ -35,6 +35,7 @@ class Draw {
     this.ctx.strokeStyle = setting.stroke || '#000000'
     this.ctx.fillStyle = setting.fill || '#cc0000'
     this.ctx.lineWidth = setting.strokeWidth || 3
+    // if (setting.rotate) this.ctx.rotate(setting.rotate * Math.PI / 180)
   }
 
   endToDraw = () => {
@@ -102,6 +103,8 @@ class Draw {
     
     this.ctx.save();
     this.ctx.translate(x, y);
+    if (options.rotate) this.ctx.rotate(options.rotate * Math.PI / 180)
+
     this.ctx.beginPath();
     // 从椭圆纵轴下端开始逆时针方向绘制
     this.ctx.moveTo(0, hr); 
@@ -113,32 +116,6 @@ class Draw {
 
     this.endToDraw()
     this.ctx.restore();
-
-    // this.ctx.translate(x, y);
-    // this.ctx.beginPath();
-    // this.ctx.strokeStyle = 'red'
-    // // 右下
-    // this.ctx.moveTo(0, hr);
-    // this.ctx.lineTo(wr / 3, hr);
-    // this.ctx.lineTo(wr, hr / 3 * 2)
-    // this.ctx.lineTo(wr, 0)
-    // // 右上
-    // // this.ctx.moveTo(wr, 0)
-    // this.ctx.lineTo(wr, -hr / 3)
-    // this.ctx.lineTo(wr / 3 * 2, -hr)
-    // this.ctx.lineTo(0, -hr)
-    // // 左上
-    // // this.ctx.moveTo(0, -hr)
-    // this.ctx.lineTo(-wr / 3, -hr)
-    // this.ctx.lineTo(-wr, -hr / 3 * 2)
-    // this.ctx.lineTo(-wr, 0)
-    // // 左下
-    // // this.ctx.moveTo(-wr, 0)
-    // this.ctx.lineTo(-wr, hr / 3)
-    // this.ctx.lineTo(-wr / 3 * 2, hr)
-    // this.ctx.lineTo(0, hr)
-    // this.ctx.closePath();
-    // this.endToDraw()
   }
 
   // poly -> polygon

@@ -71,6 +71,82 @@ export const formatOptions = (index, type, options, params) => {
   return getMainOptions(index, type, options, params)
 }
 
+/**
+  * 计算从x1y1到x2y2的直线，与水平线形成的夹角
+  * 计算规则为顺时针从左侧0°到与该直线形成的夹角
+  * @param {Object} x1
+  * @param {Object} y1
+  * @param {Object} x2
+  * @param {Object} y2
+  */
+export const getAngle = (x1, y1, x2, y2) => {
+  var x = x1 - x2,
+      y = y1 - y2;
+  if (!x && !y) {
+      return 0;
+  }
+  var angle = Math.floor((180 + Math.atan2(-y, -x) * 180 / Math.PI + 360) % 360);
+  return angle;
+}
+
+
+export const coordinateToEllipseParameter = (data, scale) => {
+  let x = 0
+  let y = 0
+  let w = 0
+  let h = 0
+  let angle = 0
+  if (data.length < 4) {
+    new Error('参数不正确')
+    return { x, y, w, h, angle }
+  }
+
+  let left = { x: null }
+  let top = { y: null }
+  let right = { x: null }
+  let bottom = { y: null }
+
+  data.forEach((item) => {
+    const point = {
+      x: item.x * scale,
+      y: item.y * scale
+    }
+    if (!left.x || point.x < left.x) {
+      left = point
+    }
+    if (!right.x || point.x > right.x) {
+      right = point
+    }
+    if (!top.y || point.y < top.y) {
+      top = point
+    }
+    if (!bottom.y || point.y > bottom.y) {
+      bottom = point
+    }
+  })
+  const center = {
+    x: (right.x + left.x) / 2,
+    y: (bottom.y + top.y) / 2,
+  }
+  const w1 = Math.sqrt(Math.pow(top.x - right.x, 2) + Math.pow(top.y - right.y, 2))
+  const w2 = Math.sqrt(Math.pow(bottom.x - left.x, 2) + Math.pow(bottom.y - left.y, 2))
+  const h1 = Math.sqrt(Math.pow(top.x - left.x, 2) + Math.pow(top.y - left.y, 2))
+  const h2 = Math.sqrt(Math.pow(bottom.x - right.x, 2) + Math.pow(bottom.y - right.y, 2))
+  w = (w1 + w2) / 2 + (h1 + h2) / 4
+  h = (h1 + h2) / 2 + (h1 + h2) / 6
+  const point1 = {
+    x: (top.x + left.x) / 2,
+    y: (top.y + left.y) / 2
+  }
+  const point2 = {
+    x: (bottom.x + right.x) / 2,
+    y: (bottom.y + right.y) / 2,
+  }
+  angle = (getAngle(point1.x, point1.y, center.x, center.y) - 180 + getAngle(point2.x, point2.y, center.x, center.y)) / 2
+
+  return { center, x: Math.floor(center.x), y: Math.floor(center.y), w: Math.floor(w), h: Math.floor(h), angle }
+}
+
 export const addTestImage = (ctx) => new Promise((resolve) => {
   var img = new Image();
   img.src = 'http://localhost:8080/test1.jpeg';
@@ -124,60 +200,39 @@ export const addImageData = (ctx, zoom, imageUrl, data) => new Promise((resolve)
     if (data && data.length) {
       data.forEach((item, index) => {
         if (index) return
-        console.log(item, '---')
-
-        console.log(item.vertices, '///')
-        
-        // var p1 = {
-        //   x: Math.round(item.vertices[0][0].x * (800 / width)),
-        //   y: Math.round(item.vertices[0][0].y * (800 / width)),
-        // }
-        // var p2 = {
-        //   x: Math.round(item.vertices[0][1].x * (800 / width)),
-        //   y: Math.round(item.vertices[0][1].y * (800 / width)),
-        // }
-        // var p3 = {
-        //   x: Math.round(item.vertices[0][2].x * (800 / width)),
-        //   y: Math.round(item.vertices[0][2].y * (800 / width)),
-        // }
-        // var p4 = {
-        //   x: Math.round(item.vertices[0][3].x * (800 / width)),
-        //   y: Math.round(item.vertices[0][3].y * (800 / width)),
-        // }
-
-        var p1 = {
+        var p1 = { // 上
           x: item.vertices[0][0].x * (zoom / width),
           y: item.vertices[0][0].y * (zoom / width),
         }
-        var p2 = {
+        var p2 = { // 右
           x: item.vertices[0][1].x * (zoom / width),
           y: item.vertices[0][1].y * (zoom / width),
         }
-        var p3 = {
+        var p3 = { // 下
           x: item.vertices[0][2].x * (zoom / width),
           y: item.vertices[0][2].y * (zoom / width),
         }
-        var p4 = {
+        var p4 = { // 左
           x: item.vertices[0][3].x * (zoom / width),
           y: item.vertices[0][3].y * (zoom / width),
         }
 
-        const hr1 = (p2.y - p1.y) / 2
-        const hr2 = (p4.y - p3.y) / 2
-        const w = ((p3.x - p1.x) + (p4.x - p2.x)) / 2 + hr1 + hr2
-        const h = ((p3.y - p3.y) + (p4.y - p2.y)) / 2 + (hr1 + hr2) * 2
-        const x = p1.x - hr1 + w / 2
-        const y = p1.y - hr1 / 2 + h / 2
+        const params = coordinateToEllipseParameter(item.vertices[0], zoom / width)
+
+        const x = params.x
+        const y = params.y
+        const w = params.w
+        const h = params.h
+        const angle = params.angle
         
         notations.push({
-          x: Math.round(x),
-          y: Math.round(y),
-          w: Math.round(w),
-          h: Math.round(h),
+          ...params,
           point: [[p1.x, p1.y], [p2.x, p2.y], [p3.x, p3.y], [p4.x, p4.y]],
         })
       })
     }
+
+    console.log(notations)
        
     resolve(notations[0])
   } 
