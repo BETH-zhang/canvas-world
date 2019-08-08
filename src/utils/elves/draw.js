@@ -90,7 +90,7 @@ class Draw {
   }
 
   // new add api
-  ellipse = (x, y, w, h, options) => {
+  ellipse = (x, y, w, h, options = {}) => {
     this.setStyle(options)
 
     // 存在兼容性问题

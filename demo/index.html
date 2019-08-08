@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Elves</title>
+	<script src="../node_modules/us-utils-asyncloadscript/index.js"></script>
+  <!-- <script src="../dist/elves.min.js"></script> -->
+  <style>
+  canvas {
+    width: 800px;
+    height: 800px;
+    border: 1px solid;
+  }
+  </style>
+</head>
+<body>
+  <canvas id="canvas">
+	<script>
+		console.log(window.GlobalLoadScript)
+		window.GlobalLoadScript()(`../dist/elves.min.js?t=${new Date().getTime()}`, () => {
+
+      console.log(window.Elves)
+      const canvas = document.getElementById('canvas')
+      canvas.width = 800 || document.body.clientWidth
+      canvas.height = 800 || document.body.clientHeight
+      const ctx = canvas.getContext('2d')
+      const Elves = window.Elves.default
+      const uc = new Elves(canvas)
+
+      const data = [
+        ['rectangle', [100, 100, 100, 40, { fill: 'red' }]],
+        ['rectangle', [100, 200, 100, 40, { stroke: 'red', strokeWidth: 5 }]],
+        ['line', [80, 120, 300, 100, { strokeWidth: 10 }]],
+        ['circle', [100, 300, 50, { stroke: 'blue', strokeWidth: 2, fill: 'red' }]],
+        ['ellipse', [100, 500, 150, 50, { stroke: '#000' }]],
+      ]
+
+      uc.ellipse(392.25, 159, 764.5, 164)
+      uc.rectangle(10, 10, 100, 40, { fill: 'red' })
+      data.forEach((item) => {
+        uc[item[0]](...item[1])
+      })
+		})
+  </script>
+</body>
+</html>
