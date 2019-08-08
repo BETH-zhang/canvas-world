@@ -121,6 +121,7 @@ storiesOf('Draw|Demo', module)
                 errorTip.setState({
                   style: {
                     display: 'block',
+                    key: 'tab1',
                     top: notation.y + notation.h / 2,
                     left: notation.x - notation.w / 2,
                   },
