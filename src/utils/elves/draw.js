@@ -229,6 +229,10 @@ class Draw {
     };
   })
 
+  clear = () => {
+    this.ctx.clearRect(0, 0, this.screenWidth, this.screenHeight)
+  }
+
   eraser = (x, y, x1, y1) => {
     this.ctx.clearRect(x1 - 5, y1 - 5, 10, 10)
   }
