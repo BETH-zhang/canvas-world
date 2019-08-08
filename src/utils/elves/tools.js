@@ -96,6 +96,14 @@ class Tools {
       mouseup()
     });
   }
+
+  addClickEvent = () => {
+    this.canvas.addEventListener('click', (evt) => {
+      const px = evt.clientX
+      const py = evt.clientY
+      
+    })
+  }
 }
 
 export default Tools

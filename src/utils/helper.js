@@ -206,18 +206,23 @@ export const addImageData = (ctx, zoom, imageUrl, data) => new Promise((resolve)
     const notations = []
     if (data && data.length) {
       data.forEach((item, index) => {
-        const vertices = item.vertices.map((item) => {
-          return item.map((subItem) => ([subItem.x * (zoom / width), subItem.y * (zoom / width)]))
+        const vertices = item.vertices.map((subItem) => {
+          return subItem.map((subItem) => ([subItem.x * (zoom / width), subItem.y * (zoom / width)]))
         })
-
-        const params = coordinateToEllipseParameter(item.vertices[0], zoom / width)
-        notations.push({
-          ...params,
-          point: [],
-          vertices,
+        item.vertices.map((subItem, subIndex) => {
+          const params = coordinateToEllipseParameter(subItem, zoom / width)
+          console.log('params: ', params)
+          notations.push({
+            ...params,
+            point: [],
+            vertice: vertices[subIndex],
+            item,
+          })
         })
       })
     }
+
+    console.log('notations: ', notations)
 
     resolve({ params: notations[0], notations })
   } 

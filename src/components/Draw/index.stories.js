@@ -3,6 +3,8 @@ import { storiesOf } from '@storybook/react'
 import Component from './index'
 import WbUtils from '../../utils/whiteboard'
 import { addImageData, addTestImage, findFourPoint } from '../../utils/helper'
+import { checkBoundary } from '../../utils/elves/physical'
+import ErrorType from '../../utils/correctErrorType'
 
 import defaultImg from '../../assets/mr.jpg'
 import imageTestData from '../../assets/data'
@@ -93,20 +95,51 @@ storiesOf('Draw|Demo', module)
   }} />)
   .add('标记3', () => <Component style={{ width: 800 }} render={(ctx, uc, canvas) => {
     addImageData(ctx, 800, imageTestData2.img, imageTestData2.data).then(({ params, notations }) => {
-      const colors = ['#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3', '#FB001F', '#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3']
+      const blockList = []
       notations.forEach((notation, index) => {
-        const vertices = notation.vertices
-        vertices.forEach((vertice) => {
-          if (vertice && vertice.length) {
-            uc.polygon(vertice, { fill: 'rgba(255, 0, 0, 0.3)' })
-            uc.ellipse(notation.x, notation.y, notation.w, notation.h, { rotate: notation.angle, stroke: 'yellow' })
-            uc.line(vertice[vertice.length - 1][0], vertice[vertice.length - 1][1] + 3, vertice[vertice.length / 2][0], vertice[vertice.length / 2][1] + 3, { stroke: colors[index] })
-            vertice.forEach((point) => {
-              uc.circle(...point, 5, { stroke: colors[index], fill: colors[index] }) 
-            })
+        const vertice = notation.vertice
+        blockList.push({
+          x: notation.x - notation.w / 2,
+          y: notation.y - notation.h / 2,
+          w: notation.w,
+          h: notation.h,
+          type: ErrorType.categoryShap[notation.item.category],
+          polygon: [vertice],
+          rectangle: [notation.x - notation.w / 2, notation.y - notation.h / 2, notation.w, notation.h],
+          line: [vertice[vertice.length - 1][0], vertice[vertice.length - 1][1], vertice[vertice.length / 2][0], vertice[vertice.length / 2][1]],
+          ellipse: [notation.x, notation.y, notation.w, notation.h],
+          options: {
+            rotate: notation.angle,
+            fill: 'rgba(255, 0, 0, 0.3)',
+            stroke: ErrorType.categoryColor[notation.item.category],
+          },
+          onClick: () => {
+            console.log(notation)
+            console.log(notation.item.category, notation.item.categoryHuman)
           }
         })
+        vertice.forEach((point) => {
+          uc.circle(...point, 5) 
+        })
       })
+
+      // 注册click事件
+      console.log('blockList: ', blockList)
+      blockList.forEach((item, index) => {
+        // uc.rectangle(item.x, item.y, item.w, item.h, item.options)
+        uc[item.type](...item[item.type], item.options)
+      })
+      const mousedownEvent = (e) => {
+        const x = e.clientX
+        const y = e.clientY
+        console.log(x, y)
+        for (let i = blockList.length - 1; i >= 0; i--) {
+          if (checkBoundary(x, y, blockList[i])) {
+            blockList[i].onClick()
+          }
+        }
+      }
+      canvas.addEventListener('click', mousedownEvent)
     })
   }} />)
 
@@ -417,10 +450,6 @@ storiesOf('Draw|其他操作', module)
     })
   }} />)
   .add('点击方块', () => <Component render={(ctx, uc, canvas) => {
-    // 碰撞检测
-    const checkBoundary = (x, y, self) => {
-      return x > self.x && x < (self.x + self.w) && y > self.y && y < (self.y + self.h)
-    }
     const blockList = [
       {x: 100, y: 100, w: 100, h: 100, fill: 'red', onClick: () => {console.log('red')}},
       {x: 150, y: 100, w: 100, h: 100, fill: 'blue', onClick: () => {console.log('blue')}}
@@ -433,7 +462,6 @@ storiesOf('Draw|其他操作', module)
       const y = e.clientY
       let hierarchy = -1
       for (let i = blockList.length - 1; i >= 0; i--) {
-        console.log(hierarchy, i)
         if (checkBoundary(x, y, blockList[i]) && hierarchy === -1) {
           blockList[i].onClick()
           hierarchy = i

@@ -109,6 +109,16 @@ class Atomic {
       },
     }
   }
+
+  customShape = (type, params, onClick) => {
+    const self = this
+    return {
+      onClick,
+      draw: function () {
+        self.draw[type](...params)
+      }
+    }
+  }
 }
 
 export default Atomic
