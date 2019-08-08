@@ -211,7 +211,6 @@ export const addImageData = (ctx, zoom, imageUrl, data) => new Promise((resolve)
         })
         item.vertices.map((subItem, subIndex) => {
           const params = coordinateToEllipseParameter(subItem, zoom / width)
-          console.log('params: ', params)
           notations.push({
             ...params,
             point: [],
@@ -221,8 +220,6 @@ export const addImageData = (ctx, zoom, imageUrl, data) => new Promise((resolve)
         })
       })
     }
-
-    console.log('notations: ', notations)
 
     resolve({ params: notations[0], notations })
   } 

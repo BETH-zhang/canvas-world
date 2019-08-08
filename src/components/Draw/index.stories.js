@@ -5,12 +5,14 @@ import WbUtils from '../../utils/whiteboard'
 import { addImageData, addTestImage, findFourPoint } from '../../utils/helper'
 import { checkBoundary } from '../../utils/elves/physical'
 import ErrorType from '../../utils/correctErrorType'
+import ErrorTip from '../ErrorTip'
 
 import defaultImg from '../../assets/mr.jpg'
 import imageTestData from '../../assets/data'
 import imageTestData1 from '../../assets/data1'
 import imageTestData2 from '../../assets/data2'
 
+let errorTip = null
 storiesOf('Draw|Demo', module)
   .add('默认状态', () => <Component render={(ctx, uc, canvas) => {
     uc.ellipse(392.25, 159, 764.5, 164)
@@ -93,55 +95,80 @@ storiesOf('Draw|Demo', module)
       })
     })
   }} />)
-  .add('标记3', () => <Component style={{ width: 800 }} render={(ctx, uc, canvas) => {
-    addImageData(ctx, 800, imageTestData2.img, imageTestData2.data).then(({ params, notations }) => {
-      const blockList = []
-      notations.forEach((notation, index) => {
-        const vertice = notation.vertice
-        blockList.push({
-          x: notation.x - notation.w / 2,
-          y: notation.y - notation.h / 2,
-          w: notation.w,
-          h: notation.h,
-          type: ErrorType.categoryShap[notation.item.category],
-          polygon: [vertice],
-          rectangle: [notation.x - notation.w / 2, notation.y - notation.h / 2, notation.w, notation.h],
-          line: [vertice[vertice.length - 1][0], vertice[vertice.length - 1][1], vertice[vertice.length / 2][0], vertice[vertice.length / 2][1]],
-          ellipse: [notation.x, notation.y, notation.w, notation.h],
-          options: {
-            rotate: notation.angle,
-            fill: 'rgba(255, 0, 0, 0.3)',
-            stroke: ErrorType.categoryColor[notation.item.category],
-          },
-          onClick: () => {
-            console.log(notation)
-            console.log(notation.item.category, notation.item.categoryHuman)
-          }
-        })
-        vertice.forEach((point) => {
-          uc.circle(...point, 5) 
-        })
-      })
+  .add('标记3', () => {
+    return (<div style={{ position: 'relative' }}>
+      <Component style={{ width: 800 }} render={(ctx, uc, canvas) => {
+        addImageData(ctx, 800, imageTestData2.img, imageTestData2.data).then(({ params, notations }) => {
+          const blockList = []
+          notations.forEach((notation, index) => {
+            const vertice = notation.vertice
+            blockList.push({
+              x: notation.x - notation.w / 2,
+              y: notation.y - notation.h / 2,
+              w: notation.w,
+              h: notation.h,
+              type: ErrorType.categoryShap[notation.item.category],
+              polygon: [vertice],
+              rectangle: [notation.x - notation.w / 2, notation.y - notation.h / 2, notation.w, notation.h],
+              line: [vertice[vertice.length - 1][0], vertice[vertice.length - 1][1], vertice[vertice.length / 2][0], vertice[vertice.length / 2][1]],
+              ellipse: [notation.x, notation.y, notation.w, notation.h],
+              options: {
+                rotate: notation.angle,
+                fill: 'rgba(255, 0, 0, 0.3)',
+                stroke: ErrorType.categoryColor[notation.item.category],
+              },
+              onClick: () => {
+                errorTip.setState({
+                  style: {
+                    display: 'block',
+                    top: notation.y + notation.h / 2,
+                    left: notation.x - notation.w / 2,
+                  },
+                  notation: {
+                    categoryHumanText: ErrorType.categoryHumanText[notation.item.category],
+                    ...notation.item,
+                  }
+                })
+                errorTip.update()
+              }
+            })
+            vertice.forEach((point) => {
+              uc.circle(...point, 5) 
+            })
+          })
 
-      // 注册click事件
-      console.log('blockList: ', blockList)
-      blockList.forEach((item, index) => {
-        // uc.rectangle(item.x, item.y, item.w, item.h, item.options)
-        uc[item.type](...item[item.type], item.options)
-      })
-      const mousedownEvent = (e) => {
-        const x = e.clientX
-        const y = e.clientY
-        console.log(x, y)
-        for (let i = blockList.length - 1; i >= 0; i--) {
-          if (checkBoundary(x, y, blockList[i])) {
-            blockList[i].onClick()
+          // 注册click事件
+          console.log('blockList: ', blockList)
+          blockList.forEach((item, index) => {
+            // uc.rectangle(item.x, item.y, item.w, item.h, item.options)
+            uc[item.type](...item[item.type], item.options)
+          })
+          const mousedownEvent = (e) => {
+            const x = e.clientX
+            const y = e.clientY
+            console.log(x, y)
+            let havePoint = false
+            for (let i = blockList.length - 1; i >= 0; i--) {
+              if (checkBoundary(x, y, blockList[i])) {
+                blockList[i].onClick()
+                havePoint = true
+              }
+            }
+            if (!havePoint) {
+              errorTip.setState({
+                style: {
+                  display: 'none',
+                },
+              })
+              errorTip.update()
+            }
           }
-        }
-      }
-      canvas.addEventListener('click', mousedownEvent)
-    })
-  }} />)
+          canvas.addEventListener('click', mousedownEvent)
+        })
+      }} />
+      <ErrorTip ref={_node => errorTip = _node} title='jjk' />
+    </div>)
+  })
 
 storiesOf('Draw|Picture', module)
   .add('画板1', () => <Component render={(ctx, uc, canvas, rc) => {
