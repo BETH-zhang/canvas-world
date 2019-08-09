@@ -1,7 +1,6 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react'
 import Component from './index'
-import Cube from '../../utils/elves/cube';
 
 storiesOf('Atomic|Demo', module)
   .add('ball', () => <Component render={(ctx, uc, canvas) => {
