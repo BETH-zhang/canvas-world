@@ -1,5 +1,8 @@
 import React, { useState, setState } from 'react'
 import { Card } from 'antd'
+/**
+ * 图片的基本信息
+ */
 
 import './index.less'
 
@@ -15,13 +18,13 @@ export default class ErrorTip extends React.Component {
     const contentList = {
       tab1: (<div>
         {
-          Object.keys(this.state.notation).map((key) => {
+          Object.keys(this.state.notation).map((key, index) => {
             if (['category', 'categoryHuman', 'categoryHumanText', 'impact', 'point', 'todo'].includes(key)) {
-              return (<div><b>{key}</b>&nbsp;&nbsp;{this.state.notation[key]}</div>)
+              return (<div key={index}><b>{key}</b>&nbsp;&nbsp;{this.state.notation[key]}</div>)
             } else if (['explanation', 'details'].includes(key)) {
-              return (<div dangerouslySetInnerHTML={{ __html: this.state.notation[key]}} />)
+              return (<div key={index} dangerouslySetInnerHTML={{ __html: this.state.notation[key]}} />)
             } else if (key === 'replacements') {
-              return (<div>
+              return (<div key={index}>
                 <b>{key}</b>&nbsp;&nbsp;{this.state.notation[key].map((item) => (<i>【{item}】</i>))}
               </div>)
             }

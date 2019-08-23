@@ -12,7 +12,6 @@ import imageTestData from '../../assets/data'
 import imageTestData1 from '../../assets/data1'
 import imageTestData2 from '../../assets/data2'
 
-let errorTip = null
 storiesOf('Draw|Demo', module)
   .add('默认状态', () => <Component render={(ctx, uc, canvas) => {
     uc.ellipse(392.25, 159, 764.5, 164)
@@ -59,43 +58,161 @@ storiesOf('Draw|Demo', module)
       uc.curveTag(...line, { stroke: 'red', strokeWidth: 1 })
     })
   }} />)
-  .add('标记1', () => <Component style={{ width: 800 }} render={(ctx, uc, canvas) => {
-    addImageData(ctx, 800, imageTestData.img, imageTestData.data).then(({ params, notations }) => {
-      const colors = ['#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3', '#FB001F', '#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3']
-      notations.forEach((notation, index) => {
-        const vertices = notation.vertices
-        vertices.forEach((vertice) => {
-          if (vertice && vertice.length) {
-            uc.polygon(vertice, { fill: 'rgba(255, 0, 0, 0.3)' })
-            uc.ellipse(notation.x, notation.y, notation.w, notation.h, { rotate: notation.angle, stroke: 'yellow' })
-            uc.line(vertice[vertice.length - 1][0], vertice[vertice.length - 1][1] + 3, vertice[vertice.length / 2][0], vertice[vertice.length / 2][1] + 3, { stroke: colors[index] })
-            vertice.forEach((point) => {
-              uc.circle(...point, 5, { stroke: colors[index], fill: colors[index] }) 
-            })
+  .add('标记1', () => {
+    let errorTip1 = null
+    return (<div style={{ position: 'relative' }}>
+      <Component style={{ width: 800 }} render={(ctx, uc, canvas) => {
+        addImageData(ctx, 800, imageTestData.img, imageTestData.data).then(({ params, notations }) => {
+          const blockList = []
+          notations.forEach((notation, index) => {
+            const vertice = notation.vertice
+            if (vertice && vertice.length) {
+              console.log(notation.item.category)
+              blockList.push({
+                x: notation.x - notation.w / 2,
+                y: notation.y - notation.h / 2,
+                w: notation.w,
+                h: notation.h,
+                type: ErrorType.categoryShap[notation.item.category],
+                polygon: [vertice],
+                rectangle: [notation.x - notation.w / 2, notation.y - notation.h / 2, notation.w, notation.h],
+                line: [vertice[vertice.length - 1][0], vertice[vertice.length - 1][1], vertice[vertice.length / 2][0], vertice[vertice.length / 2][1]],
+                ellipse: [notation.x, notation.y, notation.w, notation.h],
+                options: {
+                  rotate: notation.angle,
+                  fill: 'rgba(255, 0, 0, 0.3)',
+                  stroke: ErrorType.categoryColor[notation.item.category],
+                },
+                onClick: () => {
+                  console.log(notation.item)
+                  errorTip1.setState({
+                    style: {
+                      display: 'block',
+                      key: 'tab1',
+                      top: notation.y + notation.h / 2,
+                      left: notation.x - notation.w / 2,
+                    },
+                    notation: {
+                      categoryHumanText: ErrorType.categoryHumanText[notation.item.category],
+                      ...notation.item,
+                    }
+                  })
+                  errorTip1.update()
+                }
+              })
+              vertice.forEach((point) => {
+                uc.circle(...point, 5) 
+              })
+            }
+          })
+
+          // 注册click事件
+          console.log('blockList: ', blockList)
+          blockList.forEach((item, index) => {
+            // uc.rectangle(item.x, item.y, item.w, item.h, item.options)
+            uc[item.type](...item[item.type], item.options)
+          })
+          const mousedownEvent = (e) => {
+            const x = e.clientX
+            const y = e.clientY
+            console.log(x, y)
+            let havePoint = false
+            for (let i = blockList.length - 1; i >= 0; i--) {
+              if (checkBoundary(x, y, blockList[i])) {
+                blockList[i].onClick()
+                havePoint = true
+              }
+            }
+            if (!havePoint) {
+              errorTip1.setState({
+                style: {
+                  display: 'none',
+                },
+              })
+              errorTip1.update()
+            }
           }
+          canvas.addEventListener('click', mousedownEvent)
         })
-      })
-    })
-  }} />)
-  .add('标记2', () => <Component style={{ width: 400 }} render={(ctx, uc, canvas) => {
-    addImageData(ctx, 400, imageTestData1.img, imageTestData1.data).then(({ params, notations }) => {
-      const colors = ['#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3', '#FB001F', '#FB1808', '#FEEF0B', '#30FF07', '#1DE5FE', '#0031FF', '#FB00E3']
-      notations.forEach((notation, index) => {
-        const vertices = notation.vertices
-        vertices.forEach((vertice) => {
-          if (vertice && vertice.length) {
-            uc.polygon(vertice, { fill: 'rgba(255, 0, 0, 0.3)' })
-            uc.ellipse(notation.x, notation.y, notation.w, notation.h, { rotate: notation.angle, stroke: 'yellow' })
-            uc.line(vertice[vertice.length - 1][0], vertice[vertice.length - 1][1] + 3, vertice[vertice.length / 2][0], vertice[vertice.length / 2][1] + 3, { stroke: colors[index] })
-            vertice.forEach((point) => {
-              uc.circle(...point, 5, { stroke: colors[index], fill: colors[index] }) 
-            })
+      }} />
+      <ErrorTip ref={_node => errorTip1 = _node} title='jjk' />
+    </div>)
+  })
+  .add('标记2', () => {
+    let errorTip = null
+    return <div style={{ position: 'relative' }}><Component style={{ width: 400 }} render={(ctx, uc, canvas) => {
+      addImageData(ctx, 400, imageTestData1.img, imageTestData1.data).then(({ params, notations }) => {
+        const blockList = []
+        notations.forEach((notation, index) => {
+          const vertice = notation.vertice
+          blockList.push({
+            x: notation.x - notation.w / 2,
+            y: notation.y - notation.h / 2,
+            w: notation.w,
+            h: notation.h,
+            type: ErrorType.categoryShap[notation.item.category],
+            polygon: [vertice],
+            rectangle: [notation.x - notation.w / 2, notation.y - notation.h / 2, notation.w, notation.h],
+            line: [vertice[vertice.length - 1][0], vertice[vertice.length - 1][1], vertice[vertice.length / 2][0], vertice[vertice.length / 2][1]],
+            ellipse: [notation.x, notation.y, notation.w, notation.h],
+            options: {
+              rotate: notation.angle,
+              fill: 'rgba(255, 0, 0, 0.3)',
+              stroke: ErrorType.categoryColor[notation.item.category],
+            },
+            onClick: () => {
+              errorTip.setState({
+                style: {
+                  display: 'block',
+                  key: 'tab1',
+                  top: notation.y + notation.h / 2,
+                  left: notation.x - notation.w / 2,
+                },
+                notation: {
+                  categoryHumanText: ErrorType.categoryHumanText[notation.item.category],
+                  ...notation.item,
+                }
+              })
+              errorTip.update()
+            }
+          })
+          vertice.forEach((point) => {
+            uc.circle(...point, 5) 
+          })
+        })
+  
+        // 注册click事件
+        console.log('blockList: ', blockList)
+        blockList.forEach((item, index) => {
+          // uc.rectangle(item.x, item.y, item.w, item.h, item.options)
+          uc[item.type](...item[item.type], item.options)
+        })
+        const mousedownEvent = (e) => {
+          const x = e.clientX
+          const y = e.clientY
+          console.log(x, y)
+          let havePoint = false
+          for (let i = blockList.length - 1; i >= 0; i--) {
+            if (checkBoundary(x, y, blockList[i])) {
+              blockList[i].onClick()
+              havePoint = true
+            }
           }
-        })
+          if (!havePoint) {
+            errorTip.setState({
+              style: {
+                display: 'none',
+              },
+            })
+            errorTip.update()
+          }
+        }
+        canvas.addEventListener('click', mousedownEvent)
       })
-    })
-  }} />)
+    }} /><ErrorTip ref={_node => errorTip = _node} title='jjk' /></div>
+  })
   .add('标记3', () => {
+    let errorTip3 = null
     return (<div style={{ position: 'relative' }}>
       <Component style={{ width: 800 }} render={(ctx, uc, canvas) => {
         addImageData(ctx, 800, imageTestData2.img, imageTestData2.data).then(({ params, notations }) => {
@@ -118,7 +235,7 @@ storiesOf('Draw|Demo', module)
                 stroke: ErrorType.categoryColor[notation.item.category],
               },
               onClick: () => {
-                errorTip.setState({
+                errorTip3.setState({
                   style: {
                     display: 'block',
                     key: 'tab1',
@@ -130,7 +247,7 @@ storiesOf('Draw|Demo', module)
                     ...notation.item,
                   }
                 })
-                errorTip.update()
+                errorTip3.update()
               }
             })
             vertice.forEach((point) => {
@@ -155,19 +272,20 @@ storiesOf('Draw|Demo', module)
                 havePoint = true
               }
             }
+            console.log('???havePoint', havePoint)
             if (!havePoint) {
-              errorTip.setState({
+              errorTip3.setState({
                 style: {
                   display: 'none',
                 },
               })
-              errorTip.update()
+              errorTip3.update()
             }
           }
           canvas.addEventListener('click', mousedownEvent)
         })
       }} />
-      <ErrorTip ref={_node => errorTip = _node} title='jjk' />
+      <ErrorTip ref={_node => errorTip3 = _node} title='jjk' />
     </div>)
   })
 
