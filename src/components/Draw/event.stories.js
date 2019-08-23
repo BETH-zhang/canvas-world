@@ -80,7 +80,7 @@ storiesOf('0|Demo', module)
 
     drawFrame()
   }} />)
-  .add('小球自动跟随', () => <Component render={(ctx, uc, canvas) => {
+  .add('正圆运动', () => <Component render={(ctx, uc, canvas) => {
     var ball = new Ball(100, 25)
     var radius = 50
     var angle = 0
@@ -109,8 +109,28 @@ storiesOf('0|Demo', module)
 
     drawFrame()
   }} />)
-  // .add('', () => <Component render={(ctx, uc, canvas) => {
-  // }} />)
+  .add('椭圆运动', () => <Component render={(ctx, uc, canvas) => {
+    var ball = new Ball(100, 25)
+    var radiusX = 60
+    var radiusY = 40
+    var angle = 0
+
+    function drawFrame() {
+      window.requestAnimationFrame(drawFrame)
+      uc.clear()
+
+      ball.x = canvas.width / 2 + Math.cos(angle) * radiusX
+      ball.y = canvas.height / 2 + Math.sin(angle) * radiusY
+      ctx.font = "40px serif";
+      ctx.fillText(`x: ${ball.x}`, 10, 50);
+      ctx.fillText(`y: ${ball.y}`, 10, 100)
+      ball.fill(ctx)
+
+      angle += 0.05
+    }
+
+    drawFrame()
+  }} />)
   // .add('', () => <Component render={(ctx, uc, canvas) => {
   // }} />)
   // .add('', () => <Component render={(ctx, uc, canvas) => {
