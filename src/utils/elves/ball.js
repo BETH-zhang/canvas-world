@@ -27,8 +27,8 @@ Ball.prototype = {
   },
   fill: function (ctx) {
     ctx.save()
-    // ctx.translate(this.x, this.y)
-    // ctx.rotate(this.rotation)
+    // 缩放时，会缩放整个画布，如果希望，整体位置不变，需要处理一下偏移量    
+    ctx.translate(this.x * (1 - this.scaleX), this.y * (1 - this.scaleY))
     ctx.scale(this.scaleX, this.scaleY)
     ctx.fillStyle = this.color
     ctx.beginPath()
