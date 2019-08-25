@@ -1,10 +1,12 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react'
-import { addEvent } from 'us-common-utils'
+import { addEvent, removeEvent } from 'us-common-utils'
+import { message } from 'antd';
 import Component from './index'
 import tools from '../../utils/elves/tools'
 import Arrow from '../../utils/elves/arrow'
 import Ball from '../../utils/elves/ball'
+import Box from '../../utils/elves/box'
 
 storiesOf('Move|事件系统', module)
   .add('鼠标事件', () => <Component render={(ctx, uc, canvas) => {
@@ -401,8 +403,8 @@ storiesOf('Move|边界检测', module)
     ball.fill(ctx)
     var key = tools.getKey()
     var checkBorder = () => {
-      var borderDirection = tools.checkBorder(ball, canvas)
-      switch (borderDirection) {
+      var borderDirections = tools.checkBorder(ball, canvas)
+      switch (borderDirections[0]) {
         case 'top':
           ball.y = ball.radius
           break
@@ -450,8 +452,8 @@ storiesOf('Move|边界检测', module)
     ball.fill(ctx)
     var key = tools.getKey()
     var checkBorder = () => {
-      var borderDirection = tools.checkBorder(ball, canvas)
-      switch (borderDirection) {
+      var borderDirections = tools.checkBorder(ball, canvas)
+      switch (borderDirections[0]) {
         case 'top':
           ball.y = canvas.height + ball.radius
           break
@@ -576,8 +578,8 @@ storiesOf('Move|边界检测', module)
       uc.clear()
 
       balls.forEach((ball) => {
-        var borderDirection = tools.checkBorder(ball, canvas)
-        switch (borderDirection) {
+        var borderDirections = tools.checkBorder(ball, canvas)
+        switch (borderDirections[0]) {
           case 'top':
             ball.y = ball.radius
             ball.vy = -ball.vy
@@ -604,9 +606,412 @@ storiesOf('Move|边界检测', module)
     frame()
   }} />)
 storiesOf('Move|碰撞检测', module)
-  .add('两个球', () => <Component render={(ctx, uc, canvas) => {
+  .add('外接矩形判断法', () => <Component render={(ctx, uc, canvas) => {
     // 外接矩形判定法
     // 外接圆判定发
+    var ballA = new Ball(canvas.width / 2, canvas.height / 2)
+    var rectA = ballA.getRect()
+    var mouse = tools.getClick(canvas)
+
+    addEvent(canvas, 'click', () => {
+      uc.clear()
+
+      ballA.fill(ctx)
+      ctx.strokeRect(rectA.x, rectA.y, rectA.width, rectA.height)
+
+      var ballB = new Ball(mouse.x, mouse.y, 30)
+      var rectB = ballB.getRect()
+      ballB.fill(ctx)
+      ctx.strokeRect(rectB.x, rectB.y, rectB.width, rectB.height)
+
+      if (tools.checkRectBorder(rectA, rectB)) {
+        message.info('撞上了')
+      }
+    })
+    // var frame = () => {
+    //   window.requestAnimationFrame(frame)
+    //   uc.clear()
+
+    //   ballA.fill(ctx)
+    //   ctx.strokeRect(rectA.x, rectA.y, rectA.width, rectA.height)
+
+    //   var ballB = new Ball(mouse.x, mouse.y, 30)
+    //   var rectB = ballB.getRect()
+    //   ballB.fill(ctx)
+    //   ctx.strokeRect(rectB.x, rectB.y, rectB.width, rectB.height)
+
+    //   message.info(tools.checkRectBorder(rectA, rectB))
+    // }
+    // frame()
+  }} />)
+  .add('简易俄罗斯方块', () => <Component style={{ width: 400, height: 400 }} render={(ctx, uc, canvas) => {
+    var boxes = []
+    var activeBox = createBox()
+    var vy = 2
+
+    function createBox() {
+      var x = Math.random() * canvas.width
+      var y = 0
+      var width = Math.random() * 40 + 10
+      var height = Math.random() * 40 + 10
+      var color = tools.getRandomColor()
+      var box = new Box(x, y, width, height, color)
+      boxes.push(box)
+      return box
+    }
+
+    var frame = () => {
+      window.requestAnimationFrame(frame)
+      uc.clear()
+
+      activeBox.y += vy
+      if (activeBox.y > canvas.height - activeBox.height) {
+        // 重置高度 
+        activeBox.y = canvas.height - activeBox.height
+        activeBox = createBox()
+      }
+
+      boxes.forEach(function(box, index) {
+        if (activeBox !== box && tools.checkRectBorder(activeBox, box)) {
+          // 重置高度  
+          activeBox.y = box.y - activeBox.height
+          activeBox = createBox()
+        }
+        box.fill(ctx)
+      })
+    }
+    frame()
+  }} />)
+  .add('简易俄罗斯方块-键盘控制', () => <Component style={{ width: 400, height: 400 }} render={(ctx, uc, canvas) => {
+    var boxes = []
+    var activeBox = createBox()
+    var vy = 2
+
+    var key = tools.getKey()
+    addEvent(window, 'keydown', () => {
+      switch (key.direction) {
+        case 'down':
+          activeBox.y += 10
+          break;
+        case 'left':
+          activeBox.x -= 10
+          break
+        case 'right':
+          activeBox.x += 10
+          break
+      }
+    })
+
+    function createBox() {
+      var x = Math.random() * canvas.width
+      var y = 0
+      var width = Math.random() * 40 + 10
+      var height = Math.random() * 40 + 10
+      var color = tools.getRandomColor()
+      var box = new Box(x, y, width, height, color)
+      boxes.push(box)
+      return box
+    }
+
+    var frame = () => {
+      window.requestAnimationFrame(frame)
+      uc.clear()
+
+      activeBox.y += vy
+      if (activeBox.y > canvas.height - activeBox.height) {
+        // 重置高度 
+        activeBox.y = canvas.height - activeBox.height
+        activeBox = createBox()
+      }
+
+      boxes.forEach(function(box, index) {
+        if (activeBox !== box && tools.checkRectBorder(activeBox, box)) {
+          // 重置高度  
+          activeBox.y = box.y - activeBox.height
+          activeBox = createBox()
+        }
+        box.fill(ctx)
+      })
+    }
+    frame()
+  }} />)
+  .add('外接圆判断法', () => <Component render={(ctx, uc, canvas) => {
+    var ballA = new Ball(canvas.width / 2, canvas.height / 2)
+    var mouse = tools.getClick(canvas)
+    ballA.fill(ctx)
+
+    addEvent(canvas, 'click', () => {
+      uc.clear()
+
+      var ballB = new Ball(mouse.x, mouse.y, 20, 'yellow')
+      if (tools.checkCircleBorder(ballA, ballB)) {
+        message.info('碰撞上')
+      }
+
+      ballA.fill(ctx)
+      ballB.fill(ctx)
+    })
+  }} />)
+  .add('小球碰撞反弹', () => <Component render={(ctx, uc, canvas) => {
+    var ballA = new Ball(13, canvas.height / 2, 12, 'red')
+    var ballB = new Ball(canvas.width - 13, canvas.height / 2, 12, 'blue')
+    var vx = 10
+
+    var frame = () => {
+      window.requestAnimationFrame(frame)
+      uc.clear()
+
+      ballA.x += vx
+      ballB.x += -vx
+
+      if (tools.checkCircleBorder(ballA, ballB) || tools.checkBorder(ballA, canvas)) {
+        vx = -vx
+      }
+      ballA.fill(ctx)
+      ballB.fill(ctx)
+    }
+    frame()
+  }} />)
+  .add('多物体碰撞', () => <Component style={{ width: 400, height: 400 }} render={(ctx, uc, canvas) => {
+    var n = 8
+    var balls = []
+
+    Array(n).fill(0).forEach(() => {
+      var ball = new Ball()
+      ball.x = Math.random() * canvas.width
+      ball.y = Math.random() * canvas.height
+      ball.radius = 30
+      ball.color = tools.getRandomColor()
+      ball.vx = Math.random() * 6 - 3
+      ball.vy = Math.random() * 6 - 3
+      balls.push(ball)
+    })
+
+    var frame = () => {
+      window.requestAnimationFrame(frame)
+      uc.clear()
+
+      // 碰撞检测
+      tools.checkManyObjectCircleBorder(balls, (ballA, ballB) => {
+        ballA.vx = -ballA.vx
+        ballA.vy = -ballA.vy
+        ballB.vx = -ballB.vx
+        ballB.vy = -ballB.vy
+
+        if (ballA.vx > 0) {
+          ballA.x += 15
+        } else {
+          ballA.x -= 15
+        }
+
+        if (ballA.vy > 0) {
+          ballA.y += 15
+        } else {
+          ballA.y -= 15
+        }
+
+        if (ballB.vx > 0) {
+          ballB.x += 15
+        } else {
+          ballB.x -= 15
+        }
+
+        if (ballB.vy > 0) {
+          ballB.y += 15
+        } else {
+          ballB.y -= 15
+        }
+      })
+
+      // 边界检测
+      balls.forEach((ball) => {
+        const borderDirection = tools.checkBorder(ball, canvas)
+        ball.setPosition(borderDirection, canvas)
+      }) 
+
+      // 图形绘制
+      balls.forEach((ball) => {
+        ball.fill(ctx)
+        ball.x += ball.vx
+        ball.y += ball.vy
+      })
+    }
+    frame()
+  }} />)
+storiesOf('Move|用户交互', module)
+  .add('捕获物体', () => <Component render={(ctx, uc, canvas) => {
+    /**
+     * 矩形捕获
+     * 圆捕获
+     * 多边形捕获
+     * 不规则图形的捕获（方法：分离轴定理（SAT）和最小平移向量（MTV））
+     */
+    var ball = new Ball(canvas.width / 2, canvas.height / 2, 30)
+    ball.fill(ctx)
+    var vx = 3
+    var mouse = tools.getMouse(canvas)
+    var isMouseDown = false
+    addEvent(canvas, 'mousemove', () => {
+      if (ball.checkMouse(mouse)) {
+        // message.info('捕获到小球')
+        isMouseDown = true
+      } else {
+        isMouseDown = false
+      }
+    })
+
+    var frame = () => {
+      window.requestAnimationFrame(frame)
+      uc.clear()
+
+      if (!isMouseDown) {
+        ball.x += vx
+      }
+
+      ball.fill(ctx)
+    }
+    frame()
+  }} />)
+  .add('拖拽物体', () => <Component render={(ctx, uc, canvas) => {
+    var ball = new Ball(canvas.width / 2, canvas.height / 2, 20)
+    ball.fill(ctx)
+    var mouse = tools.getMouse(canvas)
+    var dx = 0
+    var dy = 0
+
+    addEvent(canvas, 'mousedown', () => {
+      if (ball.checkMouse(mouse)) {
+        dx = mouse.x - ball.x
+        dy = mouse.y - ball.y
+        addEvent(document, 'mousemove', onMouseMove, false)
+        addEvent(document, 'mouseup', onMouseUp, false)
+      }
+    })
+
+    function onMouseMove() {
+      ball.x = mouse.x - dx
+      ball.y = mouse.y - dy
+
+      // 边界检测
+      const borderDirection = tools.checkBorder(ball, canvas)
+      ball.setPosition(borderDirection, canvas)
+    }
+
+    function onMouseUp() {
+      removeEvent(document, 'mouseup', onMouseUp, false)
+      removeEvent(document, 'mousemove', onMouseMove, false)
+    }
+
+    var frame = () => {
+      window.requestAnimationFrame(frame)
+      uc.clear()
+
+      ball.fill(ctx)
+    }
+    frame()
+  }} />)
+  .add('抛掷物体', () => <Component render={(ctx, uc, canvas) => {
+    var ball = new Ball()
+    ball.init(canvas)
+    ball.fill(ctx)
+    var mouse = tools.getMouse(canvas)
+    var isMouseDown = false
+    var dx = 0
+    var dy = 0
+    var oldX = 0
+    var oldY = 0
+    var vx = 0
+    var vy = 0
+
+    uc.tools.addMouseEvent((evt, cb) => {
+      if (ball.checkMouse(mouse)) {
+        cb()
+        isMouseDown = true
+        oldX = ball.x
+        oldY = ball.y
+        dx = mouse.x - ball.x
+        dy = mouse.y - ball.y
+      }
+    }, () => {
+      ball.x = mouse.x - dx
+      ball.y = mouse.y - dy
+    }, () => {
+      isMouseDown = false
+    })
+
+    var frame = () => {
+      window.requestAnimationFrame(frame)
+      uc.clear()
+
+      if (isMouseDown) {
+        vx = ball.x - oldX
+        vy = ball.y - oldY
+      } else {
+        ball.x += vx
+        ball.y += vy
+
+        // 有bug
+        const borderDirections = tools.checkBorder(ball, canvas)
+        ball.setPosition(borderDirections, canvas)
+      }
+
+      ball.fill(ctx)
+    }
+    frame()
+    
+  }} />)
+  .add('抛掷物体-加入重力和反弹消耗', () => <Component render={(ctx, uc, canvas) => {
+    var ball = new Ball()
+    ball.init(canvas)
+    ball.fill(ctx)
+    var mouse = tools.getMouse(canvas)
+    var isMouseDown = false
+    var dx = 0
+    var dy = 0
+    var oldX = 0
+    var oldY = 0
+    var gravity = 1.5
+    ball.vx = 0
+    ball.vy = 0
+    ball.bounce = -0.8
+
+    uc.tools.addMouseEvent((evt, cb) => {
+      if (ball.checkMouse(mouse)) {
+        cb()
+        isMouseDown = true
+        oldX = ball.x
+        oldY = ball.y
+        dx = mouse.x - ball.x
+        dy = mouse.y - ball.y
+      }
+    }, () => {
+      ball.x = mouse.x - dx
+      ball.y = mouse.y - dy
+    }, () => {
+      isMouseDown = false
+    })
+
+    var frame = () => {
+      window.requestAnimationFrame(frame)
+      uc.clear()
+
+      if (isMouseDown) {
+        ball.vx = ball.x - oldX
+        ball.vy = ball.y - oldY
+      } else {
+        ball.vy += gravity
+        ball.x += ball.vx
+        ball.y += ball.vy
+
+        // 有bug
+        const borderDirections = tools.checkBorder(ball, canvas)
+        ball.setPosition(borderDirections, canvas)
+      }
+
+      ball.fill(ctx)
+    }
+    frame()
+    
   }} />)
   // .add('', () => <Component render={(ctx, uc, canvas) => {
   // }} />)

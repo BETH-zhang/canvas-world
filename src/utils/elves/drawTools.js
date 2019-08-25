@@ -82,18 +82,26 @@ class Tools {
 
   addMouseEvent = (mousedown, mousemove, mouseup) => {
     let allowMouse = false
-    this.canvas.addEventListener('mousedown', (evt) => {
-      allowMouse = true
-      mousedown(evt)
-    });
-    document.addEventListener('mousemove', (evt) => {
+
+    var onMouseMove = (evt) => {
       if (allowMouse) {
         mousemove(evt)
-      }
-    });
-    document.addEventListener('mouseup', () => {
+      } 
+    }
+
+    var onMouseUp = (evt) => {
       allowMouse = false
-      mouseup()
+      document.removeEventListener('mouseup', onMouseUp, false)
+      document.removeEventListener('mousemove', onMouseMove, false)
+      mouseup(evt)
+    }
+
+    this.canvas.addEventListener('mousedown', (evt) => {
+      allowMouse = true
+      mousedown(evt, () => {
+        document.addEventListener('mousemove', onMouseMove, false);
+        document.addEventListener('mouseup', onMouseUp, false);
+      })
     });
   }
 

@@ -1,3 +1,6 @@
+import tools from './tools.js'
+import isArray from 'lodash/isArray';
+
 function Ball(x, y, radius, color) {
   // 小球中心的x坐标，默认值为0
   this.x = x || 0
@@ -10,9 +13,53 @@ function Ball(x, y, radius, color) {
 
   this.scaleX = 1
   this.scaleY = 1
+
+  // 反弹消耗
+  this.bounce = -1
+  this.vx = 0
+  this.vx = 0
 }
 
 Ball.prototype = {
+  init: function(canvas) {
+    this.x = canvas.width / 2
+    this.y = canvas.width / 2
+  },
+  setPosition: function (borderDirections, canvas) {
+    // 只有触碰到边界的时候才会存在反弹消耗
+    if (borderDirections && isArray(borderDirections)) {
+      borderDirections.forEach((borderDirection) => {
+        if (borderDirection === 'left') {
+          this.x = this.radius
+          this.vx = this.vx * this.bounce
+        } else if (borderDirection === 'right') {
+          this.x = canvas.width - this.radius
+          this.vx = this.vx * this.bounce
+        } else if (borderDirection === 'top') {
+          this.y = this.radius
+          this.vy = this.vy * this.bounce
+        } else if (borderDirection === 'down') {
+          this.y = canvas.height - this.radius
+          this.vy = this.vy * this.bounce
+        }
+      })
+    } 
+  },
+  checkMouse: function (mouse) {
+    if (tools.checkCaptureCircleElement(mouse, this)) {
+      return true
+    }
+    return false
+  },
+  getRect: function () {
+    var rect = {
+      x: this.x - this.radius,
+      y: this.y - this.radius,
+      width: this.radius * 2,
+      height: this.radius * 2,
+    }
+    return rect
+  }, 
   stroke: function (ctx) {
     ctx.save()
     ctx.translate(this.x, this.y)
