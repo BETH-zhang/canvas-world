@@ -1,0 +1,20 @@
+{
+  "name": "ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc src main.ts",
+    "dev": "lite-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "beth <522718277@qq.com>",
+  "license": "MIT",
+  "dependencies": {
+    "systemjs": "^0.19.47",
+    "typescript": "^3.6.4"
+  },
+  "devDependencies": {
+    "lite-server": "^2.5.4"
+  }
+}
