@@ -1,0 +1,161 @@
+<html> 
+<head> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="jquery-1.12.1.js"></script>
+<title>Canvas&maze</title>
+<style type="text/css">  
+#x{background: none repeat scroll 0 0 #ffffff;    
+    border-radius: 80%;  
+    width:10px; 
+    height:10px;    
+    color: red;   
+    position: absolute; 
+} 
+</style>
+</head>
+<body bgcolor="#215E21">
+<canvas id = "myCanvas" height="932px" width="1920px" style="">your browser does not support the canvas tag </canvas>
+
+<div id="x" style="position:absolute;left: 1px; top: 1px;" ></div>
+
+<script type="text/javascript">
+//-----------------------------------------移动div----------------------------------------------
+    //var scrWidth=screen.width;
+    var scrWidth = $(window).width();
+    var scrHeight=screen.height;
+    //var   winWidth = $(window).width();
+    var winHeight = $(window).height();
+    $(function(){
+        $("#myCanvas").css("width",scrWidth-10);
+        $("#myCanvas").attr("height",winHeight + "px");
+    });
+
+(function() { 
+    var l = 0; 
+    var t = 0;
+    var lmax = scrWidth - 10;
+    var tmax = winHeight - 10;
+    var addTop = addLeft = 50;
+    var maxcircl = (winHeight > scrWidth ? scrWidth : winHeight)/100;
+    var o = $('#x');
+    var c=document.getElementById("myCanvas");
+    var ctx=c.getContext("2d");
+    var lt = 1,rt = 0,rb = 0,lb=0;//左上，右上，右下，左下
+    var circl = 1, onecircl = 1, twocircl=0, threecircl=0, fourcircl=0;
+    setInterval(function() {
+        var currl = cl = parseInt(o.css("left"));
+        var currt = ct = parseInt(o.css("top"));
+        if(circl > 0 && circl < maxcircl + 1){
+            if(lt == 1){
+                if(lmax-currl >addLeft * circl){
+                //左上到右上
+                    o.css("left",currl + addLeft);              
+                    cl = parseInt(o.css("left"));
+                    ctx.beginPath();
+                    ctx.moveTo(currl,ct);
+                    ctx.lineTo(cl,ct);
+                    ctx.stroke();
+                }else{
+                //左上到右上最后一段
+                    o.css("left",lmax - addLeft*(circl-1));
+                    cl = parseInt(o.css("left"));
+                    ctx.beginPath();
+                    ctx.moveTo(currl,ct);
+                    ctx.lineTo(cl,ct);
+                    ctx.stroke();
+                    if(tmax-currt > addTop * circl){
+                    //右上到右下
+                        o.css("top",currt + addTop);
+                        ct = parseInt(o.css("top"));
+                        ctx.beginPath();
+                        ctx.moveTo(cl,currt);
+                        ctx.lineTo(cl,ct);
+                        ctx.stroke();
+                    }else{
+                    //右上到右下最后一段
+                        o.css("top",tmax -addTop*(circl-1)-1);
+                        ct = parseInt(o.css("top"));
+                        ctx.beginPath();
+                        ctx.moveTo(cl,currt);
+                        ctx.lineTo(cl,ct);
+                        ctx.stroke();
+                    }
+                }
+            }
+            if(currl == lmax-addLeft*(circl-1) && currt == tmax -addTop*(circl-1)-1)
+            {
+                rb = 1;
+                lt = 0;
+            }
+            if(rb == 1){
+            //右下到左下
+                if(currl > addLeft * circl){
+                    o.css("left",currl - addLeft);
+                    cl = parseInt(o.css("left"));
+                    ctx.beginPath();
+                    ctx.moveTo(currl,currt);
+                    ctx.lineTo(cl,currt);
+                    ctx.stroke();
+                }else{
+                //右下到左下最后一段
+                    if(circl == 1){
+                        o.css("left","1");
+                    }else{
+                        o.css("left",addLeft*(circl-1));
+                    }
+                    cl = parseInt(o.css("left"));
+                    ctx.beginPath();
+                    ctx.moveTo(currl,currt);
+                    if(circl == 1){
+                        ctx.lineTo(1,currt);
+                    }else{
+                        ctx.lineTo(cl,currt);
+                    }
+                    ctx.stroke();
+                    if(currt > addTop*circl){
+                    //左下到左上
+                        if((currt - addTop) < addTop*circl){
+                            o.css("top",addTop*circl);
+                            cl = parseInt(o.css("left"));
+                            ct = parseInt(o.css("top"));
+                            ctx.beginPath();
+                            if(circl == 1){
+                                ctx.moveTo(1,currt);
+                                ctx.lineTo(1,addTop*circl);
+                            }else{
+                                ctx.moveTo(cl,currt);
+                                ctx.lineTo(cl,ct);  
+                            }
+                            ctx.stroke();
+                        }else{
+                        //左下到左上最后一段
+                            o.css("top",currt - addTop);
+                            cl = parseInt(o.css("left"));
+                            ct = parseInt(o.css("top"));                            
+                            ctx.beginPath();
+                            if(circl == 1){
+                                ctx.moveTo(1,currt);
+                                ctx.lineTo(1,ct);
+                            }else{
+                                ctx.moveTo(cl,currt);
+                                ctx.lineTo(cl,ct);  
+                            }
+                            ctx.stroke();
+                        }
+                    }else{
+                        o.css("top",addTop*circl);
+                    }
+                }
+            }
+            if((currl == addLeft*(circl-1) || currl == 1)&& currt == addTop*circl)
+            {
+                lt = 1;
+                rb = 0;
+                circl++;
+            }
+        }
+    }, 100); 
+})();
+</script>
+</body>
+</html>
