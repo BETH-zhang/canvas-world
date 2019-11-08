@@ -13,11 +13,34 @@ export interface IDoom3Token {
   getInt (): number;
 }
 
-export interface IDoom3Tokenizer {
-  setSource (source: string): void; // 设置要解析的字符串
-  reset(): void; // 重置当前索引为0
-  getNextToken(token: IDoom3Token): boolean; // 获取下一个Token
+
+// 枚举类型，可以转化成迭代器的形式输出
+export interface IEnumerator <T> {
+  // 将迭代器重置为初始位置
+  reset(): void
+  // 如果没越界，moveNext 将 current 设置为下一个元素，并返回 true
+  // 如果已越界，moveNext 返回false
+  moveNext(): boolean;
+  // 只读属性，用于获取当前的元素，返回范性 T
+  readonly current: T;
 }
+
+// 接口扩展和类扩展一样，都是使用extends关键字
+// 类实现接口，则使用 implements 关键字
+// 注意，IEnumerator 中的范型在 extends 时替换成了 IDoom3Token 类型
+export interface IDoom3Tokenizer extends IEnumerator <IDoom3Token> {
+  // 只需要保留 setSource 接口方法
+  setSource(source: string): void;
+}
+
+// export interface IDoom3Tokenizer {
+//   // 新增一个创建子接口的方法
+//   createIDoom3Token(): IDoom3Token;
+
+//   setSource (source: string): void; // 设置要解析的字符串
+//   reset(): void; // 重置当前索引为0
+//   _getNextToken(token: IDoom3Token): boolean; // 获取下一个Token
+// }
 
 /**
  * 
@@ -27,18 +50,18 @@ export interface IDoom3Tokenizer {
  */
 
 class Doom3Token implements IDoom3Token {
-//  private _type: ETokenType; // 标识当前Token的类型：NONE / STRING / NUMBER
-//  private _charArr: string[] = []; // 字符串数组
-//  private _val: number; // 如果当前的Token类型是NUMBER，则会设置该数组，如果是字符串类型，就忽略变量
-private _charArr: string[] = [];
-private _type!: ETokenType;
-private _val!: number;
+  //  private _type: ETokenType; // 标识当前Token的类型：NONE / STRING / NUMBER
+  //  private _charArr: string[] = []; // 字符串数组
+  //  private _val: number; // 如果当前的Token类型是NUMBER，则会设置该数组，如果是字符串类型，就忽略变量
+  private _charArr: string[] = [];
+  private _type!: ETokenType;
+  private _val!: number;
 
   public constructor() {
   //  this._charArr.length = 0
   //  this._type = ETokenType.NONE
   //  this._val = 0.0
-  this.reset()
+    this.reset()
   }
 
   // 一下都是接口方法实现
@@ -113,11 +136,16 @@ private _val!: number;
 class Doom3Tokenizer implements IDoom3Tokenizer {
   // 使用初始化表达式初始化字符串数组
   private _digits: string[] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-  private _whiteSpaces: string[] = [' ', '\t', '\v', '\n']
+  private _whiteSpaces: string[] = [' ', '\t', '\v', '\n', '\r'] // \n 针对mac，\r 针对window
   //                              空格符 水平制表符 垂直制表符 换行符
   // 要解析的字符串，使用Doom3Tokenizer字符串来初始化变量
   private _source: string = ' Doom3Tokenizer '
   private _currIdx: number = 0;
+
+  // 实现新增的接口方法,创建 IDoom3Token 接口
+  public createIDoom3Token(): IDoom3Token {
+    return new Doom3Token
+  }
 
   //实现公开的接口方法，设置要解析的字符串，并且重置当前索引
   public setSource(source: string): void {
@@ -126,8 +154,21 @@ class Doom3Tokenizer implements IDoom3Tokenizer {
   }
 
   // 实现公开的接口方法，不改变要解析的字符串，仅重置当前索引
-  public reset(): void {
-    this._currIdx = 0
+  // public reset(): void {
+  //   this._currIdx = 0
+  // }
+
+  // 增加一个私有变量_current,并使用 new 进行初始化接口
+  private _current: IDoom3Token = new Doom3Token()
+  
+  // 实现moveNext方法，实际调用的是 _getNextToken 方法
+  public moveNext():boolean{
+    return this._getNextToken(this._current)
+  }
+
+  // 通过 get方法实现只读属性 current
+  public get current():IDoom3Token {
+    return this._current
   }
 
   // 判断某个字符是不是数字
@@ -178,17 +219,21 @@ class Doom3Tokenizer implements IDoom3Tokenizer {
     }
   }
 
-  // getNextToken 方法是一个相对复杂的实现，其工作原理就是一个有限状态机(Finite State Machine。 FSM)。所谓有限状态机是有限的，
-  // 并且根据当前的状态来执行某个操作。那么来看一下getNextToken这个有限状态及相关的问题
+  // _getNextToken 方法是一个相对复杂的实现，其工作原理就是一个有限状态机(Finite State Machine。 FSM)。所谓有限状态机是有限的，
+  // 并且根据当前的状态来执行某个操作。那么来看一下_getNextToken这个有限状态及相关的问题
   /**
    * 1.有哪几个状态（即有限的状态数量）
    * 2.每个状态的开始条件是什么？
    * 3.每个状态的结束条件是什么？
    * 4.在某个状态下要做什么操作？
    */
-  public getNextToken(tok: IDoom3Tokenizer): boolean {
+  /**
+   * 该方法被调用时，每次调用会返回下一个可用的 Token，该行为非常符合迭代器模式。迭代器是最常用的设计模式
+   */
+  private _getNextToken(tok: IDoom3Token): boolean {
     // 使用as关键字将 IDoom3Token 向下转型为 Doom3Token类型
     let token: Doom3Token = tok as Doom3Token;
+    console.log('token: ', token, this._current)
     // let token: Doom3Token = < Doom3Token > tok;
     // 初始化为空字符串
     let c: string = ''
@@ -199,24 +244,31 @@ class Doom3Tokenizer implements IDoom3Tokenizer {
       // 第一步：跳过所有的空字符，返回第一个可显示的字符
       // 开始条件，当前字符是空白符
       c = this._skipWhitespace()
+      console.log('1. c: ', c)
       // 第二步：判断非空白字符的第一个字符是什么
       if (c === '/' && this._peekChar() === '/') {
+        console.log('2. 判断非空白字符的第一个字符是 / ')
         // 开始条件：如果是 // 开头，则跳过单行注释中的所有字符
         c = this._skipComments0()
       } else if (this._isDigit(c) || c === '-' || (c === '.' && this._isDigit(this._peekChar()))) {
+        console.log('3. 判断当前是数字，或者符号且下一个是数字')
         // 开始条件，如果当前字符是数字、符号或者以点号且数字开头
         // 则返回到上一个字符索引处，因为第一个字符被读取并处理过了，而_getNumber会重新处理数字情况，这样需要恢复到数字解析的原始状态
         this._ungetChar();
         this._getNumber(token);
+        return true
       } else if (c === '\"' || c === '\'') {
+        console.log('4. 如果以\"或\'开头的字符')
         // 开始条件：如果以\"或\'开头的字符，例如‘origin'或‘Body'
         this._getSubstring(token, c)
         return true
       } else if (c.length > 0) {
+        console.log('5. 可能是字符')
         // 开始条件，排除上述所有的条件并且在确保数据源没有解析完成的情况下
         // 返回到上一个字符索引处，因为_getString会重新处理相关情况
         this._ungetChar()
         this._getString(token)
+        return true
       }
     } while(c.length > 0)
     return false
@@ -286,8 +338,110 @@ class Doom3Tokenizer implements IDoom3Tokenizer {
         isFloat = true
       } else if (c !== '-') {
         // 十进制从字符到浮点数的转换算法
+        // 否则如果不是一负号的话，说明是数字（代码运行到这里已经将点和负号操作符都排拆掉了，仅可能是数字）
+        // 这里肯定是数字了，获取当前的数字字符的ASCII编码
+        let ascii:number = c.charCodeAt(0)
+        let vc:number = (ascii - ascii0)
+        if (!isFloat) {
+          console.log('～～～～～~~~~~~~val1:', val, vc)
+          // 整数部分算法，10倍递增，因为十进制
+          val = 10 * val + vc
+        } else {
+          console.log('～～～～～~~~~~~~val2:', val, vc, scaleValue)
+          // 小数部分算法
+          val = val + scaleValue * vc;
+          // 10倍递减
+          scaleValue *= 0.1
+        }
       }
-    } while()
-    
+      // 上面循环中的代码没有读取并处理过字符，之所以使用consumed变量，是为了探测下一个字符
+      if (consumed === true) {
+        this._getChar()
+      }
+      // 获得下一个字符后，才设置 consumed为true
+      c = this._peekChar()
+      consumed = true
+      // 结束条件：数据源解析全部完成，或下一个字符即不是数字也不是小数掉（如果是浮点数表示的话）
+    } while(c.length > 0 && (this._isDigit(c) || (!isFloat && c === '.'))) 
+    // 如果是负数，要取反
+    if (isNegate) {
+      val = -val
+    }
+    // 设置数字值和Number类型
+    console.log('～～～～～~~~~~~~val', val)
+    token.setVal(val)
+  }
+
+  // Doom3文本文件格式中的标识符是由带一对单引号或双引号的字符串组成，因此也需要一个方法来解析这种情况
+  private _getSubstring(token: Doom3Token, endChar: string): void {
+    let end:boolean = false
+    let c:string = '';
+    token.setType(ETokenType.STRING)
+    do {
+      // 获取字符
+      c = this._getChar()
+      // 如果当前字符是结束符（要么是 \", 要么是\'）
+      if(c === endChar) {
+        end = true // 结束符
+      } else {
+        token.addChar(c)
+      }
+      // 结束条件：数据源解析全部完成或遇到换行符（子串不能多行表示）或是结束符号
+    } while (c.length > 0 && c !== '\n' && !end)
+  }
+
+  // 进入该函数，说明肯定不是数字，不是单行注释，不是多行注释，也不是字符串
+  // 进入该函数只能有两种类型的字符串，即不带双引号或单引号的字符串及 specialChar
+  private _getString(token: Doom3Token): void {
+    // 获取当前字符，因为前面已经判断为字符串了
+    let c:string = this._getChar()
+    token.setType(ETokenType.STRING)
+    // 进入循环
+    do {
+      // 将当前的char添加到Token中
+      token.addChar(c)
+      if (!this._isSpecialChar(c)) {
+        c = this._getChar()// 只有不是特殊字符的字符，才调用—_getChar移动当前索引
+      }
+      // 如果this._isPecialChar(c)为true,不会调用_getChar()函数，并且满足了跳出while循环的条件
+      // 结束条件，数据源解析全部完成，或下一个是空白符或者字符是特殊符号
+    } while(c.length > 0 && !this._isWhitespace(c) && !this._isSpecialChar(c))
+    this._isSpecialChar(c)
+  }
+
+  // 将左边和右边的大、中、小括号及点号，逗号都当作当读的Token进行处理
+  // 如果要增加更多的标点作为 Token，可以在本函数中进行添加
+  private _isSpecialChar(c:string): boolean {
+    switch(c) {
+      case '(':
+        return true;
+      case ')':
+        return true;
+      case '[':
+        return true;
+      case ']':
+        return true
+      case '{':
+        return true
+      case '}':
+        return true
+      case ',':
+        return true
+      case '.':
+        return true
+    }
+    return false
+  }
+}
+
+// 使用静态方法，增加一个工厂类，用于创建 IDoom3Tokenizer 接口
+// 该工厂需要被调用方法使用，因此export导出
+export class Doom3Factory {
+  // 注意返回的是 IDoom3Tokenizer 接口，而不是 Doom3Tokenizer 实现类
+  // static 是一个静态方法 ，可以直接调用静态方法，如：Doom3Factory.createDoom3Tokenizer
+  // 但是在接口中，不能声明静态方法或属性
+  public static createDoom3Tokenizer(): IDoom3Tokenizer {
+    let ret:IDoom3Tokenizer = new Doom3Tokenizer()
+    return ret
   }
 }
