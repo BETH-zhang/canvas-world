@@ -1,6 +1,10 @@
+body {
+    margin: 0; 
+    /* reset设置非常重要，比如：你需要获取 鼠标在canvas 上的位置，发现，canvas与viewport有8个像素的偏移。 */
+}
 #canvas {
     background: #ffffff;
-    margin-left: 10;
+    margin-left: 100px;
     margin-top: 10px;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
 }

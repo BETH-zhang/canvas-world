@@ -1,3 +1,5 @@
+import { Canvas2D } from './canvas/Canvas2D.ts'
+
 let start: number = 0
 let lastTime: number = 0
 let count: number = 0
