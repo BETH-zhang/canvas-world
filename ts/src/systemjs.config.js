@@ -23,7 +23,10 @@
   // System
   //   .import('./test/testThis.ts')
   //   .then(null, console.error.bind(console))
+  // System
+  //   .import('./test/applicationTest.ts')
+  //   .then(null, console.error.bind(console))
   System
-    .import('./test/applicationTest.ts')
+    .import('./test/testCanvasApplication.ts')
     .then(null, console.error.bind(console))
 })(this)

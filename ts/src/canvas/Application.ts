@@ -1,3 +1,4 @@
+import { vec2 } from './math2D.ts'
 /**
  * 可以启动动画玄幻和结束动画循环
  * 可以进行基于实现的更新与重绘
@@ -438,9 +439,10 @@ export class Application implements EventListenerObject {
 
  export class Canvas2DApplication extends Application {
    public context2D: CanvasRenderingContext2D | null
-   public constructor(canvas: HTMLCanvasElement, contextAttributes ? : Canvas2DContextAttributes) {
+   public constructor(canvas: HTMLCanvasElement, contextAttributes ?: Canvas2DContextAttributes) {
     super(canvas)
     this.context2D = this.canvas.getContext('2d', contextAttributes)
+    console.log('canvas---', this.context2D)
    }
  }
 

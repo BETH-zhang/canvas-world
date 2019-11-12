@@ -8,6 +8,6 @@ body {
     margin-top: 10px;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
 
-    border: 80px solid red;
+    border: 80px solid #f2f2f2;
     padding: 20px;
 }
