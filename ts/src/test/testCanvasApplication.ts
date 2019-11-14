@@ -15,6 +15,26 @@ class TestApplication extends Canvas2DApplication {
     }
   }
 
+  public static Colors: string[] = [
+    'aqua', // 浅绿色
+    'black', // 黑色
+    'blue', // 蓝色
+    'fuchsia', // 紫红色
+    'gray', // 灰色
+    'green', // 绿色
+    'lime', // 绿黄色
+    'maroon', // 褐红色
+    'navy', // 海军蓝
+    'olive',// 橄榄色
+    'orange', // 橙色
+    'purple', // 紫色
+    'red', // 红色
+    'silver',// 银灰色
+    'teal', // 蓝绿色
+    'white', // 白色
+    'yellow', // 黄色
+  ]
+
   public start(): void {
     this.addTimer((id: number, data: any): void => {
       this._updateLineDashOffset()
@@ -476,6 +496,73 @@ class TestApplication extends Canvas2DApplication {
     }
   }
 
+  // 获取 4 * 4 = 16 种基本颜色的离屏画布
+  public getColorCanvas(amount: number = 32) : HTMLCanvasElement {
+    let step: number = 4
+    // 第一步： 使用createElement方法，提供tagName为‘canvas'关键字创建一个离屏画布对象
+    let canvas: HTMLCanvasElement = document.createElement('canvas') as HTMLCanvasElement
+    // 第2步：设置该画布的尺寸
+    canvas.width = amount * step
+    canvas.height = amount * step
+    // 第三步：从离屏画布中获取渲染上下文对象
+    let context: CanvasRenderingContext2D | null = canvas.getContext('2d')
+    if (context === null) {
+      alert('离屏Canvas获取渲染上下文失败！')
+      throw new Error('离屏Canvas获取渲染上下文失败')
+    }
+
+    for (let i: number = 0; i < step; i++) {
+      for (let j: number = 0; j < step; j++) {
+        // 将二维索引转成一堆索引，用来在静态的Colors数据中寻址
+        let idx: number = step * i + j;
+        // 第四步，使用渲染上下文对象绘图
+        context.save()
+        // 使用其中16中颜色
+        context.fillStyle = TestApplication.Colors[idx]
+        context.fillRect(i * amount, j * amount, amount, amount)
+        context.restore()
+      }
+    }
+    return canvas
+  }
+
+  public drawColorCanvas(): void {
+    let colorCanvas: HTMLCanvasElement = this.getColorCanvas()
+    this.drawImage(colorCanvas, ectangle.create(100, 100, colorCanvas.width, colorCanvas.height))
+  }
+
+  public testChangePartCanvasImageData(rRow: number = 2, rColum: number = 0, cRow: number = 1, cColum: number = 0, size: number = 32): void {
+    // 调用getColorCanvas方法生成16中标准色块离屏画布
+    let colorCanvas: HTMLCanvasElement = this.getColorCanvas(size)
+    // 获取离屏画布的上下文渲染对象
+    let context: CanvasRenderingContext2D | null = colorCanvas.getContext('2d')
+    if (context === null) {
+      alert('Canvas获取渲染上下文失败')
+      throw new Error('Canvas获取渲染上下文失败')
+    }
+    // 显示未修改时的离屏画布的效果
+    this.drawImage(colorCanvas, Rectangle.create(100, 100, colorCanvas.width, colorCanvas.height))
+    // 接上面的代码继续往下来替换颜色
+    // 使用createImageData方法，大小为size * size 个像素
+    // 每个像素又有4个分量[r, g, b, a]
+    let imgData: ImageData = context.createImageData(size, size)
+    // imgData有三个属性，其中data属性存储的是一个Uint8ClampedArray类型数组对象
+    // 该数组中存储方式为：[r, g, b, a, r, g, b, a, ...]
+    // 所以imgData.data.length = size * size * 4
+    // 上面也提到过，imgData.data.length 表示的是所有分量的个数
+    // 而为了方便寻址，希望使用像素个数进行遍历，因此要除以4（一个像素由r，g，b，a这4个分量组成）
+    let rgbaCount: number = data.length / 4
+    for (let i = 0; i< rgbaCount; i++) {
+      // 注意下面索引的计算方式
+      data[i * 4 + 0] = 255
+      data[i * 4 + 1] = 0
+      data[i * 4 + 2] = 0
+      data[i * 4 + 3] = 255
+    }
+
+    // 一定要调用putImageData方法来替换context中的像素数据
+    context.putImageData(imageData, size * rColum, size * rRow, 0, 0, size, size)
+  }
 }
 
 const addToolButton = (text: string = '按钮', handleClick: Function = (): void => {}): void => {
