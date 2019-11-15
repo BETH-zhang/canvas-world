@@ -1,9 +1,47 @@
 import { Canvas2DApplication } from '../canvas/Application.ts'
 import { vec2, Size, Rectangle, ETextLayout, EImageFillType } from '../canvas/math2D.ts'
 
+const Colors: string[] = [
+  'aqua', // 浅绿色
+  'black', // 黑色
+  'blue', // 蓝色
+  'fuchsia', // 紫红色
+  'gray', // 灰色
+  'green', // 绿色
+  'lime', // 绿黄色
+  'maroon', // 褐红色
+  'navy', // 海军蓝
+  'olive',// 橄榄色
+  'orange', // 橙色
+  'purple', // 紫色
+  'red', // 红色
+  'silver',// 银灰色
+  'teal', // 蓝绿色
+  'white', // 白色
+  'yellow', // 黄色
+]
+
 class TestApplication extends Canvas2DApplication {  
   // 声明_lineDashOffset 成员变量 初始化0
   private _lineDashOffset: number = 0;
+  private _mouseX: number = 0;
+  private _mouseY: number = 0;
+  // this.isSupportMouseMove = true;
+
+  // override Application 的 dispatchMouseMove 方法
+  public dispatchMouseMove(evt: CanvasMouseEvent): void {
+    this._mouseX = evt.canvasPosition.x;
+    this._mouseY = evt.canvasPosition.y;
+  }
+
+  public render(): void {
+    if (this.context2D !== null) {
+      this.clearScreen()
+      this.strokeGrid()
+      this.drawCanvasCoordCenter()
+      this.drawCoordInfo(`[${this._mouseX}, ${this._mouseY}]`, this._mouseX, this._mouseY)
+    }
+  }
 
   // 实现一个更新lineDashOffset的方法
   private _updateLineDashOffset(): void {
@@ -15,36 +53,16 @@ class TestApplication extends Canvas2DApplication {
     }
   }
 
-  public static Colors: string[] = [
-    'aqua', // 浅绿色
-    'black', // 黑色
-    'blue', // 蓝色
-    'fuchsia', // 紫红色
-    'gray', // 灰色
-    'green', // 绿色
-    'lime', // 绿黄色
-    'maroon', // 褐红色
-    'navy', // 海军蓝
-    'olive',// 橄榄色
-    'orange', // 橙色
-    'purple', // 紫色
-    'red', // 红色
-    'silver',// 银灰色
-    'teal', // 蓝绿色
-    'white', // 白色
-    'yellow', // 黄色
-  ]
-
   public start(): void {
     this.addTimer((id: number, data: any): void => {
       this._updateLineDashOffset()
-      this.render()
+      this.clearScreen()
     }, 0.05)
 
     super.start()
   }
 
-  public render(): void {
+  public clearScreen(): void {
     if (this.context2D !== null) {
       // 流程1: 渲染前，先清屏
       this.context2D.clearRect(0, 0, this.context2D.canvas.width, this.context2D.canvas.height)
@@ -52,14 +70,35 @@ class TestApplication extends Canvas2DApplication {
     }
   }
 
-  public printLineStates(): void {
-    console.log('this.context2D: ', this.context2D)
+  public printAllStates(): void {
     if (this.context2D !== null) {
-      console.log('****LineState***')
+      console.log('**** LineState ***')
       console.log('LineWidth: ', this.context2D.lineWidth) // 1
       console.log('lineCap', this.context2D.lineCap) // butt 和其他两个的区别是不会增加宽度
       console.log('lineJoin', this.context2D.lineJoin) // miter
       console.log('miterLimit', this.context2D.miterLimit) // 10
+
+      console.log('**** LineDashState ****')
+      console.log('lineDashOffset: ', this.context2D.lineDashOffset)
+
+      console.log('**** shadowState *****')
+      console.log('shadowBlur: ', this.context2D.shadowBlur)
+      console.log('shadowColor: ', this.context2D.shadowColor)
+      console.log('shadowOffsetX: ', this.context2D.shadowOffsetX)
+      console.log('shadowOffsetY: ', this.context2D.shoadowOffsetY)
+
+      console.log('****** TextState ******')
+      console.log('font: ', this.context2D.font)
+      console.log('textAlign: ', this.context2D.textAlign)
+      console.log('textBaseline: ', this.context2D.textBaseline)
+      
+      console.log('***** RenderState *****')
+      console.log('strokeStyle: ', this.context2D.strokeStyle)
+      console.log('fillStyle: ', this.context2D.fillStyle)
+      console.log('globalAlpha: ', this.context2D.globalAlpha) // 
+      console.log('globalCompositeOperation: ', this.context2D.globalCompositeOperation)
+      // 都收到渲染堆栈管理
+      // 图像绘制和渲染状态及渲染堆栈无任何关系
     }
   }
 
@@ -437,8 +476,10 @@ class TestApplication extends Canvas2DApplication {
     if (destRect.isEmpty()) {
       return false
     }
+
     // 分为stretch和repeat两种法方式
     if (fillType === EImageFillType.STRETCH) {
+      console.log('stretch')
       this.context2D.drawImage(img,
         srcRect.origin.x,
         srcRect.origin.y,
@@ -450,6 +491,7 @@ class TestApplication extends Canvas2DApplication {
         destRect.size.height,
       )
     } else { // 使用repeat模式
+      console.log('repeat')
       // 测试使用，绘制出目标区域的大小
       this.fillRectangleWithColor(destRect, 'grey')
       // 调用Math.floor方法 round ceil
@@ -518,7 +560,7 @@ class TestApplication extends Canvas2DApplication {
         // 第四步，使用渲染上下文对象绘图
         context.save()
         // 使用其中16中颜色
-        context.fillStyle = TestApplication.Colors[idx]
+        context.fillStyle = Colors[idx]
         context.fillRect(i * amount, j * amount, amount, amount)
         context.restore()
       }
@@ -528,7 +570,7 @@ class TestApplication extends Canvas2DApplication {
 
   public drawColorCanvas(): void {
     let colorCanvas: HTMLCanvasElement = this.getColorCanvas()
-    this.drawImage(colorCanvas, ectangle.create(100, 100, colorCanvas.width, colorCanvas.height))
+    this.drawImage(colorCanvas, Rectangle.create(100, 100, colorCanvas.width, colorCanvas.height))
   }
 
   public testChangePartCanvasImageData(rRow: number = 2, rColum: number = 0, cRow: number = 1, cColum: number = 0, size: number = 32): void {
@@ -545,23 +587,68 @@ class TestApplication extends Canvas2DApplication {
     // 接上面的代码继续往下来替换颜色
     // 使用createImageData方法，大小为size * size 个像素
     // 每个像素又有4个分量[r, g, b, a]
-    let imgData: ImageData = context.createImageData(size, size)
+    const imgData: ImageData = context.createImageData(size, size)
     // imgData有三个属性，其中data属性存储的是一个Uint8ClampedArray类型数组对象
     // 该数组中存储方式为：[r, g, b, a, r, g, b, a, ...]
     // 所以imgData.data.length = size * size * 4
     // 上面也提到过，imgData.data.length 表示的是所有分量的个数
     // 而为了方便寻址，希望使用像素个数进行遍历，因此要除以4（一个像素由r，g，b，a这4个分量组成）
+    const data = imgData.data
     let rgbaCount: number = data.length / 4
+    console.log(rgbaCount, data)
     for (let i = 0; i< rgbaCount; i++) {
       // 注意下面索引的计算方式
-      data[i * 4 + 0] = 255
-      data[i * 4 + 1] = 0
-      data[i * 4 + 2] = 0
-      data[i * 4 + 3] = 255
+      imgData.data[i * 4 + 0] = 255
+      imgData.data[i * 4 + 1] = 0
+      imgData.data[i * 4 + 2] = 0
+      imgData.data[i * 4 + 3] = 255
     }
 
     // 一定要调用putImageData方法来替换context中的像素数据
-    context.putImageData(imageData, size * rColum, size * rRow, 0, 0, size, size)
+    context.putImageData(imgData, size * rColum, size * rRow, 0, 0, size, size)
+    this.drawImage(colorCanvas, Rectangle.create(100, 100, colorCanvas.width, colorCanvas.height))
+  }
+
+  public drawCanvasCoordCenter(): void {
+    if (this.context2D === null) {
+      return 
+    }
+    // 计算Canvas的中心坐标
+    let halfWidth: number = this.canvas.width * 0.5
+    let halfHeight: number = this.canvas.height * 0.5
+    this.context2D.save()
+    this.context2D.lineWidth = 2
+    this.context2D.strokeStyle = 'rgba(255, 0, 0, 0.5)'
+    // 使用alpha为0.5的红色来绘制x轴
+    this.strokeLine(0, halfHeight, this.canvas.width, halfHeight)
+    this.context2D.strokeStyle = 'rgba(0, 0, 255, 0.5)'
+    // 使用alpha为0.5的蓝色来绘制y轴
+    this.strokeLine(halfWidth, 0, halfWidth, this.canvas.height)
+    this.context2D.restore()
+    this.fillCircle(halfWidth, halfHeight, 5, 'rgba(0, 0, 0, 0.5)')
+  }
+
+  public drawCoordInfo(info: string, x: number, y: number): void {
+    this.fillText(info, x, y, 'black', 'center', 'bottom')
+  }
+
+  public distance(x0: number, y0: number, x1: number, y1: number): number {
+    let diffX: number = x1 - x0
+    let diffY: number = y1 - y0
+    return Math.sqrt(diffX * diffX + diffY * diffY)
+  }
+
+  public doTransform(): void {
+    if (this.context2D !== null) {
+      let width: number = 100
+      let height: number = 60
+      let x: number = this.canvas.width * 0.5
+      let y: number = this.canvas.height * 0.5
+      this.context2D.save()
+      this.context2D.translate(x, y)
+      this.fillRectWithTitle(0, 0, width, height, '0度旋转')
+      this.context2D.restore()
+    }
   }
 }
 
@@ -579,10 +666,21 @@ if (canvas === null) {
 }
 let canvas2d: Canvas2DApplication = new TestApplication(canvas)
 console.log(canvas2d)
-// canvas2d.printLineStates()
-// canvas2d.textMyTextLayout()
-addToolButton('10px 网格', () => { canvas2d.render(); canvas2d.strokeGrid('black') })
-addToolButton('50px 网格', () => { canvas2d.render();canvas2d.strokeGrid('black', 50) })
-addToolButton('100px 网格', () => { canvas2d.render();canvas2d.strokeGrid('black', 100) })
-// canvas2d.start()
+addToolButton('Start', () => { canvas2d.start() })
+addToolButton('Stop', () => { canvas2d.stop() })
+addToolButton('PrintLineStates', () => { canvas2d.clearScreen(); canvas2d.printLineStates() })
+addToolButton('Text Layout', () => { canvas2d.clearScreen(); canvas2d.textMyTextLayout() })
+addToolButton('strokeRect', () => { canvas2d.clearScreen(); canvas2d.strokeRect(0, 0, 300, 100, 'red') })
+addToolButton('fillCircle', () => { canvas2d.clearScreen(); canvas2d.fillCircle(0, 0, 100, 'red') })
+addToolButton('strokeLine', () => { canvas2d.clearScreen(); canvas2d.strokeLine(0, 0, 100, 100) })
+addToolButton('strokeCoord', () => { canvas2d.clearScreen(); canvas2d.strokeCoord(100, 100, 300, 100) })
+addToolButton('strokeGrid 10px 网格', () => { canvas2d.clearScreen(); canvas2d.strokeGrid('black') })
+addToolButton('strokeGrid 50px 网格', () => { canvas2d.clearScreen();canvas2d.strokeGrid('black', 50) })
+addToolButton('strokeGrid 100px 网格', () => { canvas2d.clearScreen();canvas2d.strokeGrid('black', 100) })
+addToolButton('fillText', () => { canvas2d.clearScreen(); canvas2d.fillText('中华小当家', 300, 300, 'red', 'center', 'middle', canvas2d.makeFontString(40)) })
+addToolButton('testCanvas2DTextLayout', () => { canvas2d.clearScreen(); canvas2d.testCanvas2DTextLayout() })
+addToolButton('testChangePartCanvasImageData', () => { canvas2d.clearScreen(); canvas2d.testChangePartCanvasImageData() })
+addToolButton('drawColorCanvas', () => { canvas2d.clearScreen(); canvas2d.drawColorCanvas() })
+addToolButton('drawCanvasCoordCenter', () => { canvas2d.clearScreen(); canvas2d.drawCanvasCoordCenter() })
+addToolButton('doTransform', () => { canvas2d.clearScreen(); canvas2d.doTransform() })
 

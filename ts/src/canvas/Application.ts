@@ -145,6 +145,7 @@ export class Application implements EventListenerObject {
     this._isMouseDown = false
     // 默认状态下，不支持 mousemove事件
     this.isSupportMouseMove = false
+    // this.isSupportMouseMove = true
   }
 
   // 提供一个只读函数，用来获得当前帧率
@@ -285,15 +286,15 @@ export class Application implements EventListenerObject {
 
     this._handleTimers(intervalSec)
 
-    console.log('step---')
+    // console.log('step---')
     // console.log(' timeStamp = ' + timeStamp)
     // console.log(' elapsedMsec = ' + elapsedMsec)
     // console.log(' intervalMsec = ' + intervalSec)
 
     // 先更新
-    // this.update(elapsedMsec, intervalSec)
-    // // 后渲染
-    // this.render()
+    this.update(elapsedMsec, intervalSec)
+    // 后渲染
+    this.render()
 
     requestAnimationFrame((elapsedMsec: number): void => {
       this.step(elapsedMsec)
@@ -347,7 +348,7 @@ export class Application implements EventListenerObject {
         // x = b - paddingLeft, 将padding坐标系变换到context坐标系，也就是canvas元素坐标系
         let x: number = evt.clientX - rect.left - borderLeftWidth - paddingLeft
         let y: number = evt.clientY - rect.top - borderTopWidth - paddingTop
-        console.log(x, y)
+        // console.log(x, y)
 
         if (evt.type === 'mousedown') {
           console.log(' borderLeftWidth: ' + borderLeftWidth, ' borderTopWidth: ' + borderTopWidth)
@@ -441,6 +442,7 @@ export class Application implements EventListenerObject {
    public context2D: CanvasRenderingContext2D | null
    public constructor(canvas: HTMLCanvasElement, contextAttributes ?: Canvas2DContextAttributes) {
     super(canvas)
+    this.isSupportMouseMove = true
     this.context2D = this.canvas.getContext('2d', contextAttributes)
     console.log('canvas---', this.context2D)
    }
