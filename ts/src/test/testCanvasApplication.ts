@@ -1,6 +1,7 @@
 import { Canvas2DApplication } from '../canvas/Application.ts'
-import { vec2, Size, Rectangle, ETextLayout, EImageFillType } from '../canvas/math2D.ts'
+import { vec2, Size, Rectangle, ELayout, EImageFillType, Math2D } from '../canvas/math2D.ts'
 
+console.log('Math2D: ', Math2D)
 const Colors: string[] = [
   'aqua', // 浅绿色
   'black', // 黑色
@@ -35,7 +36,7 @@ class TestApplication extends Canvas2DApplication {
   }
 
   public render(): void {
-    if (this.context2D !== null) {
+    if ((this as any).context2D !== null) {
       this.clearScreen()
       this.strokeGrid()
       this.drawCanvasCoordCenter()
@@ -63,174 +64,187 @@ class TestApplication extends Canvas2DApplication {
   }
 
   public clearScreen(): void {
-    if (this.context2D !== null) {
+    if ((this as any).context2D !== null) {
       // 流程1: 渲染前，先清屏
-      this.context2D.clearRect(0, 0, this.context2D.canvas.width, this.context2D.canvas.height)
-      this._drawRect(0, 0, this.canvas.width, this.canvas.height)
+      (this as any).context2D.clearRect(0, 0, (this as any).context2D.canvas.width, (this as any).context2D.canvas.height)
+      this._drawRect(0, 0, (this as any).canvas.width, (this as any).canvas.height)
     }
   }
 
   public printAllStates(): void {
-    if (this.context2D !== null) {
+    if ((this as any).context2D !== null) {
       console.log('**** LineState ***')
-      console.log('LineWidth: ', this.context2D.lineWidth) // 1
-      console.log('lineCap', this.context2D.lineCap) // butt 和其他两个的区别是不会增加宽度
-      console.log('lineJoin', this.context2D.lineJoin) // miter
-      console.log('miterLimit', this.context2D.miterLimit) // 10
+      console.log('LineWidth: ', (this as any).context2D.lineWidth) // 1
+      console.log('lineCap', (this as any).context2D.lineCap) // butt 和其他两个的区别是不会增加宽度
+      console.log('lineJoin', (this as any).context2D.lineJoin) // miter
+      console.log('miterLimit', (this as any).context2D.miterLimit) // 10
 
       console.log('**** LineDashState ****')
-      console.log('lineDashOffset: ', this.context2D.lineDashOffset)
+      console.log('lineDashOffset: ', (this as any).context2D.lineDashOffset)
 
       console.log('**** shadowState *****')
-      console.log('shadowBlur: ', this.context2D.shadowBlur)
-      console.log('shadowColor: ', this.context2D.shadowColor)
-      console.log('shadowOffsetX: ', this.context2D.shadowOffsetX)
-      console.log('shadowOffsetY: ', this.context2D.shoadowOffsetY)
+      console.log('shadowBlur: ', (this as any).context2D.shadowBlur)
+      console.log('shadowColor: ', (this as any).context2D.shadowColor)
+      console.log('shadowOffsetX: ', (this as any).context2D.shadowOffsetX)
+      console.log('shadowOffsetY: ', (this as any).context2D.shoadowOffsetY)
 
       console.log('****** TextState ******')
-      console.log('font: ', this.context2D.font)
-      console.log('textAlign: ', this.context2D.textAlign)
-      console.log('textBaseline: ', this.context2D.textBaseline)
+      console.log('font: ', (this as any).context2D.font)
+      console.log('textAlign: ', (this as any).context2D.textAlign)
+      console.log('textBaseline: ', (this as any).context2D.textBaseline)
       
       console.log('***** RenderState *****')
-      console.log('strokeStyle: ', this.context2D.strokeStyle)
-      console.log('fillStyle: ', this.context2D.fillStyle)
-      console.log('globalAlpha: ', this.context2D.globalAlpha) // 
-      console.log('globalCompositeOperation: ', this.context2D.globalCompositeOperation)
+      console.log('strokeStyle: ', (this as any).context2D.strokeStyle)
+      console.log('fillStyle: ', (this as any).context2D.fillStyle)
+      console.log('globalAlpha: ', (this as any).context2D.globalAlpha) // 
+      console.log('globalCompositeOperation: ', (this as any).context2D.globalCompositeOperation)
       // 都收到渲染堆栈管理
       // 图像绘制和渲染状态及渲染堆栈无任何关系
     }
   }
 
   private _drawRect(x: number, y: number, w: number, h: number): void {
-    if (this.context2D !== null) {
+    if ((this as any).context2D !== null) {
       // 流程2: 绘制时，使用save/restore 对
-      this.context2D.save()
+      (this as any).context2D.save()
       // 流程3: 在渲染状态save后，设置当前的渲染状态
-      this.context2D.fillStyle = 'white'
-      this.context2D.strokeStyle = 'black'
-      this.context2D.lineWidth = 1
-      // this.context2D.setLineDash([30, 15])
-      // this.context2D.lineDashOffset = this._lineDashOffset
-      // this.context2D.lineCap = 'round'
-      // this.context2D.lineCap = 'square'
+      (this as any).context2D.fillStyle = 'white';
+      (this as any).context2D.strokeStyle = 'black';
+      (this as any).context2D.lineWidth = 1;
+      // (this as any).context2D.setLineDash([30, 15])
+      // (this as any).context2D.lineDashOffset = this._lineDashOffset
+      // (this as any).context2D.lineCap = 'round'
+      // (this as any).context2D.lineCap = 'square'
 
       // 流程4，使用beginPath 产生一个子路径
-      this.context2D.beginPath()
+      (this as any).context2D.beginPath()
       // 坐首席，左手顺时针方向定义定点坐标
       // 流程5，在子路径中添加向量点
-      this.context2D.moveTo(x, y)
-      this.context2D.lineTo(x + w, y)
-      this.context2D.lineTo(x + w, y + h)
-      this.context2D.lineTo(x, y + h)
+      (this as any).context2D.moveTo(x, y)
+      (this as any).context2D.lineTo(x + w, y)
+      (this as any).context2D.lineTo(x + w, y + h)
+      (this as any).context2D.lineTo(x, y + h)
       // 流程6，如果是封装形体，调用closePath方法。封闭轮廓
-      this.context2D.closePath()
+      (this as any).context2D.closePath()
       // 流程7: 如果是填充，请使用fill方法
-      this.context2D.fill()
+      (this as any).context2D.fill()
       // 流程8，如果是描边，请使用stroke方法
-      this.context2D.stroke()
+      (this as any).context2D.stroke()
       // 恢复渲染状态
-      this.context2D.restore()
+      (this as any).context2D.restore()
     }
   }
 
   public strokeRect(x: number, y: number, w: number, h: number, color: string = 'white'): void {
-    if (this.context2D !== null) {
+    if ((this as any).context2D !== null) {
       // 流程2: 绘制时，使用save/restore 对
-      this.context2D.save()
+      (this as any).context2D.save()
         // 流程3: 在渲染状态save后，设置当前的渲染状态
-        this.context2D.strokeStyle = color
-        this.context2D.lineWidth = 2
-        this.context2D.beginPath()
+        (this as any).context2D.strokeStyle = color
+        (this as any).context2D.lineWidth = 2
+        (this as any).context2D.beginPath()
         // 坐首席，左手顺时针方向定义定点坐标
         // 流程5，在子路径中添加向量点
-        this.context2D.moveTo(x, y)
-        this.context2D.lineTo(x + w, y)
-        this.context2D.lineTo(x + w, y + h)
-        this.context2D.lineTo(x, y + h)
+        (this as any).context2D.moveTo(x, y)
+        (this as any).context2D.lineTo(x + w, y)
+        (this as any).context2D.lineTo(x + w, y + h)
+        (this as any).context2D.lineTo(x, y + h)
         // 流程6，如果是封装形体，调用closePath方法。封闭轮廓
-        this.context2D.closePath()
+        (this as any).context2D.closePath()
         // 流程7: 如果是填充，请使用fill方法
-        this.context2D.fill()
+        (this as any).context2D.fill()
         // 流程8，如果是描边，请使用stroke方法
-        this.context2D.stroke()
+        (this as any).context2D.stroke()
       // 恢复渲染状态
-      this.context2D.restore()
+      (this as any).context2D.restore()
     }
   }
 
   // 在坐标【x，y】出绘制半径为radius的圆，可以设置style（颜色，渐变，图案）
   public fillCircle(x: number, y: number, radius: number, fillStyle: string | CanvasGradient | CanvasPattern = 'red'): void {
-    if (!this.context2D !== null) {
+    if (!(this as any).context2D !== null) {
       // 流程
-      this.context2D.save()
-        this.context2D.fillStyle = fillStyle
-        this.context2D.beginPath()
-        this.context2D.arc(x, y, radius, 0, Math.PI * 2)
-        this.context2D.fill()
+      (this as any).context2D.save()
+        (this as any).context2D.fillStyle = fillStyle
+        (this as any).context2D.beginPath()
+        (this as any).context2D.arc(x, y, radius, 0, Math.PI * 2)
+        (this as any).context2D.fill()
       // 流程
-      this.context2D.restore()
+      (this as any).context2D.restore()
+    }
+  }
+
+  public strokeCircle(x: number, y: number, radius: number, strokeStyle: string | CanvasGradient | CanvasPattern = 'red'): void {
+    if (!(this as any).context2D !== null) {
+      // 流程
+      (this as any).context2D.save()
+        (this as any).context2D.strokeStyle = strokeStyle
+        (this as any).context2D.beginPath()
+        (this as any).context2D.arc(x, y, radius, 0, Math.PI * 2)
+        (this as any).context2D.stroke()
+      // 流程
+      (this as any).context2D.restore()
     }
   }
 
   // 该方法可能多次调用，由调用方进行状态管理和状态设置
   public strokeLine(x0: number, y0: number, x1: number, y1: number): void {
-    if (!this.context2D !== null) {
-      this.context2D.beginPath()
-      this.context2D.moveTo(x0, y0)
-      this.context2D.lineTo(x1, y1)
-      this.context2D.stroke()
+    if (!(this as any).context2D !== null) {
+      (this as any).context2D.beginPath()
+      (this as any).context2D.moveTo(x0, y0)
+      (this as any).context2D.lineTo(x1, y1)
+      (this as any).context2D.stroke()
     }
   }
 
   // 绘制坐标系
   public strokeCoord (originX: number, originY: number, width: number, height: number): void {
-    if (this.context2D !== null) {
-      this.context2D.save()
+    if ((this as any).context2D !== null) {
+      (this as any).context2D.save()
         // 红色 x 轴
-        this.context2D.strokeStyle = 'red'
+        (this as any).context2D.strokeStyle = 'red'
         this.strokeLine(originX, originY, originX + width, originY)
         // 蓝色 y 轴
-        this.context2D.strokeStyle = 'blue'
+        (this as any).context2D.strokeStyle = 'blue'
         this.strokeLine(originX, originY, originX, originY + height)
-      this.context2D.restore()
+      (this as any).context2D.restore()
     }
   }
 
   // 绘制网格
   public strokeGrid (color: string = 'grey', interval: number = 10): void {
-    if (this.context2D !== null) {
-      this.context2D.save()
-        this.context2D.strokeStyle = color
-        this.context2D.lineWidth = 0.5
+    if ((this as any).context2D !== null) {
+      (this as any).context2D.save()
+        (this as any).context2D.strokeStyle = color
+        (this as any).context2D.lineWidth = 0.5
         // 从左到右每隔interval个像素画一条垂直线
-        for (let i: number = interval + 0.5; i < this.canvas.width; i += interval) {
-          this.strokeLine(i, 0, i, this.canvas.height)
+        for (let i: number = interval + 0.5; i < (this as any).canvas.width; i += interval) {
+          this.strokeLine(i, 0, i, (this as any).canvas.height)
         }
 
         // 从上到下画水平线
-        for (let i: number = interval + 0.5; i < this.canvas.height; i += interval) {
-          this.strokeLine(0, i, this.canvas.width, i)
+        for (let i: number = interval + 0.5; i < (this as any).canvas.height; i += interval) {
+          this.strokeLine(0, i, (this as any).canvas.width, i)
         }
-      this.context2D.restore()
+      (this as any).context2D.restore()
 
       // 绘制网格背景全局坐标系的原点
       this.fillCircle(0, 0, 5, 'green')
       // 绘制全局坐标系
-      this.strokeCoord(0, 0, this.canvas.width, this.canvas.height)
+      this.strokeCoord(0, 0, (this as any).canvas.width, (this as any).canvas.height)
     }
   }
 
   // 绘制文字
   public fillText(text: string, x: number, y: number, color: string = 'white', align: TextAlign = 'left', baseline: TextBaseline = 'top', font: FontType = '10px sans-serif'): void {
-    if (this.context2D !== null) {
-      this.context2D.save()
-        this.context2D.textAlign = align
-        this.context2D.textBaseline = baseline
-        this.context2D.font = font
-        this.context2D.fillStyle = color
-        this.context2D.fillText(text, x, y)
-      this.context2D.restore()
+    if ((this as any).context2D !== null) {
+      (this as any).context2D.save()
+        (this as any).context2D.textAlign = align
+        (this as any).context2D.textBaseline = baseline
+        (this as any).context2D.font = font
+        (this as any).context2D.fillStyle = color
+        (this as any).context2D.fillText(text, x, y)
+      (this as any).context2D.restore()
     }
   }
 
@@ -239,8 +253,8 @@ class TestApplication extends Canvas2DApplication {
     // 要绘制的矩形离canvas的margin（外边距）分别是[20, 20, 20, 20]
     let x: number = 20
     let y: number = 20
-    let width: number = this.canvas.width - x * 2
-    let height: number = this.canvas.height - y * 2
+    let width: number = (this as any).canvas.width - x * 2
+    let height: number = (this as any).canvas.height - y * 2
     let drawX: number = x
     let drawY: number = y
     // 原点半径为3px
@@ -296,10 +310,10 @@ class TestApplication extends Canvas2DApplication {
 
   // 设置字体尺寸
   public calcTextSize(text: string, char: string = 'W', scale: number = 0.5): Size {
-    if (this.context2D !== null) {
+    if ((this as any).context2D !== null) {
       let size: Size = new Size()
-      size.width = this.context2D.measureText(text).width
-      let w: number = this.context2D.measureText(char).width
+      size.width = (this as any).context2D.measureText(text).width
+      let w: number = (this as any).context2D.measureText(char).width
       size.height = w + w * scale
       return size;
     }
@@ -308,7 +322,7 @@ class TestApplication extends Canvas2DApplication {
   }
 
   // 函数返回类型是Rectangle,表示9个文本矩形之一
-  public calcLocalTextRectangle(layout: ETextLayout, text: string, parentWidth: number, parentHeight: number): Rectangle {
+  public calcLocalTextRectangle(layout: ELayout, text: string, parentWidth: number, parentHeight: number): Rectangle {
     // 计算出要绘制的文本尺寸
     let s:Size = this.calcTextSize(text)
     // 创建一个二维向量
@@ -323,42 +337,42 @@ class TestApplication extends Canvas2DApplication {
     // 3.当前文本子矩形左上角相对父矩形中心点坐标
     let center: number = right * 0.5
     let middle: number = bottom * 0.5
-    // 根据ETextLayout 的值来匹配这3个点的分量
+    // 根据ELayout 的值来匹配这3个点的分量
     // 计算子矩形相对父矩形原点[0, 0]偏移量
     switch(layout) {
-      case ETextLayout.LEFT_TOP:
+      case ELayout.LEFT_TOP:
         o.x = left
         o.y = top
         break
-      case ETextLayout.RIGHT_TOP:
+      case ELayout.RIGHT_TOP:
         o.x = right
         o.y = top
         break
-      case ETextLayout.RIGHT_BOTTOM:
+      case ELayout.RIGHT_BOTTOM:
         o.x = right
         o.y = bottom
         break
-      case ETextLayout.LEFT_BOTTOM:
+      case ELayout.LEFT_BOTTOM:
         o.x = left
         o.y = bottom
         break
-      case ETextLayout.CENTER_MIDDLE:
+      case ELayout.CENTER_MIDDLE:
         o.x = center
         o.y = middle
         break
-      case ETextLayout.CENTER_TOP:
+      case ELayout.CENTER_TOP:
         o.x = center
         o.y = 0
         break
-      case ETextLayout.RIGHT_MIDDLE:
+      case ELayout.RIGHT_MIDDLE:
         o.x = right
         o.y = middle
         break
-      case ETextLayout.CENTER_BOTTOM:
+      case ELayout.CENTER_BOTTOM:
         o.x = center
         o.y = bottom
         break
-      case ETextLayout.LEFT_MIDDLE:
+      case ELayout.LEFT_MIDDLE:
         o.x = left
         o.y = middle
         break
@@ -368,14 +382,14 @@ class TestApplication extends Canvas2DApplication {
   }
 
   public fillRectWithTitle(
-    x: number, y: number, width: number, height: number, title: string = '', layout: ETextLayout = ETextLayout.CENTER_MIDDLE, color: string = 'grey', showCoord: boolean = true): void {
-    if (this.context2D !== null) {
-      this.context2D.save()
+    x: number, y: number, width: number, height: number, title: string = '', layout: ELayout = ELayout.CENTER_MIDDLE, color: string = 'grey', showCoord: boolean = true): void {
+    if ((this as any).context2D !== null) {
+      (this as any).context2D.save()
         // 1. 绘制矩形
-        this.context2D.fillStyle = color
-        this.context2D.beginPath()
-        this.context2D.rect(x, y, width, height)
-        this.context2D.fill()
+        (this as any).context2D.fillStyle = color
+        (this as any).context2D.beginPath()
+        (this as any).context2D.rect(x, y, width, height)
+        (this as any).context2D.fill()
         // 如果有文字的话，先根据枚举值计算x，y坐标
         if (this.length !== 0) {
           // 2. 绘制文字信息
@@ -395,15 +409,15 @@ class TestApplication extends Canvas2DApplication {
           this.strokeCoord(x, y, width + 20, height + 20)
           this.fillCircle(x, y, 3)
         }
-      this.context2D.restore()
+      (this as any).context2D.restore()
     }
   }
 
   public textMyTextLayout(): void {
     let x: number = 20
     let y: number = 20
-    let width: number = this.canvas.width - x * 2
-    let height: number = this.canvas.height - y * 2
+    let width: number = (this as any).canvas.width - x * 2
+    let height: number = (this as any).canvas.height - y * 2
     let right: number = x + width
     let bottom: number = y + height
     let drawX: number = x;
@@ -413,40 +427,40 @@ class TestApplication extends Canvas2DApplication {
     // 1.画背景rect
     this.fillRectWithTitle(x, y, width, height)
     // 2.左上
-    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'left-top', ETextLayout.LEFT_TOP, 'rgba(255, 255, 0, 0.3)')
+    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'left-top', ELayout.LEFT_TOP, 'rgba(255, 255, 0, 0.3)')
     // 3.右上
     drawX = right - drawWidth
     drawY = y
-    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'right-top', ETextLayout.RIGHT_TOP, 'rgba(255, 255, 0, 0.3)')
+    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'right-top', ELayout.RIGHT_TOP, 'rgba(255, 255, 0, 0.3)')
     // 4.右下
     drawX = right - drawWidth
     drawY = bottom - drawHeight
-    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'right-bottom', ETextLayout.RIGHT_BOTTOM, 'rgba(255, 255, 0, 0.3)')
+    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'right-bottom', ELayout.RIGHT_BOTTOM, 'rgba(255, 255, 0, 0.3)')
     // 5.左下
     drawX = x
     drawY = bottom - drawHeight
-    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'left-bottom', ETextLayout.LEFT_BOTTOM, 'rgba(255, 255, 0, 0.3)')
+    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'left-bottom', ELayout.LEFT_BOTTOM, 'rgba(255, 255, 0, 0.3)')
 
     // 6.中心
     drawX = (right - drawWidth) * 0.5
     drawY = (bottom - drawHeight) * 0.5
-    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'center-middle', ETextLayout.CENTER_MIDDLE, 'rgba(255, 255, 0, 0.3)')
+    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'center-middle', ELayout.CENTER_MIDDLE, 'rgba(255, 255, 0, 0.3)')
     // 7.中上
     drawX = (right - drawWidth) * 0.5
     drawY = y
-    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'center-top', ETextLayout.CENTER_TOP, 'rgba(255, 255, 0, 0.3)')
+    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'center-top', ELayout.CENTER_TOP, 'rgba(255, 255, 0, 0.3)')
     // 8.中下
     drawX = (right - drawWidth) * 0.5
     drawY = bottom - drawHeight
-    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'center-bottom', ETextLayout.CENTER_BOTTOM, 'rgba(255, 255, 0, 0.3)')
+    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'center-bottom', ELayout.CENTER_BOTTOM, 'rgba(255, 255, 0, 0.3)')
     // 9.左中
     drawX = x
     drawY = (bottom - drawHeight) * 0.5
-    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'left-middle', ETextLayout.LEFT_MIDDLE, 'rgba(255, 255, 0, 0.3)')
+    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'left-middle', ELayout.LEFT_MIDDLE, 'rgba(255, 255, 0, 0.3)')
     // 10.右中
     drawX = right - drawWidth
     drawY = (bottom - drawHeight) * 0.5
-    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'right-middle', ETextLayout.RIGHT_MIDDLE, 'rgba(255, 255, 0, 0.3)')
+    this.fillRectWithTitle(drawX, drawY, drawWidth, drawHeight, 'right-middle', ELayout.RIGHT_MIDDLE, 'rgba(255, 255, 0, 0.3)')
   }
 
   public makeFontString(size: FontSize = '10px', weight: FontWeight = 'normal', style: FontStyle = 'normal', variant: FontVariant = 'normal', family: FontFamily = 'sans-serif') : string {
@@ -467,7 +481,7 @@ class TestApplication extends Canvas2DApplication {
 
   public drawImage(img: HTMLImageElement, destRect: Rectangle, srcRect: Rectangle = Rectangle.create(0, 0, img.width, img.height), fillType: EImageFillType = EImageFillType.STRETCH): boolean {
     // 绘制image要满足一些条件
-    if (this.context2D === null) {
+    if ((this as any).context2D === null) {
       return false
     }
     if (srcRect.isEmpty()) {
@@ -480,7 +494,7 @@ class TestApplication extends Canvas2DApplication {
     // 分为stretch和repeat两种法方式
     if (fillType === EImageFillType.STRETCH) {
       console.log('stretch')
-      this.context2D.drawImage(img,
+      (this as any).context2D.drawImage(img,
         srcRect.origin.x,
         srcRect.origin.y,
         srcRect.size.width,
@@ -532,7 +546,7 @@ class TestApplication extends Canvas2DApplication {
             height = srcRect.size.heigt - (bottom - destBottom)
           }
 
-          this.context2D.drawImage(img, srcRect.origin.x, srcRect.origin.y, width, height, left, top, width, height)
+          (this as any).context2D.drawImage(img, srcRect.origin.x, srcRect.origin.y, width, height, left, top, width, height)
         }
       }
     }
@@ -610,21 +624,21 @@ class TestApplication extends Canvas2DApplication {
   }
 
   public drawCanvasCoordCenter(): void {
-    if (this.context2D === null) {
+    if ((this as any).context2D === null) {
       return 
     }
     // 计算Canvas的中心坐标
-    let halfWidth: number = this.canvas.width * 0.5
-    let halfHeight: number = this.canvas.height * 0.5
-    this.context2D.save()
-    this.context2D.lineWidth = 2
-    this.context2D.strokeStyle = 'rgba(255, 0, 0, 0.5)'
+    let halfWidth: number = (this as any).canvas.width * 0.5;
+    let halfHeight: number = (this as any).canvas.height * 0.5;
+    (this as any).context2D.save()
+    (this as any).context2D.lineWidth = 2;
+    (this as any).context2D.strokeStyle = 'rgba(255, 0, 0, 0.5)'
     // 使用alpha为0.5的红色来绘制x轴
-    this.strokeLine(0, halfHeight, this.canvas.width, halfHeight)
-    this.context2D.strokeStyle = 'rgba(0, 0, 255, 0.5)'
+    this.strokeLine(0, halfHeight, (this as any).canvas.width, halfHeight)
+    (this as any).context2D.strokeStyle = 'rgba(0, 0, 255, 0.5)'
     // 使用alpha为0.5的蓝色来绘制y轴
-    this.strokeLine(halfWidth, 0, halfWidth, this.canvas.height)
-    this.context2D.restore()
+    this.strokeLine(halfWidth, 0, halfWidth, (this as any).canvas.height)
+    (this as any).context2D.restore()
     this.fillCircle(halfWidth, halfHeight, 5, 'rgba(0, 0, 0, 0.5)')
   }
 
@@ -638,17 +652,130 @@ class TestApplication extends Canvas2DApplication {
     return Math.sqrt(diffX * diffX + diffY * diffY)
   }
 
-  public doTransform(): void {
-    if (this.context2D !== null) {
-      let width: number = 100
-      let height: number = 60
-      let x: number = this.canvas.width * 0.5
-      let y: number = this.canvas.height * 0.5
-      this.context2D.save()
-      this.context2D.translate(x, y)
-      this.fillRectWithTitle(0, 0, width, height, '0度旋转')
-      this.context2D.restore()
+  // 先移动后旋转，可以控制位置
+  public doTransform(degree: number = 20, rotateFirst: boolean = true): void {
+    // 将角度转换为弧度，本方法的参数degree是以角度而不是弧度表示
+    let radians: number = Math2D.toRadian(degree)
+    // 顺时针旋转
+    (this as any).context2D.save()
+    // 根据rotateFirst进行平移和旋转变换
+    if (rotateFirst) {
+      // 先顺时针旋转20度
+      (this as any).context2D.rotate(radians)
+      // 然后再平移到画布中心
+      (this as any).context2D.translate((this as any).canvas.width * 0.5, (this as any).canvas.height * 0.5)
+    } else {
+      // 和上面正好相反
+      // 先平移到画布中心
+      (this as any).context2D.translate((this as any).canvas.width * 0.5, (this as any).canvas.height * 0.5)
+      // 再顺时针旋转20度
+      (this as any).context2D.rotate(radians)
     }
+    // 注意【0，0】坐标
+    this.fillRectWithTitle(0, 0, 100, 60, '+' + degree + '度旋转')
+    (this as any).context2D.restore()
+
+    // 逆时针旋转，代码与上满顺时针一样
+    (this as any).context2D.save()
+    // 根据rotateFirst进行平移和旋转变换
+    if (rotateFirst) {
+      // 先顺时针旋转20度
+      (this as any).context2D.rotate(-radians)
+      // 然后再平移到画布中心
+      (this as any).context2D.translate((this as any).canvas.width * 0.5, (this as any).canvas.height * 0.5)
+    } else {
+      // 和上面正好相反
+      // 先平移到画布中心
+      (this as any).context2D.translate((this as any).canvas.width * 0.5, (this as any).canvas.height * 0.5)
+      // 再顺时针旋转20度
+      (this as any).context2D.rotate(-radians)
+    }
+    this.fillRectWithTitle(0, 0, 100, 60, '-' + degree + '度旋转')
+    (this as any).context2D.restore()
+
+    // 调用前面实现的两点距公式
+    let radius: number = this.distance(0, 0, (this as any).canvas.width * 0.5, (this as any).canvas.height * 0.5)
+    // 绘制一个圆
+    this.strokeCircle(0, 0, radius, 'black')
+  }
+
+  public fillLocalRectWithTitle(
+    width: number, height: number, title: string = '',
+    referencePt: ELayout = ELayout.CENTER_MIDDLE, layout: ELayout = ELayout.CENTER_MIDDLE,
+    color: string = 'grey', showCoord: boolean = true): void {
+      if ((this as any).context2D !== null) {
+        let x: number = 0
+        let y: number = 0
+        // 首先根据referencePt的值计算原点相对左上角的偏移量
+        // Canvas2D中，左上交是默认的坐标系原点，所有原点变换都相对左上角的偏移
+        switch(referencePt) {
+          case ELayout.LEFT_TOP: // Canvas2D中，默认是左上角为坐标原点
+            x = 0
+            y = 0
+            break
+          case ELayout.LEFT_MIDDLE: // 左中为原点
+            x = 0
+            y = -height * 0.5
+            break
+          case ELayout.LEFT_BOTTOM: // 左下为原点
+            x = 0
+            y = -height
+            break
+          case ELayout.CENTER_TOP: // 中上为原点
+            x = -width * 0.5
+            y = 0
+            break
+          case ELayout.CENTER_MIDDLE: // 中中为原定
+            x = -width * 0.5
+            y = -height * 0.5
+            break
+          case ELayout.CENTER_BOTTOM: // 中下为原点
+            x = -width * 0.5
+            y = -height
+            break
+          case ELayout.RIGHT_TOP: // 右上为原点
+            x = -width
+            y = 0
+            break
+          case ELayout.RIGHT_MIDDLE: // 右中为原点
+            x = -width
+            y = -height * 0.5
+            break
+          case ELayout.RIGHT_BOTTOM: // 右下为原点
+            x = -width
+            y = -height
+            break
+          default:
+            break
+        }
+
+        (this as any).context2D.save()
+        // 1. 绘制矩形
+        (this as any).context2D.fillStyle = color
+        (this as any).context2D.beginPath()
+        (this as any).context2D.rect(x, y, width, height)
+        (this as any).context2D.fill()
+        // 如果有文字的话，先根据枚举值计算x，y坐标
+        if (this.length !== 0) {
+          // 2. 绘制文字信息
+          // 在矩形的左上角绘制出相关文字信息，使用的是10px大小的文字
+          // 调用calcLocalTextRectangle方法
+          let rect:Rectangle = this.calcLocalTextRectangle(layout, title, width, height)
+          // 绘制文本
+          this.fillText(title, x + rect.origin.x, y + rect.origin.y, 'white', 'left', 'top', '10px sans-serif')
+          // 绘制文本框
+          this.strokeRect(x + rect.origin.x, y + rect.origin.y, rect.size.width, rect.size.height, 'rgba(0, 0, 0, 0.5)')
+          // 绘制文本框左上角坐标(相对父矩形表示)
+          this.fillCircle(x + rect.origin.x, y + rect.origin.y, 2)
+        }
+        // 3.绘制变换的局部坐标系
+        // 附加一个坐标，x和y比矩形的width和height多20像素
+        if (showCoord) {
+          this.strokeCoord(x, y, width + 20, height + 20)
+          this.fillCircle(x, y, 3)
+        }
+        (this as any).context2D.restore()
+      }
   }
 }
 
@@ -668,6 +795,7 @@ let canvas2d: Canvas2DApplication = new TestApplication(canvas)
 console.log(canvas2d)
 addToolButton('Start', () => { canvas2d.start() })
 addToolButton('Stop', () => { canvas2d.stop() })
+addToolButton('Clear', () => { canvas2d.clearScreen(); })
 addToolButton('PrintLineStates', () => { canvas2d.clearScreen(); canvas2d.printLineStates() })
 addToolButton('Text Layout', () => { canvas2d.clearScreen(); canvas2d.textMyTextLayout() })
 addToolButton('strokeRect', () => { canvas2d.clearScreen(); canvas2d.strokeRect(0, 0, 300, 100, 'red') })
@@ -682,5 +810,7 @@ addToolButton('testCanvas2DTextLayout', () => { canvas2d.clearScreen(); canvas2d
 addToolButton('testChangePartCanvasImageData', () => { canvas2d.clearScreen(); canvas2d.testChangePartCanvasImageData() })
 addToolButton('drawColorCanvas', () => { canvas2d.clearScreen(); canvas2d.drawColorCanvas() })
 addToolButton('drawCanvasCoordCenter', () => { canvas2d.clearScreen(); canvas2d.drawCanvasCoordCenter() })
-addToolButton('doTransform', () => { canvas2d.clearScreen(); canvas2d.doTransform() })
-
+addToolButton('doTransform-0-true', () => { canvas2d.doTransform(0, true) })
+addToolButton('doTransform-0-false', () => { canvas2d.doTransform(0, false) })
+addToolButton('doTransform-20-true', () => { canvas2d.doTransform(20, true) }) // 有问题
+addToolButton('doTransform-20-false', () => { canvas2d.doTransform(20, false) }) // 没有问题

@@ -1,4 +1,4 @@
-export enum ETextLayout {
+export enum ELayout {
   LEFT_TOP,
   RIGHT_TOP,
   RIGHT_BOTTOM,
@@ -79,19 +79,7 @@ export class Rectangle {
 }
 
 // 坐标变换
-// 使用const关键字定义常数
-const PiBy180: number = 0.01745329519943295; // Math.PI / 180
 export class CoordinateTransformation {
-  // 将以角度表示的参数转换为弧度表示
-  public static toRadian(degree: number): number {
-    return degree * PiBy180
-  }
-
-  // 将以弧度表示的参数转换为角度表示
-  public static toDegree(radian: number): number {
-    return radian / PiBy180
-  }
-
   // 局部坐标系的平移操作
   public translate(x: number, y: number): void {}
   // 局部坐标系的旋转操作
@@ -102,5 +90,18 @@ export class CoordinateTransformation {
   public transform(m11: number, m12: number, m21: number, m22: number, dx: number, dy: number): void {}
   // 设置变换矩阵操作
   public setTransform(m11: number, m12: number, m21: number, m22: number, dx: number, dy: number): void {}
+}
 
+// 使用const关键字定义常数
+const PiBy180: number = 0.01745329519943295; // Math.PI / 180
+export class Math2D {
+  // 将以角度表示的参数转换为弧度表示
+  public static toRadian(degree: number): number {
+    return degree * PiBy180
+  }
+
+  // 将以弧度表示的参数转换为角度表示
+  public static toDegree(radian: number): number {
+    return radian / PiBy180
+  }
 }
