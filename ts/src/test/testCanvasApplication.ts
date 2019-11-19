@@ -1,5 +1,6 @@
 import { Canvas2DApplication } from '../canvas/Application.ts'
 import { vec2, Size, Rectangle, ELayout, EImageFillType, Math2D } from '../canvas/math2D.ts'
+import Tank from '../canvas/Tank.ts'
 // import { ELayout } from '../canvas/math2D';
 
 console.log('Math2D: ', Math2D)
@@ -41,10 +42,16 @@ class TestApplication extends Canvas2DApplication {
   private _rotationMoon: number = 0 // 月亮自转的角位移
   private _revolution: number = 0 // 月亮围绕太阳公转的角位移
 
+  private _tank: Tank
+
   // override Application 的 dispatchMouseMove 方法
   public dispatchMouseMove(evt: CanvasMouseEvent): void {
     this._mouseX = evt.canvasPosition.x;
     this._mouseY = evt.canvasPosition.y;
+
+    if (this._tank) {
+      this._tank.onMouseMove(evt)
+    }
   }
 
   public check(): void {
@@ -54,22 +61,24 @@ class TestApplication extends Canvas2DApplication {
   }
 
   public render(): void {
-    // if (this.context2D !== null) {
-    //   this.clearScreen()
-    //   this.strokeGrid()
-    //   this.drawCanvasCoordCenter()
-    //   this.drawCoordInfo(`[${this._mouseX}, ${this._mouseY}]`, this._mouseX, this._mouseY)
-    // }
+    if (this.context2D !== null) {
+      this.clearScreen()
+      this.strokeGrid()
+      this.drawCanvasCoordCenter()
+
+      // this.rotationAndRevolutionSimulation()
+
+      this.draw4Quadrant()
+      this.drawTank()
+      this.drawCoordInfo(`坐标：[${this._mouseX}, ${this._mouseY}] 角度：${Math2D.toDegree(this._tank.tankRotation).toFixed(2)}`, this._mouseX, this._mouseY)
+    }
   }
 
   public update(elapsedMsec: number, intervalSec: number): void {
-    this.clearScreen()
     // 角位移公式: v = s * t
     this._rotationMoon += this._rotationMoonSpeed * intervalSec
     this._rotationSun += this._rotationSunSpeed * intervalSec
     this._revolution += this._revolutionSpeed * intervalSec
-
-    this.rotationAndRevolutionSimulation()
   }
 
   // 实现一个更新lineDashOffset的方法
@@ -1048,6 +1057,42 @@ class TestApplication extends Canvas2DApplication {
     this.strokeCircle(0, 0, this.distance(0, 0, this.canvas.width * 0.5, this.canvas.height * 0.5, radius))
     this.context2D.restore()
   }
+
+  // 坦克世界
+  /**
+   * Canvas2D中象限及每个象限对应的角度范围
+   * 坦克整体朝向，以及移动时涉及 atan2，sin，cos 三角函数应用
+   * 炮管依赖于底座，但是能够独立控制，此时需要特殊处理，涉及坐标系变换时的层次操作
+   */
+  // 绘制想象
+  public draw4Quadrant(): void {
+    this.check()
+    this.context2D.save()
+    this.fillText('第一象限', this.canvas.width, this.canvas.height, 'rgba(0, 0, 255, 0.5)', 'right', 'bottom', '20px sans-serif')
+    this.fillText('第二象限', 0, this.canvas.height, 'rgba(0, 0, 255, 0.5)', 'left', 'bottom', '20px sans-serif')
+    this.fillText('第三象限', 0, 0, 'rgba(0, 0, 255, 0.5)', 'left', 'top', '20px sans-serif')
+    this.fillText('第四象限', this.canvas.width, 0, 'rgba(0, 0, 255, 0.5)', 'right', 'top', '20px sans-serif')
+    this.context2D.restore()
+    canvas2d.drawCanvasCoordCenter()
+  }
+
+  // 绘制坦克
+  public drawTank(): void {
+    if (!this._tank) {
+      this._tank = new Tank()
+      this._tank.x = this.canvas.width * 0.5
+      this._tank.y = this.canvas.height * 0.5
+
+      // 让坦克按比例扩展两倍
+      // this._tank.scaleX = 2
+      // this._tank.scale = 2
+      // // 分别旋转坦克和炮管，将角度转换为弧度表示
+      // this._tank.tankRotation = Math2D.toRadian(30)
+      // this._tank.turretRotation = Math2D.toRadian(-30)
+    }
+
+    this._tank.draw(this)
+  }
 }
 
 const addToolButton = (text: string = '按钮', handleClick: Function = (): void => {}): void => {
@@ -1090,3 +1135,5 @@ addToolButton('doLocalTransform', () => { canvas2d.doLocalTransform() })
 addToolButton('translateRotateTranslateDrawRect', () => { canvas2d.translateRotateTranslateDrawRect(100) })
 addToolButton('testFillLocalRectWithTitleUV', () => { canvas2d.testFillLocalRectWithTitleUV() })
 addToolButton('rotationAndRevolutionSimulation', () => { canvas2d.rotationAndRevolutionSimulation() })
+addToolButton('draw4Quadrant', () => { canvas2d.draw4Quadrant() })
+addToolButton('drawTank', () => { canvas2d.drawTank() })
