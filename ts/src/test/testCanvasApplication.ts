@@ -1,5 +1,6 @@
 import { Canvas2DApplication } from '../canvas/Application.ts'
 import { vec2, Size, Rectangle, ELayout, EImageFillType, Math2D } from '../canvas/math2D.ts'
+// import { ELayout } from '../canvas/math2D';
 
 console.log('Math2D: ', Math2D)
 const Colors: string[] = [
@@ -29,6 +30,17 @@ class TestApplication extends Canvas2DApplication {
   private _mouseY: number = 0;
   // this.isSupportMouseMove = true;
 
+  // 太阳自转的角速度，以角度为单位
+  private _rotationSunSpeed: number = 50
+  // 月球自转的角速度，以角度为单位
+  private _rotationMoonSpeed: number = 100
+  // 月球公转的角速度
+  private _revolutionSpeed: number = 60
+
+  private _rotationSun: number = 0 // 太阳自转的角位移
+  private _rotationMoon: number = 0 // 月亮自转的角位移
+  private _revolution: number = 0 // 月亮围绕太阳公转的角位移
+
   // override Application 的 dispatchMouseMove 方法
   public dispatchMouseMove(evt: CanvasMouseEvent): void {
     this._mouseX = evt.canvasPosition.x;
@@ -42,12 +54,22 @@ class TestApplication extends Canvas2DApplication {
   }
 
   public render(): void {
-    if (this.context2D !== null) {
-      this.clearScreen()
-      this.strokeGrid()
-      this.drawCanvasCoordCenter()
-      this.drawCoordInfo(`[${this._mouseX}, ${this._mouseY}]`, this._mouseX, this._mouseY)
-    }
+    // if (this.context2D !== null) {
+    //   this.clearScreen()
+    //   this.strokeGrid()
+    //   this.drawCanvasCoordCenter()
+    //   this.drawCoordInfo(`[${this._mouseX}, ${this._mouseY}]`, this._mouseX, this._mouseY)
+    // }
+  }
+
+  public update(elapsedMsec: number, intervalSec: number): void {
+    this.clearScreen()
+    // 角位移公式: v = s * t
+    this._rotationMoon += this._rotationMoonSpeed * intervalSec
+    this._rotationSun += this._rotationSunSpeed * intervalSec
+    this._revolution += this._revolutionSpeed * intervalSec
+
+    this.rotationAndRevolutionSimulation()
   }
 
   // 实现一个更新lineDashOffset的方法
@@ -853,8 +875,177 @@ class TestApplication extends Canvas2DApplication {
     this.fillCircle(0, 0, radius)
     this.fillLocalRectWithTitle(width, height, '3.平移到画布中心')
 
-    // 
+    // 将坐标系继续旋转-120度
+    // this.context2D.rotate(Math2D.toRadian(-120))
+    // // 绘制旋转-120矩形
+    // this.fillLocalRectWithTitle(width, height, '4.旋转-120度')
+    // this.strokeCoord(0, 0, coordWidth, coordHeight)
+    // this.fillCircle(0, 0, radius)
 
+    // // 将坐标系在-120基础上再旋转-130
+    // this.context2D.rotate(Math2D.toRadian(-130))
+    // this.fillLocalRectWithTitle(width, height, '5.旋转-130度')
+    // this.strokeCoord(0, 0, coordWidth, coordHeight)
+    // this.fillCircle(0, 0, radius)
+
+    this.context2D.scale(1.5, 2.0) // 局部坐标系的x轴放大1.5倍，y轴放大2倍
+    this.fillLocalRectWithTitle(width, height, '7.局部坐标系放大')
+    this.strokeCoord(0, 0, coordWidth, coordHeight)
+    this.fillCircle(0, 0, radius)
+
+    this.context2D.restore()
+  }
+
+  public fillLocalRectWidthTitleUV(
+    width: number = 0,
+    height: number,
+    title: string = '',
+    u: number = 0,
+    v: number = 0, // 这里使用 u和v 参数代替原来的Elayout枚举
+    layout: ELayout.ELayout.CENTER_MIDDLE, // 文字框的对齐方式
+    color: string = 'grey',
+    showCoord: boolean = true
+  ): void {
+    this.check()
+    let x: number = -width * u;
+    let y: number = -height * v;
+
+    this.context2D.save()
+        // 1. 绘制矩形
+        this.context2D.fillStyle = color;
+        this.context2D.beginPath()
+        this.context2D.rect(x, y, width, height)
+        this.context2D.fill()
+        // 如果有文字的话，先根据枚举值计算x，y坐标
+        if (title.length !== 0) {
+          // 2. 绘制文字信息
+          // 在矩形的左上角绘制出相关文字信息，使用的是10px大小的文字
+          // 调用calcLocalTextRectangle方法
+          let rect:Rectangle = this.calcLocalTextRectangle(layout, title, width, height)
+          // 绘制文本框
+          this.strokeRect(x + rect.origin.x, y + rect.origin.y, rect.size.width, rect.size.height, 'rgba(0, 0, 0, 0.5)')
+          // 绘制文本框左上角坐标(相对父矩形表示)
+          this.fillCircle(x + rect.origin.x, y + rect.origin.y, 2)
+          // 绘制文本
+          this.fillText(title, x + rect.origin.x, y + rect.origin.y, 'white', 'left', 'top', '10px sans-serif')
+        }
+        // 3.绘制变换的局部坐标系
+        // 附加一个坐标，x和y比矩形的width和height多20像素
+        if (showCoord) {
+          this.strokeCoord(x, y, width + 20, height + 20)
+          this.fillCircle(x, y, 3)
+        }
+    this.context2D.restore()
+  }
+
+  // 这个方法名称按照变换顺序取名
+  // 其形成一个圆的路径，而且绘制物体的朝向和圆路径一致
+  public translateRotateTranslateDrawRect(
+    degree: number = 20,
+    u: number = 0,
+    v: number = 0,
+    radius: number = 200,
+    width: number = 40,
+    height: number = 20
+  ): void {
+    // 将角度转换为弧度
+    let radians: number = Math2D.toRadian(degree)
+    // 记录状态
+    this.context2D.save()
+    this.context2D.translate(this.canvas.width * 0.5, this.canvas.height * 0.5)
+    this.context2D.rotate(radians)
+    this.context2D.translate(radius, 0)
+    this.fillLocalRectWidthTitleUV(width, height, '', u, v)
+    this.context2D.restore()
+  }
+
+  public testFillLocalRectWithTitleUV(): void {
+    this.check()
+    let radius: number = 200 // 圆路径的半径为200px
+    let steps: number = 18 // 将圆分成上下个18等分， -180 ～ 180，每个等分10度
+    // [0, +180] 绘制u系数从0 ～ 1，v系数不变
+    for (let i = 0; i <= steps; i++) {
+      let n: number = i / steps
+      this.translateRotateTranslateDrawRect(i * 10, n, 0, radius)
+    }
+
+    // [0, -180]
+    for (let i = 0; i < steps i++) {
+      let n: number = i / steps
+      this.translateRotateTranslateDrawRect(-i * 10, 0, n, radius)
+    }
+
+    // 在画布中心的4个象限绘制不同u，v的矩形，可以看一下u，v不同系数产生的不同效果
+    this.context2D.save()
+    this.context2D.translate(this.canvas.width * 0.5 - radius * 0.4, this.canvas.height * 0.5 - radius * 0.4)
+    this.fillLocalRectWidthTitleUV(100, 60, 'u = 0.5/v=0.5', 0.5, 0.5)
+    this.context2D.restore()
+
+    this.context2D.save()
+    this.context2D.translate(this.canvas.width * 0.5 + radius * 0.2, this.canvas.height * 0.5 - radius * 0.2)
+    this.fillLocalRectWidthTitleUV(100, 60, 'u = 0/v = 1', 0, 1)
+    this.context2D.restore()
+
+    this.context2D.save()
+    this.context2D.translate(this.canvas.width * 0.5 + radius * 0.3, this.canvas.height * 0.5 + radius * 0.4)
+    this.fillLocalRectWidthTitleUV(100, 60, 'u = 0.3 /v = 0.6', 0.3, 0.6)
+    this.context2D.restore()
+
+    this.context2D.save()
+    this.context2D.translate(this.canvas.width * 0.5 - radius * 0.1, this.canvas.height * 0.5 + radius * 0.25)
+    this.fillLocalRectWidthTitleUV(100, 60, 'u = 1/v = 0.2', 1, 0.2)
+    this.context2D.restore()
+
+    // 使用10px线宽，绘制半透明的圆路径
+    this.strokeCircle(this.canvas.width * 0.5, this.canvas.width * 0.5, radius, 'black', 10)
+  }
+
+  // 公转自转模拟
+  public rotationAndRevolutionSimulation(radius: number = 250): void {
+    this.check()
+
+    // 将自转rotation转换为弧度表示
+    let rotationMoon: number = Math2D.toRadian(this._rotationMoon)
+    // 将公转revolution转换为弧度表示
+    let rotationSun: number = Math2D.toRadian(this._rotationSun)
+    let revolution: number = Math2D.toRadian(this._revolution)
+    // 记录当前渲染状态
+    this.context2D.save()
+    this.context2D.translate(this.canvas.width * 0.5, this.canvas.height * 0.5)
+    // this.context2D.save()
+    // 绘制矩形在画布中心自转
+    this.context2D.rotate(rotationSun)
+    // 绕局部坐标系原点自转
+    this.fillLocalRectWidthTitleUV(100, 100, '自转', 0.5, 0.5)
+
+    // this.context2D.restore()
+    // // 公转+自转，注意顺序
+    // 基于上面的结果，进行处理
+    this.context2D.save()
+    this.context2D.rotate(revolution) // 公转
+    this.context2D.translate(radius, 0)
+    // 然后沿着当前的x轴平移radius个单位，radius半径形成圆路径
+    this.context2D.rotate(rotationMoon) // 自转
+    // 一旦平移到圆的路径上，开始绕局部坐标系原点进行自转
+    this.fillLocalRectWidthTitleUV(80, 80, '自转+公转', 0.5, 0.5)
+    this.context2D.restore()
+    // 恢复上一次记录的渲染状态
+    this.context2D.restore()
+
+    this.context2D.save()
+    // 绘制矩形在画布中心自转
+    this.context2D.rotate(revolution)
+    // 因为要绘制的矩形和宽度都是100，而原点在矩形左上角
+    // 为了将自转的原点位移到中心
+    this.context2D.translate(this.canvas.width * 0.5, this.canvas.height * 0.5)
+    this.context2D.translate(-50, -50)
+    this.fillLocalRectWidthTitleUV(100, 100, '自转', 0, 0)
+    this.context2D.restore()
+
+    this.context2D.save()
+    this.drawCanvasCoordCenter()
+    this.strokeCircle(this.canvas.width * 0.5, this.canvas.height * 0.5, radius)
+    this.strokeCircle(0, 0, this.distance(0, 0, this.canvas.width * 0.5, this.canvas.height * 0.5, radius))
     this.context2D.restore()
   }
 }
@@ -896,3 +1087,6 @@ addToolButton('doTransform-20-true', () => { canvas2d.doTransform(20, true) }) /
 addToolButton('doTransform-20-false', () => { canvas2d.doTransform(20, false) }) // 没有问题
 addToolButton('testFillLocalRectWithTitle', () => { canvas2d.testFillLocalRectWithTitle() })
 addToolButton('doLocalTransform', () => { canvas2d.doLocalTransform() })
+addToolButton('translateRotateTranslateDrawRect', () => { canvas2d.translateRotateTranslateDrawRect(100) })
+addToolButton('testFillLocalRectWithTitleUV', () => { canvas2d.testFillLocalRectWithTitleUV() })
+addToolButton('rotationAndRevolutionSimulation', () => { canvas2d.rotationAndRevolutionSimulation() })
