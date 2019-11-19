@@ -35,6 +35,12 @@ class TestApplication extends Canvas2DApplication {
     this._mouseY = evt.canvasPosition.y;
   }
 
+  public check(): void {
+    if (this.context2D === null) {
+      return;
+    }
+  }
+
   public render(): void {
     if (this.context2D !== null) {
       this.clearScreen()
@@ -391,11 +397,13 @@ class TestApplication extends Canvas2DApplication {
         this.context2D.rect(x, y, width, height)
         this.context2D.fill()
         // 如果有文字的话，先根据枚举值计算x，y坐标
+        console.log('title: ', title)
         if (title.length !== 0) {
           // 2. 绘制文字信息
           // 在矩形的左上角绘制出相关文字信息，使用的是10px大小的文字
           // 调用calcLocalTextRectangle方法
           let rect:Rectangle = this.calcLocalTextRectangle(layout, title, width, height)
+          console.log('title: ', title, rect)
           // 绘制文本
           this.fillText(title, x + rect.origin.x, y + rect.origin.y, 'white', 'left', 'top', '10px sans-serif')
           // 绘制文本框
@@ -700,9 +708,13 @@ class TestApplication extends Canvas2DApplication {
   }
 
   public fillLocalRectWithTitle(
-    width: number, height: number, title: string = '',
-    referencePt: ELayout = ELayout.CENTER_MIDDLE, layout: ELayout = ELayout.CENTER_MIDDLE,
-    color: string = 'grey', showCoord: boolean = true): void {
+    width: number,
+    height: number,
+    title: string = '',
+    referencePt: ELayout = ELayout.CENTER_MIDDLE,
+    layout: ELayout = ELayout.CENTER_MIDDLE,
+    color: string = 'grey',
+    showCoord: boolean = true): void {
       if (this.context2D !== null) {
         let x: number = 0
         let y: number = 0
@@ -755,18 +767,20 @@ class TestApplication extends Canvas2DApplication {
         this.context2D.beginPath()
         this.context2D.rect(x, y, width, height)
         this.context2D.fill()
+        console.log('title: ', title)
         // 如果有文字的话，先根据枚举值计算x，y坐标
         if (title.length !== 0) {
           // 2. 绘制文字信息
           // 在矩形的左上角绘制出相关文字信息，使用的是10px大小的文字
           // 调用calcLocalTextRectangle方法
           let rect:Rectangle = this.calcLocalTextRectangle(layout, title, width, height)
-          // 绘制文本
-          this.fillText(title, x + rect.origin.x, y + rect.origin.y, 'white', 'left', 'top', '10px sans-serif')
+          console.log('title: ', title, rect)
           // 绘制文本框
           this.strokeRect(x + rect.origin.x, y + rect.origin.y, rect.size.width, rect.size.height, 'rgba(0, 0, 0, 0.5)')
           // 绘制文本框左上角坐标(相对父矩形表示)
           this.fillCircle(x + rect.origin.x, y + rect.origin.y, 2)
+          // 绘制文本
+          this.fillText(title, x + rect.origin.x, y + rect.origin.y, 'white', 'left', 'top', '10px sans-serif')
         }
         // 3.绘制变换的局部坐标系
         // 附加一个坐标，x和y比矩形的width和height多20像素
@@ -811,7 +825,41 @@ class TestApplication extends Canvas2DApplication {
       this.rotateTranslate(-30, ELayout.RIGHT_MIDDLE)
       this.rotateTranslate(-40, ELayout.RIGHT_BOTTOM)
       // 计算半径
+      let radius: number = this.distance(0, 0, this.canvas.width * 0.5, this.canvas.height * 0.5)
+      this.strokeCircle(0, 0, radius, 'black')
     }
+  }
+
+  public doLocalTransform(): void {
+    this.check()
+    let width: number = 100
+    let height: number = 60
+
+    let coordWidth: number = width * 1.2
+    let coordHeight: number = height * 1.2
+    let radius: number = 5
+    this.context2D.save()
+    /**
+     * 所有局部坐标系变换演示的代码都放在此处
+     */
+    this.strokeCoord(0, 0, coordWidth, coordHeight)
+    this.fillLocalRectWithTitle(width, height, '1 初始状态')
+    this.fillCircle(0, 0, radius)
+
+    // 将坐标系向右移动到画布的中心，向下移动10个单位，再绘制局部坐标系
+    this.context2D.translate(this.canvas.width * 0.5, 10)
+    this.strokeCoord(0, 0, coordWidth, coordHeight)
+    this.fillCircle(0, 0, radius)
+
+    // 将坐标系向下移动到画布中心，再绘制局部坐标系
+    this.context2D.translate(0, this.canvas.height * 0.5 - 10)
+    this.strokeCoord(0, 0, coordWidth, coordHeight)
+    this.fillCircle(0, 0, radius)
+    this.fillLocalRectWithTitle(width, height, '3.平移到画布中心')
+
+    // 
+
+    this.context2D.restore()
   }
 }
 
@@ -851,3 +899,4 @@ addToolButton('doTransform-0-false', () => { canvas2d.doTransform(0, false) })
 addToolButton('doTransform-20-true', () => { canvas2d.doTransform(20, true) }) // 有问题
 addToolButton('doTransform-20-false', () => { canvas2d.doTransform(20, false) }) // 没有问题
 addToolButton('testFillLocalRectWithTitle', () => { canvas2d.testFillLocalRectWithTitle() })
+addToolButton('doLocalTransform', () => { canvas2d.doLocalTransform() })
