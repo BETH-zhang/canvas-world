@@ -54,6 +54,10 @@ class TestApplication extends Canvas2DApplication {
     }
   }
 
+  protected dispatchKeyPress(evt: CanvasKeyBoardEvent): void {
+    this._tank.onKeyPress(evt)
+  }
+
   public check(): void {
     if (this.context2D === null) {
       return;
@@ -1093,6 +1097,35 @@ class TestApplication extends Canvas2DApplication {
 
     this._tank.draw(this)
   }
+
+  // 绘制三角形
+  public drawTriangle(
+    x0: number,
+    y0: number,
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    stroke: boolean = true
+  ): void {
+    this.check()
+    this.context2D.save()
+      this.context2D.lineWidth = 3
+      this.context2D.strokeStyle = 'rgba(0, 0, 0, 0.5)'
+      this.context2D.beginPath()
+      this.context2D.moveTo(x0, y0)
+      this.context2D.lineTo(x1, y1)
+      this.context2D.lineTo(x2, y2)
+      this.context2D.closePath()
+
+      if (stroke) {
+        this.context2D.stroke()
+      } else {
+        this.context2D.fill()
+      }
+      this.fillCircle(x2, y2, 5)
+    this.context2D.restore()
+  }
 }
 
 const addToolButton = (text: string = '按钮', handleClick: Function = (): void => {}): void => {
@@ -1137,3 +1170,4 @@ addToolButton('testFillLocalRectWithTitleUV', () => { canvas2d.testFillLocalRect
 addToolButton('rotationAndRevolutionSimulation', () => { canvas2d.rotationAndRevolutionSimulation() })
 addToolButton('draw4Quadrant', () => { canvas2d.draw4Quadrant() })
 addToolButton('drawTank', () => { canvas2d.drawTank() })
+addToolButton('drawTriangle', () => { canvas2d.drawTriangle(0, 0, 100, 50, 300, 300) })
