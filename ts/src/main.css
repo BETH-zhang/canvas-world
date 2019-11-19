@@ -2,12 +2,30 @@ body {
     margin: 0; 
     /* reset设置非常重要，比如：你需要获取 鼠标在canvas 上的位置，发现，canvas与viewport有8个像素的偏移。 */
 }
+
+#tools {
+    overflow-y: scroll;
+    width: 400px;
+    height: 100vh;
+    float: left;
+}
+
+#tools button {
+    margin: 3px;
+    padding: 3px 5px;
+    height: 32px;
+    border: 1px solid #607D8B;
+    font-size: 14px;
+    background: #607d8b2e;
+    color: #395c6d;
+}
+
 #canvas {
     background: #ffffff;
     margin-left: 100px;
     margin-top: 10px;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
 
-    border: 80px solid #f2f2f2;
+    border: 20px solid #f2f2f2;
     padding: 20px;
 }
