@@ -64,6 +64,8 @@ class TestApplication extends Canvas2DApplication {
   }
 
   public render(): void {
+    // 由于canvas.getContext方法返回的CanvasRenderingContext2D可能会是null
+    // 因此需要null值检查
     if (this.context2D !== null) {
       this.clearScreen()
       this.strokeGrid()
